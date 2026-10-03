@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 
-/** Čeká na webfonty (VT323, Pixelify Sans) PŘED vytvořením prvního textu. */
+/** Čeká na webfonty (Jersey 10, IBM Plex Mono) PŘED vytvořením prvního textu. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('Boot');
@@ -10,8 +10,7 @@ export class BootScene extends Phaser.Scene {
     // pravé tlačítko otáčí razítkem — kontextové menu by překáželo
     this.input.mouse?.disableContextMenu();
     const ready = Promise.all([
-      document.fonts.load('32px VT323'),
-      document.fonts.load('32px "Pixelify Sans"'),
+      document.fonts.load('64px "Jersey 10"'),
       document.fonts.load('32px "IBM Plex Mono"'),
       document.fonts.load('600 32px "IBM Plex Mono"'),
       document.fonts.ready,

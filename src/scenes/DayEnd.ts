@@ -35,10 +35,10 @@ export class DayEndScene extends Phaser.Scene {
     this.add
       .text(
         cx,
-        140,
-        `${Content.ui('statRejected')}: ${s.rejected}   ·   ${Content.ui('statMistakes')}: ${s.rejectedWrong}   ·   ` +
+        138,
+        `${Content.ui('statRejected')}: ${s.rejected}   ·   ${Content.ui('statMistakes')}: ${s.rejectedWrong}\n` +
           `${Content.ui('statDecrees')}: ${s.decreesUsed}   ·   ${Content.ui('statActive')}: ${GameState.enactedRules.size}`,
-        { fontFamily: FONTS.doc, fontSize: '28px', color: '#bfa978', align: 'center' },
+        { fontFamily: FONTS.doc, fontSize: '28px', color: '#bfa978', align: 'center', lineSpacing: 6 },
       )
       .setOrigin(0.5);
 
@@ -61,14 +61,29 @@ export class DayEndScene extends Phaser.Scene {
 
     // ---------- legislativní fáze ----------
     const nextDay = GameState.day + 1;
+    // vyhlášky o vousech (3 délky) — nikdy nesmí být v platnosti všechny 3 naráz,
+    // jinak by žádná délka vousu nebyla legální. Vždy nech aspoň jednu povolenou:
+    // do nabídky pusť tolik vousových vyhlášek, aby ani výběr 2 nedal dohromady 3.
+    const BEARD_RULES = new Set(['R23', 'R29', 'R30']);
+    const beardActive = [...GameState.enactedRules, ...GameState.pendingRules]
+      .filter((id) => BEARD_RULES.has(id)).length;
+    const beardBudget = Math.max(0, 2 - beardActive);
+    let beardSeen = 0;
     const candidates: Rule[] = Content.all.rules
-      .filter((r) => !GameState.enactedRules.has(r.id) && r.day <= nextDay)
+      // už v platnosti NEBO čeká v šuplíku → znovu nenabízet
+      .filter((r) => !GameState.enactedRules.has(r.id) && !GameState.pendingRules.includes(r.id) && r.day <= nextDay)
       .sort((a, b) => b.day - a.day || a.id.localeCompare(b.id))
+      .filter((r) => {
+        if (!BEARD_RULES.has(r.id)) return true;
+        if (beardSeen >= beardBudget) return false;
+        beardSeen++;
+        return true;
+      })
       .slice(0, 6);
     this.minPick = Math.min(2, candidates.length); // vybírá se PŘESNĚ 2 (min i max)
 
     this.add
-      .text(cx, 205, Content.ui('legislaTitle'), { fontFamily: FONTS.ui, fontSize: '36px', color: '#d4a017' })
+      .text(cx, 205, Content.ui('legislaTitle'), { fontFamily: FONTS.title, fontSize: '48px', color: '#d4a017' })
       .setOrigin(0.5);
     this.add
       .text(cx, 250, Content.ui('legislaHint'), {
@@ -93,7 +108,9 @@ export class DayEndScene extends Phaser.Scene {
       .setOrigin(0.5);
     this.nextBtn = makeButton(this, cx, GAME_HEIGHT - 80, Content.ui('nextDay'), () => {
       if (this.selected.size < this.minPick) return;
-      for (const id of this.selected) GameState.enactRule(id);
+      // vyhlášky se NEuvedou v platnost rovnou — přistanou v šuplíku a hráč je
+      // musí druhý den aktivně zahrát ze „Podpultových vyhlášek" na rytíře
+      for (const id of this.selected) GameState.addPendingRule(id);
       const t = GameState.nextDay();
       this.scene.start(t === 'ending:survived' ? 'Ending' : 'Newspaper');
     }, { fontSize: 42 });

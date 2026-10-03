@@ -1,4 +1,5 @@
 import type { Decree, Encounter, Flaw, Reason } from '../content/schemas';
+import { beardLen, type BeardLen } from '../ui/KnightPortrait';
 import { Content } from './Content';
 import { GameState } from './GameState';
 
@@ -28,16 +29,39 @@ export const RuleEngine = {
     return Content.all.reasons.filter((r) => active.has(r.ruleRef) && !GameState.usedReasons.has(r.id));
   },
 
+  /** Je důvod legendární (univerzální „vyhnutí se čemukoli")? */
+  isLegendary(reasonId: string): boolean {
+    return Content.all.reasons.find((r) => r.id === reasonId)?.rarity === 'legendary';
+  },
+
+  /** Je to důvod vstříknutý právě vydaným dekretem? (zvýraznění „NOVÁ" ve skříni) */
+  isIssuedDecreeReason(reasonId: string): boolean {
+    return Content.all.decrees.some((d) => GameState.issuedDecrees.includes(d.id) && d.injectsReason === reasonId);
+  },
+
+  /** Legendární razítko platí na KOHOKOLI (dokud je jeho vyhláška v platnosti). */
+  legendaryVerdict(reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    const r = Content.all.reasons.find((x) => x.id === reasonId);
+    if (!r || r.rarity !== 'legendary' || !active.has(r.ruleRef)) return null;
+    return { ok: true, flaw: { reasonId, ruleRef: r.ruleRef, hint: { cs: Content.ui('legendaryUsed'), en: Content.ui('legendaryUsed') } } };
+  },
+
   /** Je zvolený důvod správný pro tento encounter? */
   validateRejection(enc: ActiveEncounter, reasonId: string, day: number): { ok: boolean; flaw?: Flaw } {
     const active = this.activeRuleIds(day);
+    // legendární razítko je univerzální — platí na kohokoli
+    const leg = this.legendaryVerdict(reasonId, active);
+    if (leg) return leg;
     // „Chybí do boje" (R21) se posuzuje OBJEKTIVNĚ z výstroje — platí u každého,
     // komu daná věc fakticky chybí, ne jen tam, kde to autor vepsal do flaws.
     const chibi = this.chibiVerdict(enc.data, reasonId, active);
     if (chibi) return chibi;
-    // vizuální prohřešky na portrétu (vousy/brýle/kalich/urážka) — objektivně dle tagu
+    // vizuální prohřešky na portrétu (brýle/kalich/urážka) — objektivně dle tagu
     const tagV = this.tagReasonVerdict(enc.data, reasonId, active);
     if (tagV) return tagV;
+    // vyhlášky o vousech (3 délky) — objektivně z vykreslené délky vousu
+    const beardV = this.beardVerdict(enc.data, reasonId, active);
+    if (beardV) return beardV;
     // délka meče (RZ_ZBROJAK) — objektivně z viditelné délky, ne jen z autorského flawu
     const sword = this.swordVerdict(enc.data, reasonId, active);
     if (sword) return sword;
@@ -67,7 +91,6 @@ export const RuleEngine = {
   /** Objektivní verdikt pro vizuální prohřešky vázané na tag portrétu. */
   tagReasonVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
     const MAP: Record<string, { tag: string; rule: string; hintKey: string }> = {
-      RZ_VOUS_DLOUHY: { tag: 'vous_dlouhy', rule: 'R23', hintKey: 'tagHintVousDlouhy' },
       RZ_BRYLE: { tag: 'bryle', rule: 'R24', hintKey: 'tagHintBryle' },
       RZ_KALICH: { tag: 'kalich', rule: 'R22', hintKey: 'tagHintKalich' },
       RZ_URAZKA_VACLAV: { tag: 'urazka_vaclav', rule: 'R25', hintKey: 'tagHintVaclav' },
@@ -75,6 +98,23 @@ export const RuleEngine = {
     const m = MAP[reasonId];
     if (!m || !active.has(m.rule)) return null;
     const ok = data.knight.tags.includes(m.tag);
+    if (!ok) return { ok: false };
+    return { ok: true, flaw: { reasonId, ruleRef: m.rule, hint: { cs: Content.ui(m.hintKey), en: Content.ui(m.hintKey) } } };
+  },
+
+  /** Mapování vousových důvodů → zakázaná délka vousu + jejich vyhláška. */
+  BEARD_REASONS: {
+    RZ_VOUS_ZADNY: { len: 'none' as BeardLen, rule: 'R30', hintKey: 'tagHintVousZadny' },
+    RZ_VOUS_KRATKY: { len: 'short' as BeardLen, rule: 'R29', hintKey: 'tagHintVousKratky' },
+    RZ_VOUS_DLOUHY: { len: 'long' as BeardLen, rule: 'R23', hintKey: 'tagHintVousDlouhy' },
+  } as Record<string, { len: BeardLen; rule: string; hintKey: string }>,
+
+  /** Objektivní verdikt pro vyhlášky o vousech (3 délky). Čte délku vousu
+   *  přesně tak, jak ji vykresluje portrét (společná funkce beardLen). */
+  beardVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    const m = this.BEARD_REASONS[reasonId];
+    if (!m || !active.has(m.rule)) return null;
+    const ok = beardLen(data.knight.sprite, data.knight.tags) === m.len;
     if (!ok) return { ok: false };
     return { ok: true, flaw: { reasonId, ruleRef: m.rule, hint: { cs: Content.ui(m.hintKey), en: Content.ui(m.hintKey) } } };
   },
@@ -121,10 +161,17 @@ export const RuleEngine = {
     for (const id of ['RZ_CHYBI_ZBRAN', 'RZ_CHYBI_KUN', 'RZ_CHYBI_ZBROJ']) {
       if (!GameState.usedReasons.has(id) && this.chibiVerdict(data, id, active)?.ok) out.add(id);
     }
-    for (const id of ['RZ_VOUS_DLOUHY', 'RZ_BRYLE', 'RZ_KALICH', 'RZ_URAZKA_VACLAV']) {
+    for (const id of ['RZ_BRYLE', 'RZ_KALICH', 'RZ_URAZKA_VACLAV']) {
       if (!GameState.usedReasons.has(id) && this.tagReasonVerdict(data, id, active)?.ok) out.add(id);
     }
+    for (const id of ['RZ_VOUS_ZADNY', 'RZ_VOUS_KRATKY', 'RZ_VOUS_DLOUHY']) {
+      if (!GameState.usedReasons.has(id) && this.beardVerdict(data, id, active)?.ok) out.add(id);
+    }
     if (!GameState.usedReasons.has('RZ_ZBROJAK') && this.swordVerdict(data, 'RZ_ZBROJAK', active)?.ok) out.add('RZ_ZBROJAK');
+    // legendární razítka platí univerzálně — dokud jsou aktivní a nepoužitá, řeší kohokoli
+    for (const r of Content.all.reasons) {
+      if (r.rarity === 'legendary' && active.has(r.ruleRef) && !GameState.usedReasons.has(r.id)) out.add(r.id);
+    }
     return [...out];
   },
 

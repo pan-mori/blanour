@@ -126,6 +126,9 @@ if (errors.length === 0) {
     if (r.category !== undefined && !CATS.includes(r.category)) {
       err('reasons.json', r.id, `category musí být jedna z: ${CATS.join(', ')}`);
     }
+    if (r.rarity !== undefined && !['common', 'legendary'].includes(r.rarity)) {
+      err('reasons.json', r.id, 'rarity musí být common | legendary');
+    }
   }
 
   // hádanky: flaw s předmětovým důvodem vyžaduje, aby rytíř předmět měl

@@ -17,11 +17,9 @@ export class MenuScene extends Phaser.Scene {
     // hudba (playlist 4 skladeb) — autoplay policy: dokud hráč neklikne, je audio
     // zamčené, proto startujeme až po events.UNLOCKED (jinak se play ztratí do ticha)
     const startMusic = () => Music.start(this.sound);
-    try {
-      this.sound.mute = localStorage.getItem('blanour:mute') === '1';
-    } catch {
-      /* private mode */
-    }
+    Music.setVolumeFactor(1); // v menu plná hlasitost (ztišení z vyhlášky o decibelech se nepřenáší)
+    // zdroj pravdy je GameState.audioMuted (přežije restart scény při změně jazyka)
+    this.sound.mute = GameState.audioMuted;
     if (this.sound.locked) this.sound.once(Phaser.Sound.Events.UNLOCKED, startMusic);
     else startMusic();
 
@@ -71,12 +69,7 @@ export class MenuScene extends Phaser.Scene {
       900,
       musicLabel(),
       () => {
-        this.sound.mute = !this.sound.mute;
-        try {
-          localStorage.setItem('blanour:mute', this.sound.mute ? '1' : '0');
-        } catch {
-          /* private mode apod. */
-        }
+        this.sound.mute = GameState.toggleMuted();
         if (!this.sound.mute) startMusic(); // kdyby hudba ještě neběžela
         const txt = musicBtn.list.find((o) => o instanceof Phaser.GameObjects.Text) as Phaser.GameObjects.Text;
         txt?.setText(musicLabel());
@@ -94,6 +87,36 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add.rectangle(cx, 440, 900, 4, COLORS.uiAccent, 0.5);
+
+    // debug: brouček vlevo dole → LAB s minihrami (samostatné testování)
+    this.makeDebugBug(90, GAME_HEIGHT - 70);
+  }
+
+  /** Malý brouček (ladybug) vlevo dole — otevře DEBUG LAB s minihrami. */
+  private makeDebugBug(x: number, y: number): void {
+    const g = this.add.graphics();
+    g.fillStyle(0xc0392b, 1); g.fillEllipse(x, y, 34, 30); // tělo
+    g.fillStyle(0x14100c, 1);
+    g.fillEllipse(x, y - 15, 16, 12); // hlava
+    g.fillRect(x - 1.5, y - 11, 3, 25); // středová čára
+    g.fillCircle(x - 8, y - 2, 3); g.fillCircle(x + 8, y - 2, 3); // tečky
+    g.fillCircle(x - 6, y + 8, 2.6); g.fillCircle(x + 6, y + 8, 2.6);
+    g.lineStyle(2, 0x14100c, 1); // tykadla
+    g.lineBetween(x - 4, y - 21, x - 10, y - 28);
+    g.lineBetween(x + 4, y - 21, x + 10, y - 28);
+    const label = this.add
+      .text(x + 30, y, 'LAB', { fontFamily: FONTS.ui, fontSize: '26px', color: '#8a7a55' })
+      .setOrigin(0, 0.5);
+    const hit = this.add
+      .rectangle(x + 12, y, 130, 64, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => label.setColor('#e8d9a8'))
+      .on('pointerout', () => label.setColor('#8a7a55'))
+      .on('pointerdown', () => {
+        try { this.sound.play('sfx_click', { volume: 0.4 }); } catch { /* ok */ }
+        this.scene.start('Lab');
+      });
+    void hit;
   }
 
   /** Klikací vlajka (cs = česká, en = britská) s highlightem aktivního jazyka. */

@@ -63,7 +63,7 @@ export function makeButton(
 export function title(scene: Phaser.Scene, x: number, y: number, s: string, size = 72): Phaser.GameObjects.Text {
   return scene.add
     .text(x, y, s, {
-      fontFamily: FONTS.ui,
+      fontFamily: FONTS.title,
       fontSize: `${size}px`,
       color: '#e8d9a8',
       stroke: '#14100c',

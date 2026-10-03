@@ -68,6 +68,8 @@ export class StampSystem {
   // razítko
   private trayStamp!: Phaser.GameObjects.Container;
   private carried: Phaser.GameObjects.Container | null = null;
+  private imprints: Phaser.GameObjects.Container[] = []; // aktuální otisk (nový přepíše starý)
+  private lastQuality: StampQuality | null = null; // kvalita posledního otisku (pro „Pustit jak je")
   private angle = 0;
   private inkCharges = 0;
   private pressStart = 0;
@@ -81,6 +83,12 @@ export class StampSystem {
 
   get isActive(): boolean {
     return this.active;
+  }
+
+  /** Otisky položené na dokument (po dokončení zůstávají ve vrstvě) — pro přetažení
+   *  celé orazítkované žádosti na rytíře / do spisovny. */
+  getImprints(): Phaser.GameObjects.Container[] {
+    return this.imprints;
   }
 
   begin(
@@ -106,6 +114,7 @@ export class StampSystem {
     this.inkCharges = 0;
     this.sealImprinted = false;
     this.waxState = 'cold';
+    this.lastQuality = null;
 
     this.buildRecap();
     this.buildCandle();
@@ -136,6 +145,7 @@ export class StampSystem {
     this.angle = this.target.angleDeg + this.target.circleAngleDeg + angleOffset;
     const wp = this.circleWorldPos();
     this.applyStamp(wp.x + 70, wp.y, pressMs); // razítko vedle pečeti
+    this.commitStamp(); // bez auto-finishe musí test otisk rovnou odevzdat
   }
 
   // ---------- geometrie ----------
@@ -372,14 +382,47 @@ export class StampSystem {
       if (!this.carried) { this.pickUpStamp(); p.event.stopPropagation(); }
     });
 
-    this.inkPad = this.scene.add.rectangle(x, y + 150, 300, 120, 0x3d1410).setStrokeStyle(4, 0x1d0a08);
+    this.inkPad = this.scene.add.rectangle(x, y + 120, 300, 120, 0x3d1410).setStrokeStyle(4, 0x1d0a08);
     const padLabel = this.scene.add
-      .text(x, y + 150, Content.ui('stampPad'), { fontFamily: FONTS.doc, fontSize: '26px', color: '#8a5a50' })
+      .text(x, y + 120, Content.ui('stampPad'), { fontFamily: FONTS.doc, fontSize: '26px', color: '#8a5a50' })
       .setOrigin(0.5);
 
-    const cancel = this.makeCancelButton(x, y + 262);
-    this.tray = this.scene.add.container(0, 0, [panel, label, this.trayStamp, stampHit, this.inkPad, padLabel, ...cancel]);
+    const cancel = this.makeCancelButton(x, y + 234);
+    // „Předat dokument vojákovi" — kulaté voskové pečetidlo dole u svíčky (ne v panelu)
+    const commit = this.makeCommitSeal(1410, 946);
+    this.tray = this.scene.add.container(0, 0, [panel, label, this.trayStamp, stampHit, this.inkPad, padLabel, ...cancel, ...commit]);
     this.layer.add(this.tray);
+  }
+
+  /** „Předat dokument vojákovi" — kulaté voskové pečetidlo (odevzdá otisk; nesedí-li → facka). */
+  private makeCommitSeal(x: number, y: number): Phaser.GameObjects.GameObject[] {
+    const g = this.scene.add.graphics();
+    g.fillStyle(0x7a1f12, 1); g.fillCircle(x, y, 52);
+    g.fillStyle(0x8f2a18, 1); g.fillCircle(x, y, 42);
+    g.lineStyle(3, 0x5a1510, 1); g.strokeCircle(x, y, 46);
+    const sym = this.scene.add.text(x, y, '✓', { fontFamily: FONTS.ui, fontSize: '56px', color: '#e8c49a' }).setOrigin(0.5);
+    const lbl = this.scene.add
+      .text(x, y + 72, Content.ui('stampFinishSeal'), { fontFamily: FONTS.doc, fontSize: '21px', color: '#e8d9a8', align: 'center', wordWrap: { width: 240 } })
+      .setOrigin(0.5);
+    const hit = this.scene.add.circle(x, y, 56, 0xffffff, 0.001).setInteractive({ useHandCursor: true });
+    hit.on('pointerover', () => sym.setScale(1.12));
+    hit.on('pointerout', () => sym.setScale(1));
+    hit.on('pointerdown', (p: Phaser.Input.Pointer) => { p.event.stopPropagation(); this.commitStamp(); });
+    return [g, sym, lbl, hit];
+  }
+
+  /** Odevzdání otisku „jak je" — kvalitu vyhodnotí Office (crisp projde, jinak facka). */
+  private commitStamp(): void {
+    this.finish({ quality: this.lastQuality ?? 'dry', ok: true });
+  }
+
+  /** Test: polož otisk BEZ odevzdání (ověření hromadění otisků). */
+  debugStampOnly(angleOffset: number, pressMs: number): void {
+    if (this.phase !== 'stamp') this.startStampPhase();
+    this.inkCharges = 1;
+    this.angle = this.target.angleDeg + this.target.circleAngleDeg + angleOffset;
+    const wp = this.circleWorldPos();
+    this.applyStamp(wp.x + Phaser.Math.Between(-40, 70), wp.y + Phaser.Math.Between(-30, 40), pressMs);
   }
 
   private makeCancelButton(x: number, y: number): Phaser.GameObjects.GameObject[] {
@@ -548,9 +591,18 @@ export class StampSystem {
 
     if (this.inkCharges > 0) this.inkCharges--;
     try { this.scene.sound.play('sfx_stamp', { volume: quality === 'dry' ? 0.25 : 0.8 }); } catch { /* ok */ }
+    // otisky se HROMADÍ na formuláři (vizuální bordel je záměr); „Pustit jak je" bere poslední
     this.drawImprint(x, y, quality);
+    this.lastQuality = quality;
 
-    if (quality === 'crisp') { this.finish({ quality, ok: true }); return; }
+    // BEZ auto-dokončení: hráč potvrdí „Pustit jak je" (crisp projde, jinak facka)
+    let msg = quality === 'crisp' ? Content.ui('stampGood') : this.qualityMsg(quality);
+    if (this.inkCharges <= 0 && quality === 'dry') msg += ` ${Content.ui('stampHintInk')}`;
+    this.setHint(`${msg} ${Content.ui('stampCommitHint')}`);
+  }
+
+  /** Hláška ke kvalitě otisku (mimo crisp). */
+  private qualityMsg(quality: StampQuality): string {
     const msgs: Record<Exclude<StampQuality, 'crisp'>, string> = {
       dry: Content.ui('stampDry'),
       crooked: Content.ui('stampCrooked'),
@@ -558,9 +610,7 @@ export class StampSystem {
       smudged: Content.ui('stampSmudged'),
       misplaced: Content.ui('stampMisplaced'),
     };
-    let msg = msgs[quality as Exclude<StampQuality, 'crisp'>];
-    if (this.inkCharges <= 0) msg += ` ${Content.ui('stampHintInk')}`;
-    this.setHint(msg);
+    return msgs[quality as Exclude<StampQuality, 'crisp'>] ?? '';
   }
 
   private drawImprint(x: number, y: number, quality: StampQuality): void {
@@ -591,6 +641,7 @@ export class StampSystem {
       const c = this.scene.add.container(x, y, parts);
       c.setAngle(this.angle);
       this.layer.add(c);
+      this.imprints.push(c); // zaznamenej otisk — jde ho setřít
       return c;
     };
     make(0, 0, alpha);
@@ -629,6 +680,9 @@ export class StampSystem {
     if (!this.active) return;
     this.active = false;
     this.unbindInput();
+    // zrušení razítkování zahodí i rozdělané otisky (ať nezůstanou na dokumentu)
+    for (const im of this.imprints) im.destroy();
+    this.imprints = [];
     this.cleanupVisuals();
     this.hint?.destroy();
     this.recap?.destroy();

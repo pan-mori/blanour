@@ -6,12 +6,25 @@ import Phaser from 'phaser';
  */
 const TRACKS = ['music', 'music2', 'music3', 'music4'];
 
+const BASE_VOLUME = 0.35;
+
 class MusicImpl {
   private sound?: Phaser.Sound.BaseSoundManager;
   private order: string[] = [];
   private idx = 0;
   private current?: Phaser.Sound.BaseSound;
   private started = false;
+  private volumeFactor = 1; // ztišení (např. vyhláška o decibelech → 0.5)
+
+  /** Ztlum/obnov hudbu (1 = plná, 0.5 = poloviční). Platí i na další skladby. */
+  setVolumeFactor(f: number): void {
+    this.volumeFactor = f;
+    try {
+      (this.current as Phaser.Sound.BaseSound & { setVolume?: (v: number) => void })?.setVolume?.(BASE_VOLUME * f);
+    } catch {
+      /* ok */
+    }
+  }
 
   /** Spustí playlist (idempotentní — podruhé nic nedělá). */
   start(sound: Phaser.Sound.BaseSoundManager): void {
@@ -42,7 +55,7 @@ class MusicImpl {
     const key = this.order[this.idx % this.order.length];
     this.idx++;
     try {
-      this.current = this.sound.add(key, { volume: 0.35 });
+      this.current = this.sound.add(key, { volume: BASE_VOLUME * this.volumeFactor });
       this.current.once(Phaser.Sound.Events.COMPLETE, () => this.playNext());
       this.current.play();
     } catch {

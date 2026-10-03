@@ -1,14 +1,15 @@
 import Phaser from 'phaser';
 import { COLORS, FONTS, GAME_HEIGHT, GAME_WIDTH, TUNING } from '../config';
-import type { Reason } from '../content/schemas';
+import type { Decree, Reason, Rule } from '../content/schemas';
 import { Content, L } from '../systems/Content';
 import { EncounterManager } from '../systems/EncounterManager';
 import { GameState } from '../systems/GameState';
+import { Music } from '../systems/Music';
 import type { ActiveEncounter } from '../systems/RuleEngine';
 import { RuleEngine } from '../systems/RuleEngine';
-import type { SealLetter, StampDecision, StampResult, StampTarget } from '../systems/StampSystem';
+import type { SealLetter, StampDecision, StampQuality, StampResult, StampTarget } from '../systems/StampSystem';
 import { StampSystem } from '../systems/StampSystem';
-import { drawOfficeBackdrop } from '../ui/Backdrop';
+import { drawOfficeBackdrop, LIBRARY_RECT } from '../ui/Backdrop';
 import { makeButton } from '../ui/helpers';
 import { ensureItemTexture, parseEquipment } from '../ui/ItemIcons';
 import { ensureKnightTexture } from '../ui/KnightPortrait';
@@ -29,9 +30,46 @@ export class OfficeScene extends Phaser.Scene {
   private pendingReason: Reason | null = null;
   private stampTarget: StampTarget | null = null;
   private actionButtons: Phaser.GameObjects.Container[] = [];
+  // odevzdání/archivace: reference na žádost, otisky, portrét rytíře (drop-zóna)
+  private primaryDoc: Phaser.GameObjects.Container | null = null;
+  private primaryDocWH = { w: 0, h: 0 };
+  private primaryDocBaseAngle = 0; // klidový náklon žádosti — pokřik ji z něj vychýlí max o 5°
+  private knightVisuals: Phaser.GameObjects.GameObject[] = [];
+  private knightDropRect: Phaser.Geom.Rectangle | null = null;
+  private handoverHint?: Phaser.GameObjects.Text;
+  private dropGlow?: Phaser.GameObjects.Rectangle;
+  // druhopis (archivace): kopie žádosti + její otisky + geometrie pro razítko
+  private copyDoc?: Phaser.GameObjects.Container;
+  private copyWH = { w: 320, h: 430 };
+  private copyTarget?: StampTarget;
+  private copyBodyText?: Phaser.GameObjects.Text;
+  private copyParagraph = '';
+  private ambientDark?: Phaser.GameObjects.Container; // zhasnutá svíčka + ztmavení (vyhláška o světle)
+  private readonly LIGHT_DECREES = ['V_POCHODEN']; // vyhlášky o světle/ohni → tma
+  private readonly NOISE_DECREES = ['V_POLNICE']; // vyhlášky o decibelech → ticho
 
   constructor() {
     super('Office');
+  }
+
+  /** Dopady vlastních vyhlášek na atmosféru: zákaz ohně → tma + zhasnutá svíčka;
+   *  limit decibelů → poloviční hudba. Platí, dokud je dekret vydán (do konce runu). */
+  private applyAmbientEffects(): void {
+    const dark = this.LIGHT_DECREES.some((d) => GameState.issuedDecrees.includes(d));
+    const quiet = this.NOISE_DECREES.some((d) => GameState.issuedDecrees.includes(d));
+
+    this.ambientDark?.destroy();
+    this.ambientDark = undefined;
+    if (dark) {
+      const ccx = GAME_WIDTH - 150; // svíčka z Backdropu
+      const ccy = 150;
+      const cover = this.add.graphics();
+      cover.fillStyle(0x241a10, 1); cover.fillRect(ccx - 12, ccy - 30, 30, 36); // přes plamen
+      cover.fillStyle(0x3a3a3a, 0.5); cover.fillRect(ccx + 1, ccy - 28, 3, 14); // dým
+      const shade = this.add.rectangle(GAME_WIDTH / 2, (80 + GAME_HEIGHT) / 2, GAME_WIDTH, GAME_HEIGHT - 80, 0x000000, 0.4);
+      this.ambientDark = this.add.container(0, 0, [cover, shade]).setDepth(5);
+    }
+    try { Music.setVolumeFactor(quiet ? 0.5 : 1); } catch { /* ok */ }
   }
 
   create(): void {
@@ -44,29 +82,25 @@ export class OfficeScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, 40, '', { fontFamily: FONTS.ui, fontSize: '34px', color: '#e8d9a8' })
       .setOrigin(0.5);
     makeButton(this, 56, 40, '?', () => this.openHelp(), { fontSize: 34, width: 72 }).setDepth(10);
+    // křížek vpravo nahoře — ukončit run a vrátit se do menu (s potvrzením)
+    makeButton(this, GAME_WIDTH - 56, 40, '✕', () => this.confirmQuitRun(), { fontSize: 34, width: 72, color: 0x5a1a10 }).setDepth(10);
 
-    // ikona dokumentu vpravo v 1/3 výšky → všechny platné vyhlášky
-    const rg = this.add.graphics().setDepth(10);
-    rg.fillStyle(0xf0e6c8, 1);
-    rg.fillRect(1846, 326, 52, 66);
-    rg.fillStyle(0xe0d4b0, 1);
-    rg.fillRect(1852, 320, 52, 66);
-    rg.lineStyle(3, 0x8a7a55, 1);
-    rg.strokeRect(1852, 320, 52, 66);
-    for (let i = 0; i < 4; i++) rg.lineBetween(1860, 334 + i * 12, 1896, 334 + i * 12);
-    const rgSym = this.add
-      .text(1878, 352, '§', { fontFamily: FONTS.ui, fontSize: '30px', color: '#7a1f12' })
-      .setOrigin(0.5)
-      .setDepth(11);
-    const rgHit = this.add
-      .rectangle(1876, 353, 76, 86, 0xffffff, 0.001)
-      .setDepth(12)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerover', () => rgSym.setScale(1.2))
-      .on('pointerout', () => rgSym.setScale(1))
+    // velké, viditelné tlačítko „Platné vyhlášky" vpravo → overlay se všemi vyhláškami
+    const rbW = 128;
+    const rbH = 162;
+    const panel = this.add.rectangle(0, 0, rbW, rbH, 0xe6dcc0).setStrokeStyle(4, COLORS.uiAccent);
+    const sym = this.add.text(0, -48, '§', { fontFamily: FONTS.ui, fontSize: '54px', color: '#7a1f12' }).setOrigin(0.5);
+    const lbl = this.add
+      .text(0, 20, Content.ui('helpRules'), { fontFamily: FONTS.ui, fontSize: '22px', color: '#4a4134', align: 'center', wordWrap: { width: rbW - 16 } })
+      .setOrigin(0.5);
+    const cnt = this.add.text(0, 62, `${GameState.enactedRules.size}×`, { fontFamily: FONTS.doc, fontSize: '22px', color: '#7a1f12' }).setOrigin(0.5);
+    const rulesBtn = this.add.container(1852, 372, [panel, sym, lbl, cnt]).setDepth(10);
+    rulesBtn.setSize(rbW, rbH);
+    panel.setInteractive({ useHandCursor: true })
+      .on('pointerover', () => panel.setFillStyle(0xfff0cf))
+      .on('pointerout', () => panel.setFillStyle(0xe6dcc0))
       .on('pointerdown', () => this.openRules());
-    this.tweens.add({ targets: [rgSym], angle: 6, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-    void rgHit;
+    this.tweens.add({ targets: rulesBtn, scale: 1.04, duration: 1300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
     this.encounterLayer = this.add.container(0, 0);
     this.overlayLayer = this.add.container(0, 0).setDepth(100);
@@ -77,6 +111,44 @@ export class OfficeScene extends Phaser.Scene {
       EncounterManager.buildDay(GameState.day, 4);
     }
     this.nextKnight();
+
+    // debug: ?demo=auto — sám dojede k zamítnutí + rovnému razítku (QA odevzdání/archivace)
+    if (new URLSearchParams(location.search).get('demo') === 'auto') {
+      this.time.delayedCall(900, () => this.runDemoReject());
+    }
+  }
+
+  /** Křížek vpravo nahoře: dotaz na ukončení runu → ano = zpět do hlavního menu. */
+  private confirmQuitRun(): void {
+    if (this.busy) return;
+    this.overlayLayer.removeAll(true);
+    const cx = GAME_WIDTH / 2;
+    const cy = GAME_HEIGHT / 2;
+    const dim = this.add.rectangle(cx, cy, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6).setInteractive();
+    const panel = this.add.rectangle(cx, cy, 1000, 320, COLORS.uiPanel).setStrokeStyle(4, COLORS.danger);
+    const head = this.add
+      .text(cx, cy - 80, Content.ui('quitConfirm'), {
+        fontFamily: FONTS.ui, fontSize: '38px', color: '#ff6b5e', wordWrap: { width: 900 }, align: 'center',
+      })
+      .setOrigin(0.5);
+    const yes = makeButton(this, cx - 200, cy + 70, Content.ui('quitYes'), () => {
+      this.scene.start('Menu');
+    }, { fontSize: 34, color: 0x5a1a10 });
+    const no = makeButton(this, cx + 200, cy + 70, Content.ui('quitNo'), () => {
+      this.overlayLayer.removeAll(true);
+    }, { fontSize: 34 });
+    this.overlayLayer.add([dim, panel, head, yes, no]);
+  }
+
+  /** Debug: zamítne prvním platným důvodem a položí rovný otisk → spadne do odevzdání. */
+  private runDemoReject(): void {
+    if (!this.enc) return;
+    const flaw = this.enc.data.flaws[0];
+    const reason = Content.all.reasons.find((r) => r.id === flaw?.reasonId) ?? this.cabinetReasons()[0];
+    if (!reason) return;
+    this.pendingReason = reason;
+    this.enterStampMode('reject');
+    this.time.delayedCall(300, () => this.stampSys?.debugApply(2, 600, true));
   }
 
   // ---------- tok encounterů ----------
@@ -92,6 +164,13 @@ export class OfficeScene extends Phaser.Scene {
     this.pendingReason = null;
     this.stampTarget = null;
     this.actionButtons = [];
+    this.primaryDoc = null;
+    this.knightVisuals = [];
+    this.knightDropRect = null;
+    this.handoverHint?.destroy();
+    this.handoverHint = undefined;
+    this.dropGlow?.destroy();
+    this.dropGlow = undefined;
     this.overlayLayer.removeAll(true);
     this.encounterLayer.removeAll(true);
     this.enc = EncounterManager.next();
@@ -106,6 +185,7 @@ export class OfficeScene extends Phaser.Scene {
     }
     this.renderEncounter(this.enc);
     this.updateHud();
+    this.applyAmbientEffects(); // tma/ticho dle dříve vydaných vyhlášek
 
     // příchod rytíře — krátký slide-in
     this.encounterLayer.setAlpha(0);
@@ -118,10 +198,12 @@ export class OfficeScene extends Phaser.Scene {
   private updateHud(): void {
     const era = Content.era(GameState.day);
     const hearts = '♥'.repeat(GameState.lives) + '♡'.repeat(Math.max(0, TUNING.lives - GameState.lives));
+    const pend = GameState.pendingRules.length;
     this.hud.setText(
       `${Content.ui('day')} ${GameState.day}/5 · L.P. ${era.year}   |   ` +
         `${Content.ui('knight')} ${EncounterManager.index}/${EncounterManager.total}   |   ` +
-        `${hearts}   |   ${Content.ui('decrees')}: ${GameState.decreesLeft}`,
+        `${hearts}   |   ${Content.ui('decrees')}: ${GameState.decreesLeft}` +
+        (pend > 0 ? `   |   ⚖ ${Content.ui('pendingToPlay')}: ${pend}` : ''),
     );
   }
 
@@ -164,6 +246,18 @@ export class OfficeScene extends Phaser.Scene {
     this.cameras.main.shake(220, 0.006);
     this.stampSys?.nudge();
     this.tweens.add({ targets: this.encounterLayer, x: '+=6', duration: 50, yoyo: true, repeat: 3 });
+    // rozzlobený rytíř bouchne do stolu → žádost sebou trhne (stejně jako razítko),
+    // ale jen o kousek — max 5° od klidového náklonu. Při razítkování ne: to by
+    // rozhodilo zacílení otisku (tam už sebou škube samotné razítko přes nudge()).
+    if (this.primaryDoc && !this.stampSys?.isActive) {
+      const kick = Phaser.Math.FloatBetween(3, 5) * (Math.random() < 0.5 ? -1 : 1);
+      const target = Phaser.Math.Clamp(
+        this.primaryDoc.angle + kick,
+        this.primaryDocBaseAngle - 5,
+        this.primaryDocBaseAngle + 5,
+      );
+      this.tweens.add({ targets: this.primaryDoc, angle: target, duration: 220, ease: 'Bounce.easeOut' });
+    }
     this.time.delayedCall(3200, () => {
       if (!this.heckleBubble) return;
       this.tweens.add({
@@ -218,6 +312,9 @@ export class OfficeScene extends Phaser.Scene {
 
     this.encounterLayer.add([portrait, face, name, tail, bubble, intro]);
     this.encounterLayer.bringToTop(intro);
+    // portrét rytíře = drop-zóna pro odevzdání žádosti; vizuály odejdou spolu s žádostí
+    this.knightVisuals = [portrait, face, name, tail, bubble, intro];
+    this.knightDropRect = new Phaser.Geom.Rectangle(px - 210, py - 240, 420, 500);
 
     // dokumenty: žádost = velký nakloněný papír s kroužkem pro pečeť, přílohy vpravo
     this.stampTarget = null;
@@ -228,8 +325,8 @@ export class OfficeScene extends Phaser.Scene {
       sy = this.renderSecondaryDoc(docs[i], sy) + 24;
     }
 
-    // vzorník pečetí (od 2. dne, kdy platí vyhláška o pečetích)
-    if (GameState.day >= 2) this.drawSealChart();
+    // vzorník pečetí se zobrazí až s vyhláškou o pečetění (R27)
+    if (GameState.enactedRules.has('R27')) this.drawSealChart();
 
     // akční tlačítka
     const by = GAME_HEIGHT - 70;
@@ -244,8 +341,9 @@ export class OfficeScene extends Phaser.Scene {
     this.encounterLayer.add([reject, approve]);
     this.actionButtons = [reject, approve];
 
-    const decrees = RuleEngine.applicableDecrees(enc);
-    if (decrees.length > 0) {
+    // šuplík je dostupný, když je co zahrát: zbývá rozpočet na dekret NEBO čeká
+    // nějaká zvolená vyhláška z večerního úřadování (musí se aktivně uvést v platnost)
+    if (GameState.decreesLeft > 0 || GameState.pendingRules.length > 0) {
       const drawer = this.makeDecreeDrawer(1560, by - 6);
       this.encounterLayer.add(drawer);
       this.actionButtons.push(drawer);
@@ -257,19 +355,25 @@ export class OfficeScene extends Phaser.Scene {
     const w = 320;
     const h = 96;
     const body = this.add.rectangle(0, 0, w, h, 0x3a2a16).setStrokeStyle(4, 0xd4a017);
-    const face = this.add.rectangle(0, -6, w - 14, h - 24, 0x5a4226).setStrokeStyle(2, 0x3a2a16);
-    const handle = this.add.rectangle(0, 20, 110, 18, 0x2a1c10).setStrokeStyle(3, 0xd4a017);
-    const txt = this.add.text(0, -14, Content.ui('drawerDecrees'), {
-      fontFamily: FONTS.ui, fontSize: '24px', color: '#e8d9a8', align: 'center', wordWrap: { width: w - 40 },
+    const face = this.add.rectangle(0, -14, w - 14, h - 32, 0x5a4226).setStrokeStyle(2, 0x3a2a16);
+    // úchytka až dole, pod nápisem — ať se text netluče s rámečkem šuplíku
+    const handle = this.add.rectangle(0, 30, 110, 16, 0x2a1c10).setStrokeStyle(3, 0xd4a017);
+    // malý obrázek: útržek vyhlášky s linkami a mini pečetí + § znak
+    const para = this.add.text(-w / 2 + 28, -16, '§', { fontFamily: FONTS.ui, fontSize: '42px', color: '#d4a017' }).setOrigin(0.5);
+    const ig = this.add.graphics();
+    ig.fillStyle(0xe8dcc0, 1); ig.fillRect(-w / 2 + 48, -32, 30, 38);
+    ig.lineStyle(2, 0x8a7a55, 1);
+    for (let i = 0; i < 3; i++) ig.lineBetween(-w / 2 + 53, -24 + i * 8, -w / 2 + 73, -24 + i * 8);
+    ig.fillStyle(0xa82810, 1); ig.fillCircle(-w / 2 + 70, 2, 6); // mini pečeť
+    const txt = this.add.text(26, -16, Content.ui('drawerDecrees'), {
+      fontFamily: FONTS.ui, fontSize: '22px', color: '#e8d9a8', align: 'center', wordWrap: { width: w - 100 },
     }).setOrigin(0.5);
-    const badge = this.add.text(w / 2 - 14, -h / 2 + 8, `${GameState.decreesLeft}`, {
-      fontFamily: FONTS.doc, fontSize: '22px', color: '#d4a017',
-    }).setOrigin(1, 0);
-    const c = this.add.container(x, y, [body, face, handle, txt, badge]);
+    // (bez čísla na šuplíku — kolik zbývá vydání je v HUD „Vyhlášky k vydání", ať to nemate)
+    const c = this.add.container(x, y, [body, face, handle, para, ig, txt]);
     c.setSize(w, h);
     face.setInteractive({ useHandCursor: true })
-      .on('pointerover', () => { face.setFillStyle(0x6a5030); this.tweens.add({ targets: handle, y: 26, duration: 90 }); })
-      .on('pointerout', () => { face.setFillStyle(0x5a4226); this.tweens.add({ targets: handle, y: 20, duration: 90 }); })
+      .on('pointerover', () => { face.setFillStyle(0x6a5030); this.tweens.add({ targets: handle, y: 36, duration: 90 }); })
+      .on('pointerout', () => { face.setFillStyle(0x5a4226); this.tweens.add({ targets: handle, y: 30, duration: 90 }); })
       .on('pointerdown', () => {
         try { this.sound.play('sfx_paper', { volume: 0.5 }); } catch { /* ok */ }
         this.openDecreePicker();
@@ -322,6 +426,17 @@ export class OfficeScene extends Phaser.Scene {
 
   private onStampDone(decision: StampDecision, result: StampResult): void {
     if (!result.ok || !this.enc) return;
+    // #4 ZPACKANÉ RAZÍTKO: otisk nesplnil podmínky (mimo kroužek / křivě / bledé / suché) = facka
+    if (result.quality !== 'crisp') {
+      this.pendingReason = null;
+      const t = GameState.loseLife();
+      this.updateHud();
+      this.showCutaway(Content.ui('botchedStamp'), this.qualityWhy(result.quality), () => {
+        if (t === 'ending:beaten') this.scene.start('Ending');
+        else this.nextKnight();
+      });
+      return;
+    }
     if (decision === 'approve') {
       GameState.approve();
       this.scene.start('Ending');
@@ -332,25 +447,296 @@ export class OfficeScene extends Phaser.Scene {
     if (!reason) return;
     const verdict = RuleEngine.validateRejection(this.enc, reason.id, GameState.day);
     if (verdict.ok) {
-      GameState.recordReject();
-      // chytří rytíři: tohle razítko je spotřebované, další rytíři si dají pozor
-      GameState.useReason(reason.id);
-      EncounterManager.pruneUnsolvable(GameState.day);
-      const msg = this.enc.data.outcomes?.rejectOk
-        ? L(this.enc.data.outcomes.rejectOk)
-        : Content.ui('rejectOkDefault');
-      this.showOutcome(`✓ ${msg}\n(${L(verdict.flaw!.hint)})`, 0x2f7d32, () => this.nextKnight());
+      // legendární razítko se SPOTŘEBUJE (univerzální — jinak by trivializovalo hru);
+      // běžné razítko ZŮSTÁVÁ v sadě a hráč ho může použít znovu (buduje si sadu nástrojů)
+      const legendary = RuleEngine.isLegendary(reason.id);
+      const msg = legendary
+        ? `⭐ ${Content.ui('legendaryUsed')}`
+        : `✓ ${this.enc.data.outcomes?.rejectOk ? L(this.enc.data.outcomes.rejectOk) : Content.ui('rejectOkDefault')}\n(${L(verdict.flaw!.hint)})`;
+      const tint = legendary ? 0xd4a017 : 0x2f7d32;
+      // zápis do stavu + výsledkový box AŽ po fyzickém odevzdání (a archivaci)
+      const finalize = (): void => {
+        GameState.recordReject();
+        if (legendary) GameState.useReason(reason.id);
+        EncounterManager.pruneUnsolvable(GameState.day);
+        this.showInfoBox(msg, tint, () => this.showNextKnightButton());
+      };
+      const imprints = this.stampSys?.getImprints() ?? [];
+      if (this.archiveActive()) this.beginArchiveFlow(imprints, reason, finalize);
+      else this.beginHandover(imprints, finalize);
     } else {
       const t = GameState.loseLife();
       this.updateHud();
       const msg = this.enc.data.outcomes?.rejectBad
         ? L(this.enc.data.outcomes.rejectBad)
         : Content.ui('rejectBadDefault');
-      this.showCutaway(msg, () => {
+      // facka VŽDY s vysvětlením, proč to bylo špatně
+      const why = RuleEngine.rejectableNow(this.enc.data, GameState.day)
+        ? `${Content.ui('whyWrongReason')} „${L(reason.label)}"`
+        : Content.ui('whyClean');
+      this.showCutaway(msg, why, () => {
         if (t === 'ending:beaten') this.scene.start('Ending');
         else this.nextKnight();
       });
     }
+  }
+
+  /** Vysvětlení facky za zpackané razítko podle kvality otisku. */
+  private qualityWhy(q: StampQuality): string {
+    const m: Record<string, string> = {
+      misplaced: Content.ui('stampMisplaced'),
+      crooked: Content.ui('stampCrooked'),
+      faded: Content.ui('stampFaded'),
+      smudged: Content.ui('stampSmudged'),
+      dry: Content.ui('stampDry'),
+    };
+    return `${Content.ui('whyBotched')} ${m[q] ?? ''}`;
+  }
+
+  // ---------- odevzdání (drag na rytíře) + archivace druhopisu ----------
+
+  /** Spodní nápověda k aktuálnímu kroku odevzdání/archivace. */
+  private setStepHint(text: string): void {
+    this.handoverHint?.destroy();
+    this.handoverHint = this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT - 38, text, {
+        fontFamily: FONTS.doc, fontSize: '28px', color: '#d4a017', fontStyle: 'bold',
+        align: 'center', wordWrap: { width: 1500 },
+      })
+      .setOrigin(0.5).setDepth(70);
+  }
+
+  /**
+   * Přetažení skupiny (dokument + jeho otisky) do cílové zóny. Pohyb po deltě,
+   * ať otisky drží s papírem. Mimo zónu = návrat zpět; v zóně = onDrop().
+   */
+  private dragGroupToZone(opts: {
+    doc: Phaser.GameObjects.Container;
+    extras: Phaser.GameObjects.Container[];
+    w: number; h: number;
+    zone: Phaser.Geom.Rectangle;
+    hintKey: string;
+    onDrop: () => void;
+  }): void {
+    this.busy = true;
+    const { doc, extras, zone } = opts;
+    // výchozí pozice pro případný návrat (otisky drží s papírem přes deltu)
+    const homeDoc = { x: doc.x, y: doc.y };
+    const homeExtras = extras.map((e) => ({ e, x: e.x, y: e.y }));
+    const hit = this.add
+      .rectangle(doc.x, doc.y, Math.max(opts.w, 160), Math.max(opts.h, 200), 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true, draggable: true });
+    this.input.setDraggable(hit);
+    this.encounterLayer.add(hit);
+
+    this.setStepHint(Content.ui(opts.hintKey));
+    this.dropGlow?.destroy();
+    this.dropGlow = this.add
+      .rectangle(zone.centerX, zone.centerY, zone.width, zone.height)
+      .setStrokeStyle(5, COLORS.uiAccent, 0.9).setDepth(6);
+    this.tweens.add({ targets: this.dropGlow, alpha: 0.25, duration: 650, yoyo: true, repeat: -1 });
+
+    let prevX = hit.x;
+    let prevY = hit.y;
+    const moveBy = (nx: number, ny: number): void => {
+      const dx = nx - prevX;
+      const dy = ny - prevY;
+      prevX = nx; prevY = ny;
+      doc.x += dx; doc.y += dy;
+      for (const e of extras) { e.x += dx; e.y += dy; }
+    };
+    hit.on('drag', (_p: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+      moveBy(dragX, dragY);
+    });
+    hit.on('dragend', (p: Phaser.Input.Pointer) => {
+      if (Phaser.Geom.Rectangle.Contains(zone, p.worldX, p.worldY)) {
+        hit.destroy();
+        this.dropGlow?.destroy(); this.dropGlow = undefined;
+        opts.onDrop();
+      } else {
+        // mimo zónu → plynulý návrat papíru i otisků na původní místo
+        this.tweens.add({ targets: doc, x: homeDoc.x, y: homeDoc.y, duration: 240, ease: 'Back.easeOut' });
+        for (const he of homeExtras) {
+          this.tweens.add({ targets: he.e, x: he.x, y: he.y, duration: 240, ease: 'Back.easeOut' });
+        }
+        hit.setPosition(homeDoc.x, homeDoc.y);
+        prevX = homeDoc.x; prevY = homeDoc.y;
+      }
+    });
+  }
+
+  /** ODEVZDÁNÍ: přetáhni orazítkovanou žádost na rytíře; žádost i portrét odejdou. */
+  private beginHandover(imprints: Phaser.GameObjects.Container[], onDone: () => void): void {
+    if (!this.primaryDoc || !this.knightDropRect) { onDone(); return; }
+    const doc = this.primaryDoc;
+    doc.setVisible(true);
+    for (const im of imprints) im.setVisible(true);
+    this.dragGroupToZone({
+      doc, extras: imprints, w: this.primaryDocWH.w, h: this.primaryDocWH.h,
+      zone: this.knightDropRect, hintKey: 'handoverHint',
+      onDrop: () => this.completeHandover(doc, imprints, onDone),
+    });
+  }
+
+  private completeHandover(
+    doc: Phaser.GameObjects.Container, imprints: Phaser.GameObjects.Container[], onDone: () => void,
+  ): void {
+    this.handoverHint?.destroy(); this.handoverHint = undefined;
+    try { this.sound.play('sfx_paper', { volume: 0.85 }); } catch { /* ok */ }
+    const kx = this.knightDropRect?.centerX ?? 330;
+    const ky = this.knightDropRect?.centerY ?? 480;
+    // žádost + otisky doletí k rytíři…
+    this.tweens.add({
+      targets: [doc, ...imprints], x: kx, y: ky, scale: 0.55, duration: 300, ease: 'Cubic.easeIn',
+      onComplete: () => {
+        // …a rytíř s nimi odejde dolů ze scény
+        const movers = [doc, ...imprints, ...this.knightVisuals];
+        this.tweens.add({
+          targets: movers, y: '+=560', alpha: 0, angle: '+=5', duration: 480, ease: 'Cubic.easeIn',
+          onComplete: () => onDone(),
+        });
+      },
+    });
+  }
+
+  /** ARCHIVACE (vyhl. 28): vyhotov druhopis, znovu ho orazítkuj, založ do spisovny,
+   *  teprve pak předej prvopis rytíři. */
+  private beginArchiveFlow(
+    originalImprints: Phaser.GameObjects.Container[], reason: Reason, onDone: () => void,
+  ): void {
+    const src = this.enc?.data.documents[0];
+    if (!src || !this.primaryDoc) { this.beginHandover(originalImprints, onDone); return; }
+    this.copyParagraph = this.reasonParagraph(reason);
+    // schovej prvopis + jeho otisky, kým se vyrábí druhopis uprostřed stolu
+    this.primaryDoc.setVisible(false);
+    for (const im of originalImprints) im.setVisible(false);
+
+    this.buildCopyDoc(src);
+    this.setStepHint(Content.ui('archiveStep1'));
+    this.runCopyTranscribe(() => {
+      this.setStepHint(Content.ui('archiveStep2'));
+      this.stampCopy((copyImprints) => {
+        if (!this.copyDoc) { this.restoreAndHandover(originalImprints, onDone); return; }
+        this.dragGroupToZone({
+          doc: this.copyDoc, extras: copyImprints, w: this.copyWH.w, h: this.copyWH.h,
+          zone: new Phaser.Geom.Rectangle(LIBRARY_RECT.x - 14, LIBRARY_RECT.y - 14, LIBRARY_RECT.w + 28, LIBRARY_RECT.h + 60),
+          hintKey: 'archiveStep3',
+          onDrop: () => this.archiveCopyToLibrary(this.copyDoc!, copyImprints, originalImprints, onDone),
+        });
+      });
+    });
+  }
+
+  /** Blank druhopis uprostřed stolu (text se odkryje opisem). Nastaví copyTarget. */
+  private buildCopyDoc(src: { template: string; fields: Record<string, string> }): void {
+    const w = this.copyWH.w;
+    const h = this.copyWH.h;
+    const center = { x: 940, y: 540 };
+    const paper = this.add.rectangle(0, 0, w, h, COLORS.paper).setStrokeStyle(4, 0x8a7a55).setOrigin(0, 0);
+    const title = this.add.text(22, 16, Content.ui('copyTitle'), {
+      fontFamily: FONTS.ui, fontSize: '26px', color: '#7a1f12',
+    });
+    const { bodyStr } = this.buildDocLines(src);
+    const body = this.add.text(22, 66, bodyStr, {
+      fontFamily: FONTS.doc, fontSize: '22px', color: '#1c1a16', lineSpacing: 5, wordWrap: { width: w - 44 },
+    }).setAlpha(0); // odkryje se opisem
+    this.copyBodyText = body;
+    // kroužek pro razítko dole uprostřed (rovně, ať se dobře razítkuje)
+    const crx = w / 2;
+    const cry = h - 78;
+    const g = this.add.graphics();
+    g.lineStyle(3, 0x9a8a60, 0.95);
+    for (let a = 0; a < 360; a += 30) {
+      g.beginPath();
+      g.arc(crx, cry, 40, Phaser.Math.DegToRad(a), Phaser.Math.DegToRad(a + 16));
+      g.strokePath();
+    }
+    const ghost = this.add.text(crx, cry, '⊛', { fontFamily: FONTS.ui, fontSize: '30px', color: '#9a8a60' }).setOrigin(0.5).setAlpha(0.85);
+    const lbl = this.add.text(crx, cry + 56, Content.ui('stampSlot'), { fontFamily: FONTS.doc, fontSize: '15px', color: '#9a8a60' }).setOrigin(0.5);
+    const children: Phaser.GameObjects.GameObject[] = [paper, title, body, g, ghost, lbl];
+    for (const c of children) {
+      (c as unknown as { x: number; y: number }).x -= w / 2;
+      (c as unknown as { x: number; y: number }).y -= h / 2;
+    }
+    this.copyDoc = this.add.container(center.x, center.y, children);
+    this.encounterLayer.add(this.copyDoc);
+    this.copyTarget = {
+      center, w, h, angleDeg: 0, circleLocal: { x: crx, y: cry }, circleAngleDeg: 0, requireWax: false,
+    };
+  }
+
+  /** Opisovací minihra: tahej brkem po druhopisu, text se postupně odkrývá. */
+  private runCopyTranscribe(onComplete: () => void): void {
+    this.busy = true;
+    const body = this.copyBodyText;
+    const start = { x: 1180, y: 560 };
+    // brk: šikmá čára s nibem
+    const shaft = this.add.rectangle(0, 0, 10, 86, 0xe8dcc0).setStrokeStyle(2, 0x8a7a55).setOrigin(0.5, 1).setAngle(28);
+    const nib = this.add.triangle(0, 6, 0, 0, -7, 16, 7, 16, 0x3a2a16).setOrigin(0.5, 0);
+    const quill = this.add.container(start.x, start.y, [shaft, nib]).setDepth(72);
+    quill.setSize(60, 90);
+    const hit = this.add.rectangle(start.x, start.y, 70, 100, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true, draggable: true }).setDepth(72);
+    this.input.setDraggable(hit);
+    this.encounterLayer.add([quill, hit]);
+
+    const NEED = 1500;
+    let dist = 0;
+    let px = hit.x;
+    let py = hit.y;
+    let done = false;
+    hit.on('drag', (_p: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+      dist += Math.hypot(dragX - px, dragY - py);
+      px = dragX; py = dragY;
+      hit.setPosition(dragX, dragY);
+      quill.setPosition(dragX, dragY);
+      const prog = Phaser.Math.Clamp(dist / NEED, 0, 1);
+      body?.setAlpha(prog);
+      if (prog >= 1 && !done) {
+        done = true;
+        try { this.sound.play('sfx_paper', { volume: 0.5 }); } catch { /* ok */ }
+        quill.destroy(); hit.destroy();
+        onComplete();
+      }
+    });
+  }
+
+  /** Orazítkování druhopisu (razítko MUSÍ padnout znovu). Kvalitu neřešíme (prvopis už platí). */
+  private stampCopy(onComplete: (copyImprints: Phaser.GameObjects.Container[]) => void): void {
+    if (!this.copyTarget) { onComplete([]); return; }
+    const recap = `${Content.ui('stampRecap')} ${Content.ui('copyTitle')}`;
+    const sys = new StampSystem(this, this.encounterLayer);
+    this.stampSys = sys;
+    sys.begin(
+      'reject', this.copyTarget, this.requiredSeal(), false, recap, this.copyParagraph,
+      () => onComplete(sys.getImprints()),
+      () => { this.stampCopy(onComplete); }, // zrušení = musí orazítkovat znovu (archivace je povinná)
+    );
+  }
+
+  private archiveCopyToLibrary(
+    copyDoc: Phaser.GameObjects.Container, copyImprints: Phaser.GameObjects.Container[],
+    originalImprints: Phaser.GameObjects.Container[], onDone: () => void,
+  ): void {
+    this.handoverHint?.destroy(); this.handoverHint = undefined;
+    try { this.sound.play('sfx_paper', { volume: 0.8 }); } catch { /* ok */ }
+    const lx = LIBRARY_RECT.x + LIBRARY_RECT.w / 2;
+    const ly = LIBRARY_RECT.y + LIBRARY_RECT.h / 2;
+    this.tweens.add({
+      targets: [copyDoc, ...copyImprints], x: lx, y: ly, scale: 0.22, alpha: 0, angle: 8,
+      duration: 420, ease: 'Cubic.easeIn',
+      onComplete: () => {
+        copyDoc.destroy();
+        for (const im of copyImprints) im.destroy();
+        this.copyDoc = undefined;
+        this.restoreAndHandover(originalImprints, onDone);
+      },
+    });
+  }
+
+  private restoreAndHandover(originalImprints: Phaser.GameObjects.Container[], onDone: () => void): void {
+    this.setStepHint(Content.ui('archiveStep4'));
+    this.beginHandover(originalImprints, onDone);
   }
 
   // ---------- nápověda ----------
@@ -366,8 +752,8 @@ export class OfficeScene extends Phaser.Scene {
     const panel = this.add.rectangle(cx, 430, 1760, 660, COLORS.uiPanel).setStrokeStyle(4, COLORS.uiAccent);
     const head = this.add
       .text(cx, 160, `${Content.ui('helpTitle')} · ${Content.ui('helpHow').toUpperCase()}`, {
-        fontFamily: FONTS.ui,
-        fontSize: '40px',
+        fontFamily: FONTS.title,
+        fontSize: '54px',
         color: '#d4a017',
       })
       .setOrigin(0.5);
@@ -408,8 +794,8 @@ export class OfficeScene extends Phaser.Scene {
     const rules = Content.all.rules.filter((r) => GameState.enactedRules.has(r.id));
     const head = this.add
       .text(cx, 95, `§ ${Content.ui('helpRules').toUpperCase()} (${rules.length}) §`, {
-        fontFamily: FONTS.ui,
-        fontSize: '42px',
+        fontFamily: FONTS.title,
+        fontSize: '56px',
         color: '#d4a017',
       })
       .setOrigin(0.5);
@@ -613,10 +999,11 @@ export class OfficeScene extends Phaser.Scene {
     const h = contentBottom + 190; // volný pruh dole — kroužek se tam vždy vejde
     const paper = this.add.rectangle(0, 0, w, h, COLORS.paper).setStrokeStyle(4, 0x8a7a55).setOrigin(0, 0);
 
-    // vosková pečeť je vyžadována NÁHODNĚ (~40 %) — podmínka postupu
-    // debug: ?wax=1 vynutí, ?wax=0 vypne
+    // vosková pečeť se vyžaduje až po enactnutí vyhlášky o pečetění (R27), pak ~50 %
+    // debug: ?wax=1 vynutí (i bez vyhlášky, pro QA), ?wax=0 vypne
     const waxParam = new URLSearchParams(location.search).get('wax');
-    const requireWax = waxParam === '1' ? true : waxParam === '0' ? false : Math.random() < 0.4;
+    const waxRuleActive = GameState.enactedRules.has('R27');
+    const requireWax = waxParam === '1' ? true : waxParam === '0' ? false : (waxRuleActive && Math.random() < 0.5);
 
     // kroužek pečeti: náhodná pozice ve volném pruhu + zcela náhodné natočení
     const crx = Phaser.Math.Between(110, w - 110);
@@ -664,6 +1051,9 @@ export class OfficeScene extends Phaser.Scene {
     const cont = this.add.container(cx0, cy0, children);
     cont.setAngle(angle);
     this.encounterLayer.add(cont);
+    this.primaryDoc = cont;
+    this.primaryDocBaseAngle = angle;
+    this.primaryDocWH = { w, h };
 
     this.stampTarget = {
       center: { x: cx0, y: cy0 },
@@ -851,8 +1241,9 @@ export class OfficeScene extends Phaser.Scene {
 
   // ---------- rozhodnutí ----------
 
+  // „dekret" už není samostatná kategorie — dekretové důvody padají do své pravé kategorie
   private readonly CATEGORY_ORDER: NonNullable<Reason['category']>[] = [
-    'formular', 'poplatek', 'papiry', 'pecet', 'vira', 'vystroj', 'kun', 'chybi', 'dekret',
+    'formular', 'poplatek', 'papiry', 'pecet', 'vira', 'vystroj', 'kun', 'chybi',
   ];
 
   private reasonCategory(r: Reason): NonNullable<Reason['category']> {
@@ -864,9 +1255,19 @@ export class OfficeScene extends Phaser.Scene {
     return rule ? L(rule.cislo) : `§ ${Content.ui('freshDecree')}`;
   }
 
-  /** Důvody do skříně: VŠECHNY dostupné (i výstrojní — ty se teď vybírají jen odsud). */
+  /** Procesní „pseudo-důvody" — vyhlášky, co mění postup, ne nabídku zamítnutí. */
+  private readonly PROCESS_REASONS = new Set(['RZ_ARCHIV']);
+
+  /** Je v platnosti vyhláška o archivaci (R28)? (nebo debug ?archive=1). */
+  private archiveActive(): boolean {
+    if (new URLSearchParams(location.search).get('archive') === '1') return true;
+    return GameState.enactedRules.has('R28');
+  }
+
+  /** Důvody do skříně: VŠECHNY dostupné (i výstrojní — ty se teď vybírají jen odsud),
+   *  kromě procesních vyhlášek (archivace není důvod k zamítnutí). */
   private cabinetReasons(): Reason[] {
-    return RuleEngine.availableReasons(GameState.day);
+    return RuleEngine.availableReasons(GameState.day).filter((r) => !this.PROCESS_REASONS.has(r.id));
   }
 
   /** ZAMÍTNOUT → razítková skříň se zásuvkami (kategoriemi). */
@@ -882,7 +1283,7 @@ export class OfficeScene extends Phaser.Scene {
     const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.72).setInteractive();
     const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1700, 920, 0x2a2016).setStrokeStyle(5, COLORS.uiAccent);
     const head = this.add
-      .text(cx, 150, Content.ui('cabinetTitle'), { fontFamily: FONTS.ui, fontSize: '40px', color: '#d4a017' })
+      .text(cx, 150, Content.ui('cabinetTitle'), { fontFamily: FONTS.title, fontSize: '54px', color: '#d4a017' })
       .setOrigin(0.5);
     const sub = this.add
       .text(cx, 205, Content.ui('cabinetPick'), { fontFamily: FONTS.doc, fontSize: '26px', color: '#bfa978' })
@@ -904,8 +1305,9 @@ export class OfficeScene extends Phaser.Scene {
       const dx = x0 + col * (dw + gapX);
       const dy = y0 + row * (dh + gapY);
       const count = reasons.filter((r) => this.reasonCategory(r) === cat).length;
+      const hasNew = reasons.some((r) => this.reasonCategory(r) === cat && RuleEngine.isIssuedDecreeReason(r.id));
       this.overlayLayer.add(
-        this.makeDrawer(dx, dy, dw, dh, Content.ui(`cat_${cat}`), count, () => this.showCabinetDrawer(cat), 0x4a3420, count === 0),
+        this.makeDrawer(dx, dy, dw, dh, Content.ui(`cat_${cat}`), count, () => this.showCabinetDrawer(cat), 0x4a3420, count === 0, hasNew),
       );
     });
 
@@ -985,16 +1387,21 @@ export class OfficeScene extends Phaser.Scene {
   /** Jedna zásuvka skříně (úchytka + štítek + počet razítek). */
   private makeDrawer(
     x: number, y: number, w: number, h: number, label: string, count: number, onClick: () => void,
-    bodyColor = 0x4a3420, dimEmpty = false,
+    bodyColor = 0x4a3420, dimEmpty = false, hasNew = false,
   ): Phaser.GameObjects.Container {
-    const body = this.add.rectangle(0, 0, w, h, bodyColor).setStrokeStyle(4, 0x6b4a2a).setOrigin(0, 0);
+    const body = this.add.rectangle(0, 0, w, h, bodyColor).setStrokeStyle(hasNew ? 5 : 4, hasNew ? 0x2f9d32 : 0x6b4a2a).setOrigin(0, 0);
     const face = this.add.rectangle(6, 6, w - 12, h - 12, 0x5a4226).setStrokeStyle(2, 0x3a2a16).setOrigin(0, 0);
     const handle = this.add.rectangle(w / 2, h - 28, 120, 22, 0x2a1c10).setStrokeStyle(3, 0xd4a017);
     const text = this.add.text(w / 2, 42, label, {
       fontFamily: FONTS.ui, fontSize: '26px', color: '#e8d9a8', align: 'center', wordWrap: { width: w - 54 },
     }).setOrigin(0.5);
     const badge = this.add.text(w - 22, 16, `(${count})`, { fontFamily: FONTS.doc, fontSize: '24px', color: '#d4a017' }).setOrigin(1, 0);
-    const c = this.add.container(x, y, [body, face, handle, text, badge]);
+    const parts: Phaser.GameObjects.GameObject[] = [body, face, handle, text, badge];
+    if (hasNew) {
+      const nb = this.add.text(14, 12, `⚡ ${Content.ui('decreeNewBadge')}`, { fontFamily: FONTS.ui, fontSize: '16px', color: '#8fe08f' }).setOrigin(0, 0);
+      parts.push(nb);
+    }
+    const c = this.add.container(x, y, parts);
     c.setSize(w, h);
     if (dimEmpty) { c.setAlpha(0.5); badge.setColor('#8a7a55'); } // prázdná zásuvka — ztlumená
     face.setInteractive({ useHandCursor: true })
@@ -1016,7 +1423,7 @@ export class OfficeScene extends Phaser.Scene {
     const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.72).setInteractive();
     const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1700, 920, 0x2a2016).setStrokeStyle(5, COLORS.uiAccent);
     const head = this.add
-      .text(cx, 150, `▸ ${Content.ui(`cat_${cat}`)}`, { fontFamily: FONTS.ui, fontSize: '40px', color: '#d4a017' })
+      .text(cx, 150, `▸ ${Content.ui(`cat_${cat}`)}`, { fontFamily: FONTS.title, fontSize: '54px', color: '#d4a017' })
       .setOrigin(0.5);
     this.overlayLayer.add([dim, panel, head]);
 
@@ -1052,9 +1459,76 @@ export class OfficeScene extends Phaser.Scene {
     this.overlayLayer.add([back, cancel]);
   }
 
+  /** Mini tematická ikonka vyhlášky do pravého horního rohu karty — kreslená
+   *  (ne emoji, ať sedí do pixel-art stylu a vykreslí se v každém fontu). */
+  private makeCategoryIcon(cat: NonNullable<Reason['category']>, size = 46): Phaser.GameObjects.Container {
+    const gold = 0xf0d68a, dark = 0x2a2016, paper = 0xe8dcc0, red = 0xc0392b, steel = 0xd0d4d8;
+    const bg = this.add.rectangle(0, 0, size, size, dark).setStrokeStyle(2, 0xd4a017);
+    const g = this.add.graphics();
+    switch (cat) {
+      case 'formular': // formulář: list s linkami a ohnutým rohem
+        g.fillStyle(paper, 1); g.fillRect(-9, -13, 18, 26);
+        g.fillStyle(dark, 1); g.fillTriangle(3, -13, 9, -13, 9, -7);
+        g.lineStyle(2, dark, 1);
+        for (let i = 0; i < 4; i++) g.lineBetween(-5, -5 + i * 5, 5, -5 + i * 5);
+        break;
+      case 'poplatek': // kolek/poplatek: komínek mincí
+        g.lineStyle(2, dark, 1);
+        for (let i = 0; i < 3; i++) { g.fillStyle(gold, 1); g.fillEllipse(0, 7 - i * 6, 24, 11); g.strokeEllipse(0, 7 - i * 6, 24, 11); }
+        break;
+      case 'papiry': // papíry: dva přeložené listy
+        g.fillStyle(paper, 1); g.lineStyle(2, dark, 1);
+        g.fillRect(-11, -7, 16, 22); g.strokeRect(-11, -7, 16, 22);
+        g.fillRect(-3, -13, 16, 22); g.strokeRect(-3, -13, 16, 22);
+        for (let i = 0; i < 3; i++) g.lineBetween(0, -6 + i * 5, 10, -6 + i * 5);
+        break;
+      case 'pecet': // pečeť: vosková pečeť se stuhami
+        g.fillStyle(red, 1); g.fillTriangle(-7, 2, -1, 2, -4, 16); g.fillTriangle(7, 2, 1, 2, 4, 16);
+        g.fillStyle(red, 1); g.fillCircle(0, -3, 11);
+        g.fillStyle(0x8a1f16, 1); g.fillCircle(0, -3, 7);
+        g.fillStyle(gold, 1); g.fillCircle(0, -3, 2.5);
+        break;
+      case 'vira': // víra: mešní kalich
+        g.fillStyle(gold, 1);
+        g.fillTriangle(-9, -12, 9, -12, 0, -1);
+        g.fillRect(-2, -3, 4, 10);
+        g.fillRect(-8, 7, 16, 3);
+        break;
+      case 'vystroj': // výstroj: meč našikmo
+        g.lineStyle(4, steel, 1); g.lineBetween(-8, 11, 9, -10);
+        g.lineStyle(4, gold, 1); g.lineBetween(-12, 3, -1, 10);
+        g.fillStyle(gold, 1); g.fillCircle(-12, 12, 3);
+        break;
+      case 'kun': { // kůň: podkova pro štěstí
+        g.lineStyle(5, steel, 1);
+        g.beginPath();
+        g.moveTo(-8, 11); g.lineTo(-8, -1); g.lineTo(0, -11); g.lineTo(8, -1); g.lineTo(8, 11);
+        g.strokePath();
+        g.fillStyle(dark, 1);
+        for (const [hx, hy] of [[-8, 7], [8, 7], [-6, -3], [6, -3]]) g.fillCircle(hx, hy, 1.6);
+        break;
+      }
+      case 'chybi': // chybí do boje: prázdné místo se škrtem
+        g.lineStyle(2, gold, 1); g.strokeRect(-10, -10, 20, 20);
+        g.lineStyle(3, red, 1); g.lineBetween(-9, 9, 9, -9);
+        break;
+      default: // záložní: razítkový kroužek s §
+        g.lineStyle(3, red, 1); g.strokeCircle(0, 0, 11);
+        g.lineStyle(3, gold, 1); g.lineBetween(0, -6, 0, 6); g.lineBetween(-4, -3, 4, 3);
+        break;
+    }
+    return this.add.container(0, 0, [bg, g]);
+  }
+
   /** Karta s konkrétním zamítacím razítkem: mini otisk + § paragraf + text důvodu. */
   private makeStampCard(x: number, y: number, w: number, h: number, r: Reason): Phaser.GameObjects.Container {
-    const card = this.add.rectangle(0, 0, w, h, 0xf0e6c8).setStrokeStyle(3, 0x8a7a55).setOrigin(0, 0);
+    // vzácnost: legendární = zlatá; čerstvě vydaná vyhláška = zelená (ať ji hráč najde)
+    const legend = r.rarity === 'legendary';
+    const fresh = RuleEngine.isIssuedDecreeReason(r.id);
+    const baseFill = legend ? 0xf7e6a8 : fresh ? 0xe2f0d8 : 0xf0e6c8;
+    const hoverFill = legend ? 0xffeeb0 : fresh ? 0xeffae4 : 0xfff4d8;
+    const borderCol = legend ? 0xd4a017 : fresh ? 0x1d6a20 : 0x8a7a55;
+    const card = this.add.rectangle(0, 0, w, h, baseFill).setStrokeStyle(legend || fresh ? 6 : 3, borderCol).setOrigin(0, 0);
     // mini zamítací razítko vlevo
     const sg = this.add.graphics();
     sg.lineStyle(5, 0xa82810, 0.9);
@@ -1069,11 +1543,34 @@ export class OfficeScene extends Phaser.Scene {
     const lbl = this.add.text(200, 58, L(r.label), {
       fontFamily: FONTS.doc, fontSize: '25px', color: '#1c1a16', wordWrap: { width: w - 220 },
     });
-    const c = this.add.container(x, y, [card, sg, stTxt, para, lbl]);
+    const parts: Phaser.GameObjects.GameObject[] = [card, sg, stTxt, para, lbl];
+    // tematická ikonka v pravém horním rohu (štítky vzácnosti se posunou vlevo od ní)
+    const icon = this.makeCategoryIcon(this.reasonCategory(r)).setPosition(w - 29, 29);
+    parts.push(icon);
+    if (legend) {
+      const badge = this.add
+        .text(w - 62, 12, `★ ${Content.ui('rarityLegendary')}`, { fontFamily: FONTS.ui, fontSize: '19px', color: '#9a6a00' })
+        .setOrigin(1, 0);
+      parts.push(badge);
+    }
+    if (fresh) {
+      // mini infografika: popisek „⚡ NOVÁ VYHLÁŠKA" + útržek čerstvé vyhlášky s pečetí
+      const badge = this.add
+        .text(w - 62, 12, `⚡ ${Content.ui('decreeNewBadge')}`, { fontFamily: FONTS.ui, fontSize: '18px', color: '#1d6a20' })
+        .setOrigin(1, 0);
+      const ix = w - 68 - badge.width - 30;
+      const ig = this.add.graphics();
+      ig.fillStyle(0xe8dcc0, 1); ig.fillRect(ix, 12, 24, 30);
+      ig.lineStyle(2, 0x8a7a55, 1);
+      for (let i = 0; i < 3; i++) ig.lineBetween(ix + 5, 19 + i * 7, ix + 19, 19 + i * 7);
+      ig.fillStyle(0xa82810, 1); ig.fillCircle(ix + 18, 38, 5);
+      parts.push(ig, badge);
+    }
+    const c = this.add.container(x, y, parts);
     c.setSize(w, h);
     card.setInteractive({ useHandCursor: true })
-      .on('pointerover', () => card.setFillStyle(0xfff4d8))
-      .on('pointerout', () => card.setFillStyle(0xf0e6c8))
+      .on('pointerover', () => card.setFillStyle(hoverFill))
+      .on('pointerout', () => card.setFillStyle(baseFill))
       .on('pointerdown', () => this.resolveReject(r));
     return c;
   }
@@ -1111,49 +1608,117 @@ export class OfficeScene extends Phaser.Scene {
     this.overlayLayer.add([dim, panel, head, yes, no]);
   }
 
+  /** Vydá dekret. U vyhlášky o světle nejdřív vyskočí vtipné „upsík" okno a teprve
+   *  po kliknutí se zhasne; ostatní efekty (ztišení) platí hned. */
+  private doIssueDecree(d: Decree): void {
+    if (!this.enc) return;
+    RuleEngine.issueDecree(this.enc, d);
+    this.overlayLayer.removeAll(true);
+    this.updateHud();
+    if (this.LIGHT_DECREES.includes(d.id)) {
+      // nejdřív vtip, po kliknutí teprve zhasne světlo (sebere se jas)
+      this.showInfoBox(`😬 ${Content.ui('lightDecreeOops')}`, 0x7a1f12, () => this.applyAmbientEffects());
+    } else {
+      this.applyAmbientEffects(); // např. ztišení hudby hned
+      this.showInfoBox(`⚖ ${Content.ui('decreeIssued')}\n${L(d.text)}`, 0xd4a017, () => {
+        // encounter pokračuje — akční tlačítka zůstala, hráč teď zamítne novým důvodem
+      });
+    }
+  }
+
+  /** Hráč aktivně zahrál čekající vyhlášku ze šuplíku → teprve teď vstupuje v platnost.
+   *  Encounter běží dál; pokud na ni rytíř sedí, dá se ho hned zamítnout novým důvodem. */
+  private playPendingRule(rule: Rule): void {
+    if (!GameState.playPendingRule(rule.id)) return;
+    this.overlayLayer.removeAll(true);
+    this.updateHud();
+    try { this.sound.play('sfx_stamp', { volume: 0.5 }); } catch { /* zvuk není kritický */ }
+    this.showInfoBox(`⚖ ${Content.ui('ruleEnacted')}\n${L(rule.cislo)}: ${L(rule.text)}`, 0x2f7d32, () => {
+      // nic dalšího — akční tlačítka zůstala, hráč teď může zamítnout
+    });
+  }
+
   private openDecreePicker(): void {
     if (this.busy || !this.enc) return;
     this.overlayLayer.removeAll(true);
+    // v šuplíku jsou dvě věci: čekající vyhlášky z úřadování (uvést v platnost)
+    // a klasické podpultové dekrety pasující na tohoto rytíře
+    const pending = GameState.pendingRules
+      .map((id) => Content.all.rules.find((r) => r.id === id))
+      .filter((r): r is Rule => !!r);
     const decrees = RuleEngine.applicableDecrees(this.enc);
     const cx = GAME_WIDTH / 2;
 
-    // nejdřív tlačítka (víceřádková — výšku známe až po vytvoření), pak panel pod ně
+    // nic k zahrání — řekni to srozumitelně
+    if (pending.length === 0 && decrees.length === 0) {
+      const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6).setInteractive();
+      const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1100, 360, COLORS.uiPanel).setStrokeStyle(4, COLORS.uiAccent);
+      const head = this.add
+        .text(cx, GAME_HEIGHT / 2 - 110, Content.ui('pickDecree'), { fontFamily: FONTS.title, fontSize: '48px', color: '#e8d9a8' })
+        .setOrigin(0.5);
+      const msg = this.add
+        .text(cx, GAME_HEIGHT / 2 - 10, Content.ui('decreeNone'), {
+          fontFamily: FONTS.doc, fontSize: '30px', color: '#bfa978', align: 'center', wordWrap: { width: 980 }, lineSpacing: 6,
+        })
+        .setOrigin(0.5);
+      const cancel = makeButton(this, cx, GAME_HEIGHT / 2 + 120, Content.ui('close'), () => {
+        this.overlayLayer.removeAll(true);
+      }, { fontSize: 30 });
+      this.overlayLayer.add([dim, panel, head, msg, cancel]);
+      return;
+    }
+
+    // nejdřív tlačítka (víceřádková — výšku známe až po vytvoření), pak panel pod ně.
+    // čekající vyhlášky jsou zelené (uvedou se v platnost), dekrety ve výchozí barvě
     const buttons: Phaser.GameObjects.Container[] = [];
     let totalH = 0;
+    for (const r of pending) {
+      const btn = makeButton(
+        this,
+        cx,
+        0,
+        `⚖ ${L(r.cislo)}: ${L(r.text)}`,
+        () => this.playPendingRule(r),
+        { fontSize: 25, width: 1160, wrap: 1080, font: FONTS.doc, color: 0x1d4020 },
+      );
+      buttons.push(btn);
+      totalH += btn.height + 18;
+    }
     for (const d of decrees) {
       const btn = makeButton(
         this,
         cx,
         0,
         L(d.text),
-        () => {
-          if (!this.enc) return;
-          RuleEngine.issueDecree(this.enc, d);
-          this.overlayLayer.removeAll(true);
-          this.updateHud();
-          this.showOutcome(`⚖ ${Content.ui('decreeIssued')}\n${L(d.text)}`, 0xd4a017, () => {
-            // encounter pokračuje — hráč teď může zamítnout s novým důvodem
-          });
-        },
+        () => this.doIssueDecree(d),
         { fontSize: 26, width: 1160, wrap: 1080, font: FONTS.doc },
       );
       buttons.push(btn);
       totalH += btn.height + 18;
     }
 
-    const panelH = Math.min(185 + totalH + 85, GAME_HEIGHT - 60);
+    const panelH = Math.min(235 + totalH + 85, GAME_HEIGHT - 60);
     const top = GAME_HEIGHT / 2 - panelH / 2;
     const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.6).setInteractive();
     const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1280, panelH, COLORS.uiPanel).setStrokeStyle(4, COLORS.uiAccent);
     const head = this.add
-      .text(cx, top + 60, Content.ui('pickDecree'), {
-        fontFamily: FONTS.ui,
-        fontSize: '40px',
+      .text(cx, top + 58, Content.ui('pickDecree'), {
+        fontFamily: FONTS.title,
+        fontSize: '52px',
         color: '#e8d9a8',
       })
       .setOrigin(0.5);
-    this.overlayLayer.add([dim, panel, head]);
-    let by = top + 125;
+    // poznámka vysvětlí obě části: čekající vyhlášky (uvést v platnost) + rozpočet dekretů
+    const noteParts: string[] = [];
+    if (pending.length > 0) noteParts.push(Content.ui('pendingNote'));
+    if (decrees.length > 0) noteParts.push(`${Content.ui('pickDecreeNote')} ${GameState.decreesLeft}×`);
+    const note = this.add
+      .text(cx, top + 116, noteParts.join('\n'), {
+        fontFamily: FONTS.doc, fontSize: '24px', color: '#bfa978', align: 'center', wordWrap: { width: 1160 }, lineSpacing: 4,
+      })
+      .setOrigin(0.5);
+    this.overlayLayer.add([dim, panel, head, note]);
+    let by = top + 172;
     for (const btn of buttons) {
       btn.setY(by + btn.height / 2);
       this.overlayLayer.add(btn);
@@ -1167,31 +1732,42 @@ export class OfficeScene extends Phaser.Scene {
 
   // ---------- overlaye ----------
 
-  /** Krátké oznámení výsledku, pak callback. */
-  private showOutcome(msg: string, tint: number, after: () => void): void {
+  /** Informační box o výsledku — zavře se klikem myší KAMKOLIV, pak onClose. */
+  private showInfoBox(msg: string, tint: number, onClose: () => void): void {
     this.busy = true;
     const cx = GAME_WIDTH / 2;
-    const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.45).setInteractive();
-    const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1100, 300, COLORS.uiPanel).setStrokeStyle(5, tint);
+    const cy = GAME_HEIGHT / 2;
+    const dim = this.add.rectangle(cx, cy, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.5).setInteractive();
+    const panel = this.add.rectangle(cx, cy - 20, 1160, 320, COLORS.uiPanel).setStrokeStyle(5, tint);
     const text = this.add
-      .text(cx, GAME_HEIGHT / 2, msg, {
-        fontFamily: FONTS.doc,
-        fontSize: '34px',
-        color: '#e8d9a8',
-        wordWrap: { width: 1000 },
-        align: 'center',
+      .text(cx, cy - 30, msg, {
+        fontFamily: FONTS.doc, fontSize: '34px', color: '#e8d9a8', wordWrap: { width: 1060 }, align: 'center',
       })
       .setOrigin(0.5);
-    this.overlayLayer.add([dim, panel, text]);
-    this.time.delayedCall(1800, () => {
+    const hint = this.add
+      .text(cx, cy + 112, Content.ui('clickAnywhere'), {
+        fontFamily: FONTS.doc, fontSize: '22px', color: '#8a7a55', fontStyle: 'italic',
+      })
+      .setOrigin(0.5);
+    dim.once('pointerdown', () => {
       this.overlayLayer.removeAll(true);
       this.busy = false;
-      after();
+      onClose();
     });
+    this.overlayLayer.add([dim, panel, text, hint]);
   }
 
-  /** Facka: screen shake + infografická karta, čeká na klik. */
-  private showCutaway(msg: string, after: () => void): void {
+  /** Po úspěšném vyřízení: tlačítko „Další rytíř →" vpravo dole v hlavním okně. */
+  private showNextKnightButton(): void {
+    for (const b of this.actionButtons) b.setVisible(false);
+    const btn = makeButton(this, GAME_WIDTH - 260, GAME_HEIGHT - 70, Content.ui('nextKnightBtn'), () => this.nextKnight(), {
+      fontSize: 36, color: 0x1d4020,
+    });
+    this.encounterLayer.add(btn);
+  }
+
+  /** Facka: screen shake + VŽDY důvod proč + infografická karta, čeká na klik. */
+  private showCutaway(msg: string, why: string, after: () => void): void {
     this.busy = true;
     try {
       this.sound.play('sfx_slap', { volume: 0.9 });
@@ -1200,36 +1776,36 @@ export class OfficeScene extends Phaser.Scene {
     }
     this.cameras.main.shake(250, 0.012);
     const cx = GAME_WIDTH / 2;
+    const cy = GAME_HEIGHT / 2;
     const pool = Content.all.infographics.filter((i) => i.kind === 'facka');
     const info = pool.length > 0 ? L(pool[Math.floor(Math.random() * pool.length)].text) : '';
-    const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.75).setInteractive();
-    const panel = this.add.rectangle(cx, GAME_HEIGHT / 2, 1200, 520, COLORS.uiPanel).setStrokeStyle(5, COLORS.danger);
+    const dim = this.add.rectangle(cx, cy, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.75).setInteractive();
+    const panel = this.add.rectangle(cx, cy, 1300, 620, COLORS.uiPanel).setStrokeStyle(5, COLORS.danger);
     const slap = this.add
-      .text(cx, GAME_HEIGHT / 2 - 170, '✊ FACKA! ✊', { fontFamily: FONTS.ui, fontSize: '64px', color: '#ff6b5e' })
+      .text(cx, cy - 250, '✊ FACKA! ✊', { fontFamily: FONTS.title, fontSize: '84px', color: '#ff6b5e' })
       .setOrigin(0.5);
     const text = this.add
-      .text(cx, GAME_HEIGHT / 2 - 60, msg, {
-        fontFamily: FONTS.doc,
-        fontSize: '34px',
-        color: '#e8d9a8',
-        wordWrap: { width: 1080 },
-        align: 'center',
+      .text(cx, cy - 170, msg, {
+        fontFamily: FONTS.doc, fontSize: '34px', color: '#e8d9a8', wordWrap: { width: 1180 }, align: 'center',
       })
       .setOrigin(0.5, 0);
+    // VŽDY vysvětlení, proč to byla chyba (zvýrazněný rámeček)
+    const whyBox = this.add.rectangle(cx, cy + 20, 1200, 110, 0x2a1512).setStrokeStyle(3, 0xd4a017);
+    const whyText = this.add
+      .text(cx, cy + 20, why, {
+        fontFamily: FONTS.doc, fontSize: '27px', color: '#f0d68a', wordWrap: { width: 1140 }, align: 'center', fontStyle: 'bold',
+      })
+      .setOrigin(0.5);
     const infoText = this.add
-      .text(cx, GAME_HEIGHT / 2 + 90, info ? `📜 ${info}` : '', {
-        fontFamily: FONTS.doc,
-        fontSize: '28px',
-        color: '#bfa978',
-        wordWrap: { width: 1080 },
-        align: 'center',
+      .text(cx, cy + 110, info ? `📜 ${info}` : '', {
+        fontFamily: FONTS.doc, fontSize: '26px', color: '#bfa978', wordWrap: { width: 1140 }, align: 'center',
       })
       .setOrigin(0.5, 0);
-    const btn = makeButton(this, cx, GAME_HEIGHT / 2 + 210, Content.ui('continue'), () => {
+    const btn = makeButton(this, cx, cy + 250, Content.ui('continue'), () => {
       this.overlayLayer.removeAll(true);
       this.busy = false;
       after();
     }, { fontSize: 32 });
-    this.overlayLayer.add([dim, panel, slap, text, infoText, btn]);
+    this.overlayLayer.add([dim, panel, slap, text, whyBox, whyText, infoText, btn]);
   }
 }

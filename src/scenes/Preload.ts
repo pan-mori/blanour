@@ -80,15 +80,25 @@ export class PreloadScene extends Phaser.Scene {
     const lang = params.get('lang');
     if (lang === 'cs' || lang === 'en') GameState.lang = lang;
     const start = params.get('start');
-    const allowed = ['Menu', 'Newspaper', 'Office', 'DayEnd', 'Ending'];
+    const allowed = ['Menu', 'Newspaper', 'Office', 'DayEnd', 'Ending', 'Lab'];
     if (start && allowed.includes(start)) {
       GameState.reset();
       const day = Number(params.get('day') ?? 1);
       if (day >= 1 && day <= 5) GameState.day = day;
-      // debug skok: uvedeme v platnost vyhlášky odpovídající epoše (jinak by byly jen base)
+      // debug: ?pending=R22,R23 → tyhle vyhlášky nechej čekat v šuplíku (test zahrání)
+      const pend = new Set((params.get('pending') ?? '').split(/[.,]/).filter(Boolean));
+      // debug skok: uvedeme v platnost vyhlášky odpovídající epoše (jinak by byly jen base).
+      // Vousové vyhlášky (3 délky) kapneme na 2, ať nikdy nejsou v platnosti všechny 3.
       if (start === 'Office' || start === 'Newspaper') {
-        for (const r of Content.all.rules) if (r.day <= day) GameState.enactRule(r.id);
+        const BEARD_RULES = new Set(['R23', 'R29', 'R30']);
+        let beard = 0;
+        for (const r of Content.all.rules) {
+          if (r.day > day || pend.has(r.id)) continue;
+          if (BEARD_RULES.has(r.id)) { if (beard >= 2) continue; beard++; }
+          GameState.enactRule(r.id);
+        }
       }
+      for (const id of pend) GameState.addPendingRule(id);
       const ending = params.get('ending');
       if (ending === 'survived' || ending === 'beaten' || ending === 'released') {
         GameState.endingType = ending;

@@ -24,8 +24,8 @@ export class NewspaperScene extends Phaser.Scene {
     // hlavička
     this.add
       .text(cx, 110, L(era.masthead).toUpperCase(), {
-        fontFamily: FONTS.ui,
-        fontSize: '72px',
+        fontFamily: FONTS.title,
+        fontSize: '96px',
         color: black,
       })
       .setOrigin(0.5);

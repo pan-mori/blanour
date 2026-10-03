@@ -20,6 +20,9 @@ export interface RunStats {
  */
 class GameStateImpl {
   lang: Lang = 'cs';
+  /** Ztlumení zvuku — NASTAVENÍ (ne stav běhu). Zdroj pravdy je tady (in-memory),
+   *  takže restart scény (např. přepnutí jazyka) hodnotu nepřehodí. */
+  audioMuted: boolean = this.readMuted();
   day = 1;
   lives = TUNING.lives;
   decreesLeft = TUNING.decrees;
@@ -29,6 +32,9 @@ class GameStateImpl {
   issuedDecrees: string[] = [];
   /** Vyhlášky, které úředník uvedl v platnost (R…). Rostou každý den — od mála po mnoho. */
   enactedRules = new Set<string>();
+  /** Vyhlášky zvolené ve večerním úřadování (R…), které ještě NEJSOU v platnosti —
+   *  čekají v šuplíku „Podpultové vyhlášky" a hráč je musí aktivně zahrát na rytíře. */
+  pendingRules: string[] = [];
   /** Důvody zamítnutí už POUŽITÉ v tomto runu — stejné razítko nejde dvakrát. */
   usedReasons = new Set<string>();
   seenEncounterIds = new Set<string>();
@@ -41,6 +47,17 @@ class GameStateImpl {
     return { rejected: 0, rejectedWrong: 0, decreesUsed: 0, coffees: 0 };
   }
 
+  private readMuted(): boolean {
+    try { return localStorage.getItem('blanour:mute') === '1'; } catch { return false; }
+  }
+
+  /** Přepne ztlumení, uloží (best-effort) a vrátí nový stav. */
+  toggleMuted(): boolean {
+    this.audioMuted = !this.audioMuted;
+    try { localStorage.setItem('blanour:mute', this.audioMuted ? '1' : '0'); } catch { /* private mode */ }
+    return this.audioMuted;
+  }
+
   reset(): void {
     this.day = 1;
     this.lives = TUNING.lives;
@@ -49,6 +66,7 @@ class GameStateImpl {
     this.stats = this.freshStats();
     this.issuedDecrees = [];
     this.enactedRules = new Set(GameStateImpl.BASE_RULES);
+    this.pendingRules = [];
     this.usedReasons.clear();
     this.seenEncounterIds.clear();
     this.seenNewsIds.clear();
@@ -56,6 +74,20 @@ class GameStateImpl {
 
   enactRule(id: string): void {
     this.enactedRules.add(id);
+  }
+
+  /** Večerní volba: vyhláška putuje do šuplíku jako „k zahrání", ne rovnou v platnost. */
+  addPendingRule(id: string): void {
+    if (!this.enactedRules.has(id) && !this.pendingRules.includes(id)) this.pendingRules.push(id);
+  }
+
+  /** Hráč vyhlášku aktivně zahrál ze šuplíku → teprve teď vstupuje v platnost. */
+  playPendingRule(id: string): boolean {
+    const i = this.pendingRules.indexOf(id);
+    if (i < 0) return false;
+    this.pendingRules.splice(i, 1);
+    this.enactedRules.add(id);
+    return true;
   }
 
   useReason(id: string): void {

@@ -301,6 +301,32 @@
       "reasonId": "RZ_VOUS_DLOUHY"
     },
     {
+      "id": "R29",
+      "day": 2,
+      "cislo": {
+        "cs": "Vyhláška č. 29/1448",
+        "en": "Decree No. 29/1448"
+      },
+      "text": {
+        "cs": "Krátce střižený vous budí podezření z napodobování úřední bradky. Rytíř s krátkým vousem nevyjede (ať se buď oholí, nebo si nechá řádný dlouhý plnovous).",
+        "en": "A closely trimmed beard raises suspicion of imitating the official clerk's goatee. A short-bearded knight shall not ride out (let him either shave or grow a proper long beard)."
+      },
+      "reasonId": "RZ_VOUS_KRATKY"
+    },
+    {
+      "id": "R30",
+      "day": 3,
+      "cislo": {
+        "cs": "Vyhláška č. 30/1448",
+        "en": "Decree No. 30/1448"
+      },
+      "text": {
+        "cs": "Hladká tvář postrádá mužnou vážnost blanického vojska. Bez vousu se nevyjíždí — oholený rytíř nevyjede.",
+        "en": "A smooth face lacks the manly gravitas of the Blaník host. No departure without a beard — a clean-shaven knight shall not ride out."
+      },
+      "reasonId": "RZ_VOUS_ZADNY"
+    },
+    {
       "id": "R24",
       "day": 1,
       "cislo": {
@@ -338,6 +364,32 @@
         "en": "Departure is granted only to a knight who proves at least 10 years of experience in cybersecurity. The field is to be established."
       },
       "reasonId": "RZ_PRAXE"
+    },
+    {
+      "id": "R27",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 27/1620",
+        "en": "Imperial Patent No. 27/1620"
+      },
+      "text": {
+        "cs": "Úřední rozhodnutí nabývá platnosti teprve přitištěním úřední voskové pečeti (K/E/V dle formuláře) vedle razítka. Bez pečeti je to pouhý papír a papír do boje nikoho nepošle.",
+        "en": "An official decision takes effect only once the office's wax seal (K/E/V per the form) is pressed beside the stamp. Without the seal it is mere paper, and paper sends no one to battle."
+      },
+      "reasonId": "RZ_PECET"
+    },
+    {
+      "id": "R28",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 28/1620 (spisový řád)",
+        "en": "Imperial Patent No. 28/1620 (records order)"
+      },
+      "text": {
+        "cs": "Každé zamítnutí se vyhotovuje ve dvou stejnopisech. Druhopis, opatřený týmž razítkem jako prvopis, se bez prodlení zakládá do spisovny. Co není v dvojím vyhotovení založeno, jako by zamítnuto nebylo.",
+        "en": "Every rejection is drawn up in two counterparts. The duplicate, bearing the same stamp as the original, is filed in the records room without delay. What is not filed in duplicate shall be deemed not rejected."
+      },
+      "reasonId": "RZ_ARCHIV"
     }
   ]
 }

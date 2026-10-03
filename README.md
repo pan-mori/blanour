@@ -51,15 +51,24 @@ obnoví sama; když ne, dej **F5**.
 
 ---
 
+## DEBUG LAB (testování miniher)
+
+V hlavním menu je **vlevo dole brouček 🐞 LAB** — otevře rozcestník, kde jde každou
+minihru spustit samostatně: razítko (ZAMÍTNUTO/SCHVÁLENO), vosková pečeť a provázek.
+Rychlé spuštění z URL viz parametr `lab` níže.
+
+---
+
 ## Debug parametry (URL)
 
 Přidej za adresu, např. `http://localhost:5173/?start=Office&day=3`:
 
 | Parametr | Příklad | Význam |
 |---|---|---|
-| `start` | `?start=Office` | Skok do scény (`Menu`/`Newspaper`/`Office`/`DayEnd`/`Ending`) |
+| `start` | `?start=Office` | Skok do scény (`Menu`/`Newspaper`/`Office`/`DayEnd`/`Ending`/`Lab`) |
 | `day` | `?start=Office&day=4` | Nastaví herní den 1–5 (aktivuje vyhlášky dané epochy) |
 | `enc` | `?start=Office&enc=ENC_061` | Vynutí konkrétní encounter (QA obsahu) |
+| `lab` | `?start=Lab&lab=wax` | Rovnou spustí minihru v LABu (`stamp`/`approve`/`wax`/`wrap`) |
 | `lang` | `?lang=en` | Jazyk `cs`/`en` |
 | `wax` | `?wax=1` / `?wax=0` | Vynutí / vypne voskovou pečeť |
 | `tags` | `?tags=stit_lev1.srp_kladivo` | Vynutí vizuální tagy portrétu (tečkou oddělené) |
@@ -72,7 +81,7 @@ Přidej za adresu, např. `http://localhost:5173/?start=Office&day=3`:
 
 ```
 public/content/     obsah hry (JSON) — encountery, vyhlášky, důvody, zprávy…
-src/scenes/         Boot, Preload, Menu, Newspaper, Office (jádro), DayEnd, Ending
+src/scenes/         Boot, Preload, Menu, Newspaper, Office (jádro), DayEnd, Ending, Lab (debug)
 src/systems/        GameState, Content/i18n, EncounterManager, RuleEngine, StampSystem
 src/ui/             procedurální pixel-art (portréty, ikony předmětů, pozadí)
 src/content/        schemas.ts — kontrakt mezi kódem a obsahem

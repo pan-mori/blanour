@@ -65,7 +65,7 @@
         "cs": "Plnovous delší než píď (dle čerstvé vyhlášky)",
         "en": "Beard longer than a span (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "vira"
     },
     {
       "id": "RZ_REFLEX",
@@ -74,7 +74,7 @@
         "cs": "Kůň bez reflexní vesty (dle čerstvé vyhlášky)",
         "en": "Horse without a hi-vis vest (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "kun"
     },
     {
       "id": "RZ_PECET",
@@ -146,7 +146,7 @@
         "cs": "Meč bez inventárního čísla (dle čerstvé vyhlášky)",
         "en": "Sword lacking an inventory number (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "vystroj"
     },
     {
       "id": "RZ_KOPI",
@@ -155,7 +155,7 @@
         "cs": "Kopí přesahuje světlou výšku chodby B (dle čerstvé vyhlášky)",
         "en": "Lance exceeds the clearance height of corridor B (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "vystroj"
     },
     {
       "id": "RZ_ERB",
@@ -164,7 +164,7 @@
         "cs": "Erb na štítě neschválen heraldickou komisí (dle čerstvé vyhlášky)",
         "en": "Coat of arms on shield not approved by the heraldic commission (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "vystroj"
     },
     {
       "id": "RZ_VRANY",
@@ -173,7 +173,7 @@
         "cs": "Vraný kůň úředně nespatřen (dle čerstvé vyhlášky)",
         "en": "Black horse not officially sighted (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "kun"
     },
     {
       "id": "RZ_SVATOZAR",
@@ -182,7 +182,7 @@
         "cs": "Svatozář bez platné revizní zprávy (dle čerstvé vyhlášky)",
         "en": "Halo without a valid safety inspection report (per fresh decree)"
       },
-      "category": "dekret"
+      "category": "vira"
     },
     {
       "id": "RZ_LEV_OCAS",
@@ -266,7 +266,8 @@
         "cs": "Povolení nevydal úředník s výjezdní praxí (žádný takový není)",
         "en": "Authorization not issued by an official with riding-out experience (no such official exists)"
       },
-      "category": "papiry"
+      "category": "papiry",
+      "rarity": "legendary"
     },
     {
       "id": "RZ_ZDRAVY",
@@ -275,7 +276,8 @@
         "cs": "Způsobilý k výjezdu — způsobilí se šetří (směrnice č. 20)",
         "en": "Fit to ride out — the fit are to be preserved (Directive No. 20)"
       },
-      "category": "papiry"
+      "category": "papiry",
+      "rarity": "legendary"
     },
     {
       "id": "RZ_CHYBI_ZBRAN",
@@ -332,6 +334,24 @@
       }
     },
     {
+      "id": "RZ_VOUS_KRATKY",
+      "ruleRef": "R29",
+      "category": "vira",
+      "label": {
+        "cs": "Krátký vous — napodobování úřední bradky (zákaz)",
+        "en": "Short beard — imitating the clerk's goatee (forbidden)"
+      }
+    },
+    {
+      "id": "RZ_VOUS_ZADNY",
+      "ruleRef": "R30",
+      "category": "vira",
+      "label": {
+        "cs": "Chybí předepsaný vous (oholená tvář)",
+        "en": "Missing the mandatory beard (clean-shaven)"
+      }
+    },
+    {
       "id": "RZ_BRYLE",
       "ruleRef": "R24",
       "category": "papiry",
@@ -353,6 +373,7 @@
       "id": "RZ_PRAXE",
       "ruleRef": "R26",
       "category": "papiry",
+      "rarity": "legendary",
       "label": {
         "cs": "Chybí 10 let praxe v kybernetické bezpečnosti",
         "en": "Missing 10 years of cybersecurity experience"
@@ -365,8 +386,10 @@
         "cs": "Polnice překračuje hlukový limit sluje (dle čerstvé vyhlášky)",
         "en": "Bugle exceeds the cave's noise limit (per fresh decree)"
       },
-      "itemKeys": ["polnice"],
-      "category": "dekret"
+      "itemKeys": [
+        "polnice"
+      ],
+      "category": "vystroj"
     },
     {
       "id": "RZ_POCHODEN",
@@ -375,8 +398,10 @@
         "cs": "Pochodeň porušuje požární řád hory (dle čerstvé vyhlášky)",
         "en": "Torch violates the mountain's fire code (per fresh decree)"
       },
-      "itemKeys": ["pochoden"],
-      "category": "dekret"
+      "itemKeys": [
+        "pochoden"
+      ],
+      "category": "vystroj"
     },
     {
       "id": "RZ_SUD",
@@ -385,8 +410,10 @@
         "cs": "Soudek medoviny bez kolku spotřební daně (dle čerstvé vyhlášky)",
         "en": "Keg of mead without an excise-duty stamp (per fresh decree)"
       },
-      "itemKeys": ["sud"],
-      "category": "dekret"
+      "itemKeys": [
+        "sud"
+      ],
+      "category": "vystroj"
     },
     {
       "id": "RZ_MAPA",
@@ -395,8 +422,10 @@
         "cs": "Mapa cest neschválena zeměměřickým úřadem (dle čerstvé vyhlášky)",
         "en": "Route map not approved by the surveying office (per fresh decree)"
       },
-      "itemKeys": ["mapa"],
-      "category": "dekret"
+      "itemKeys": [
+        "mapa"
+      ],
+      "category": "vystroj"
     },
     {
       "id": "RZ_OSTRUHY",
@@ -405,8 +434,10 @@
         "cs": "Ostruhy bez veterinární výjimky (dle čerstvé vyhlášky)",
         "en": "Spurs without a veterinary exemption (per fresh decree)"
       },
-      "itemKeys": ["ostruhy"],
-      "category": "dekret"
+      "itemKeys": [
+        "ostruhy"
+      ],
+      "category": "vystroj"
     },
     {
       "id": "RZ_SEDLO",
@@ -415,8 +446,19 @@
         "cs": "Sedlo bez inventárního štítku sluje (dle čerstvé vyhlášky)",
         "en": "Saddle without the cave's inventory tag (per fresh decree)"
       },
-      "itemKeys": ["sedlo"],
-      "category": "dekret"
+      "itemKeys": [
+        "sedlo"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_ARCHIV",
+      "ruleRef": "R28",
+      "label": {
+        "cs": "Spisový řád: zamítnutí nutno založit do spisovny ve dvou stejnopisech",
+        "en": "Records order: a rejection must be filed in the archive in two counterparts"
+      },
+      "category": "papiry"
     }
   ]
 }

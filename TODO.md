@@ -1,5 +1,63 @@
 # TODO — „Ještě není tak zle!" (živý stav)
 
+## Dávka 15 (3. 10., Opus) — zadání z konverzace
+- [x] #1 LAB: přidán **tajný test vyhlášek** (⑤ v rozcestníku + `?start=Lab&lab=rules`) — seznam VŠECH 28 vyhlášek ve 3 sloupcích; klik **přehodí na URL** `?start=Office&day=D&enc=…` (u R27 `&wax=1`, u R28 `&archive=1`), kde se vyhláška rovnou otestuje. **Ověřeno screenshotem.**
+- [x] #2a Nová vyhláška **R28 „Patent 28/1620 (spisový řád)"** (den 2, reasonId RZ_ARCHIV = procesní, vyfiltrován ze skříně): zamítnutí se vyhotovuje ve **dvou stejnopisech**. Aktivuje archivační tok (gate `enactedRules.has('R28')` nebo `?archive=1`).
+- [x] #2b **Minihra na kopírování**: po orazítkování prvopisu se schová, vysune se blank DRUHOPIS → opis **brkem** (tah odkrývá text) → **razítko se MUSÍ přitisknout znovu** (plná StampSystem fáze na kopii).
+- [x] #2c **Odevzdání předěláno**: pečetidlo „Předat vojákovi" → nově jen „✓ Hotovo s razítkem"; pak **drag&drop** orazítkované žádosti (i s otisky) **na portrét rytíře** — žádost i rytíř odejdou společně (fade dolů). Fallback snap-back mimo zónu.
+- [x] #2d Při archivaci se **druhopis drag&dropne do spisovny** (knihovny vpravo nahoře, generózní drop-zóna `LIBRARY_RECT`), teprve pak se předá prvopis rytíři.
+- [x] #2e **Grafika knihovny se svitky** (SPISOVNA) pod svíčkou vpravo nahoře — dřevěná skříň se 3 policemi svitků v Backdropu. **Ověřeno screenshotem.**
+
+> Stav ověření: `tsc --noEmit`, `npm run build` i `npm run validate` zelené. Statika (knihovna, seznam vyhlášek) ověřena headless screenshotem. **Interaktivní toky (opis/re-razítko/drag odevzdání/archivace) jsou code-complete + typechecked, ale živý screenshot se nepodařil** — WSL↔Windows interop (spouštění Edge/Chrome) během session spadl (vsock accept4 110). Rychlé ruční ověření: `?start=Office&day=1&demo=auto` (odevzdání) a `…&demo=auto&archive=1` (archivace) — debug hák `?demo=auto` sám dojede k zamítnutí+razítku. Dev screenshot sink `/shot` přidán do vite.config (dev-only).
+
+## Dávka 14 (3. 10., Opus) — feedback z hraní 4 — HOTOVO ✅
+- [x] #1 Číslo na šuplíku podpultových vyhlášek odstraněno (matoucí vs. počet nabídek) — rozpočet je v HUD „Vyhlášky k vydání" a v pickeru
+- [x] #2 Vyhláška o světle/ohni (V_POCHODEN): po vydání vtipné „upsík" okno (zavře klik myší), pak teprve zhasne svíčka + celá hra ztmavne o 40 % — ověřeno (ENC_062)
+- [x] #3 Vyhláška o decibelech (V_POLNICE): ztiší hudbu na polovinu (Music.setVolumeFactor)
+- [x] #4 Otisky razítka se na formuláři HROMADÍ (vizuální bordel) — ověřeno (6 přes sebe)
+- [x] #5 „Pustit jak je" → kulaté voskové pečetidlo dole u svíčky „Předat dokument vojákovi" — ověřeno
+
+## Dávka 13b (3. 10., Opus) — vyjasnění „3 vyhlášky vs 1 na výběr"
+- [x] Není to chyba: 3 = kolik vyhlášek smíš za hru VYDAT (rozpočet), picker ukazuje jen ty, co sednou na daného rytíře (obvykle 1). Vyjasněno v UI: HUD „Vyhlášky k vydání: 3", badge šuplíku „3×", picker podtitul „Nabízejí se jen vyhlášky, které sednou na tohoto rytíře. Zbývá ti vydání: 3×"
+
+## Dávka 13 (3. 10., Opus) — feedback z hraní 3 — HOTOVO ✅
+- [x] #1 Podpultové vyhlášky: šuplík je dostupný VŽDY dokud decreesLeft > 0 (i když na rytíře nic nesedí → picker to srozumitelně vysvětlí)
+- [x] #2 Po vydání nové vyhlášky je v ZAMÍTNOUT zvýrazněná: zelená zásuvka s „⚡ NOVÁ VYHLÁŠKA" + zelená karta s mini útržkem (pečeť) a popiskem „⚡ NOVÁ VYHLÁŠKA"
+
+## Dávka 12 (3. 10., Opus) — feedback z hraní 2 — HOTOVO ✅
+- [x] #1 Vosková pečeť se zapne až po enactnutí NOVÉ vyhlášky **R27** (Patent č. 27/1620 o pečetění) — ne od začátku (ověřeno: den 1 bez vosku, den 2 s voskem)
+- [x] #2 Vzorník úředních pečetí (K/E/V) se zobrazí taky až s R27
+- [x] #3 „Další rytíř →" vytaženo z info boxu do hlavního okna vpravo dole; info box se zavře klikem myši kamkoliv
+- [x] #4 V razítkovníku „✓ Pustit jak je" místo „Setřít" — bez auto-dokončení; zpackaný otisk (mimo kroužek/křivě/bledý/suchý) = facka s vysvětlením
+- [x] #5 Kategorie „Čerstvé vyhlášky" zrušena — 13 dekretových důvodů přeřazeno do pravých kategorií (vystroj/kun/vira); šuplík „Podpultové vyhlášky" dostal § znak + obrázek útržku vyhlášky
+
+## Dávka 11 (3. 10., Opus) — feedback z hraní
+**Bugy**
+- [x] #B1 Změna jazyka už nepřehazuje zvuk — mute je zdroj pravdy v `GameState.audioMuted` (in-memory, přežije restart scény)
+**Texty / nápověda / font**
+- [x] #2 Tutorial bod 3 zjednodušen (VYDAT VYHLÁŠKU vytvoří chybu; pozn. nechal jsem **3×** = tolik jich ve hře je, napsals 2×)
+- [x] #3 Tutorial bod 4 zjednodušen (namoč → srovnej → podrž → přitlač)
+- [x] #4/#5 Font sjednocen na **2 fonty**: nadpisy = Jersey 10 (čitelný pixel, latin-ext), vše ostatní = IBM Plex Mono. VT323 i Pixelify Sans vyhozeny.
+- [x] #6 Nápověda/Razítko: kroky 1. 2. 3. pod sebe
+- [x] #7 Nápověda/Čisté papíry: vysvětleno, že VYDAT VYHLÁŠKU vyrobí chybu šitou na tělo
+- [x] #8 Tlačítko „Platné vyhlášky" v úřadu zvětšeno (velký štítek § s počtem vpravo)
+**Razítkování**
+- [x] #9 Tolerance úhlu zvětšena (15° → 32°) — úředník razítkuje ledabyle
+- [x] #10 Tlačítko „⌫ Setřít otisky" v razítkovníku (smaže rozdělané otisky)
+- [x] #12 Po úspěšném razítku tlačítko „Srozuměno — další rytíř →" (bez auto-timeoutu)
+- [x] #15 Facka VŽDY se zlatým rámečkem „Proč facka: …" (chybná vada nebo čisté papíry)
+**Konec dne**
+- [x] #11 Statistiky konce dne do dvou řad
+**Mechaniky / design**
+- [x] #13 Správně použitá BĚŽNÁ razítka zůstávají v sadě (znovupoužitelná — hráč si buduje nástroje); legendární se po použití spotřebuje
+- [x] #16 Vzácnost razítek: zlatá karta + „★ LEGENDÁRNÍ" (RZ_UREDNIK/ZDRAVY/PRAXE); legendární = univerzální (platí na kohokoli); po použití okno „bylo to o fous…"
+- [ ] #14 „Opravit tuhle vyhlášku" — **čekám na upřesnění, kterou**
+
+## Dávka 10 (3. 10., Opus) — HOTOVO ✅
+- [x] **DEBUG LAB** — samostatná scéna s rozcestníkem miniher pro izolované testování: ① razítko ZAMÍTNUTO, ② razítko SCHVÁLENO, ③ vosková pečeť + razítko, ④ provázek (rozvázání balíku). Každá má „↻ Znovu" a „◀ Seznam".
+- [x] V hlavním menu **vlevo dole brouček 🐞 LAB** → otevře rozcestník miniher
+- [x] Rychlé spuštění z URL: `?start=Lab&lab=stamp|approve|wax|wrap` (ověřeno screenshotem: menu brouček, rozcestník, vosk, provázek)
+
 ## Dávka 9 (3. 10., Opus) — HOTOVO ✅
 - [x] #1 Víc předmětů u rytíře + ke každému vlastní „podpultová vyhláška": **polnice** (hluk/netopýři V_POLNICE), **pochodeň** (požární řád V_POCHODEN), **soudek medoviny** (spotřební daň V_SUD), **mapa cest** (státní tajemství V_MAPA), **ostruhy** (ochrana zvířat V_OSTRUHY), **sedlo** (inventární štítek V_SEDLO) — ikony + reason + 6 encounterů ENC_061–066
 - [x] #2 Razítková skříň po otevření ukazuje **všechny kategorie najednou** (9 zásuvek 4×N); prázdné mají v závorce **(0)** a jsou ztlumené; klik na prázdnou vysvětlí, že se plní vydáváním vyhlášek; dekrety přibývají do zásuvky „Čerstvé vyhlášky"

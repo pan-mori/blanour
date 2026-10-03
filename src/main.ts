@@ -1,7 +1,5 @@
-import '@fontsource/vt323/latin.css';
-import '@fontsource/vt323/latin-ext.css';
-import '@fontsource/pixelify-sans/latin.css';
-import '@fontsource/pixelify-sans/latin-ext.css';
+import '@fontsource/jersey-10/latin-400.css';
+import '@fontsource/jersey-10/latin-ext-400.css';
 import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-ext-400.css';
 import '@fontsource/ibm-plex-mono/latin-600.css';
@@ -16,6 +14,7 @@ import { NewspaperScene } from './scenes/Newspaper';
 import { OfficeScene } from './scenes/Office';
 import { DayEndScene } from './scenes/DayEnd';
 import { EndingScene } from './scenes/Ending';
+import { LabScene } from './scenes/Lab';
 import { installAutoTest } from './debug/autotest';
 
 const params = new URLSearchParams(location.search);
@@ -33,7 +32,7 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, PreloadScene, MenuScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene],
+  scene: [BootScene, PreloadScene, MenuScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene, LabScene],
 });
 
 // Debug/test hák: ?shot=nazev&wait=4500 → po čekání POSTne PNG snímek hry

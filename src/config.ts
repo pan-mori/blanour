@@ -4,10 +4,12 @@ export const GAME_WIDTH = 1920;
 export const GAME_HEIGHT = 1080;
 
 export const FONTS = {
-  /** Psací stroj — texty dokumentů a delší čtení (čitelnost!) */
-  doc: '"IBM Plex Mono", VT323, monospace',
-  /** UI, titulky — pixelová identita */
-  ui: '"Pixelify Sans"',
+  /** Psací stroj — texty dokumentů, delší čtení (čitelnost především!) */
+  doc: '"IBM Plex Mono", monospace',
+  /** UI — tlačítka, popisky, HUD. Sjednoceno na čitelný mono (dřív pixel). */
+  ui: '"IBM Plex Mono", monospace',
+  /** Velké nadpisy — pixelová identita (Jersey 10, čitelný pixel font). */
+  title: '"Jersey 10", "IBM Plex Mono", monospace',
 } as const;
 
 export const COLORS = {
@@ -35,8 +37,8 @@ export const TUNING = {
   /** Od kolika zbývajících ms začne ukazatel varovně blikat */
   patienceWarnMs: 20_000,
   stamp: {
-    /** Max odchylka otisku od vodorovna (stupně) */
-    angleTolDeg: 15,
+    /** Max odchylka otisku od kroužku (stupně) — úředník razítkuje ledabyle, ne přesně */
+    angleTolDeg: 32,
     /** Přítlak (ms): pod minimem bledý, nad maximem rozmazaný */
     pressMinMs: 350,
     pressMaxMs: 950,

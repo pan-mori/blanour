@@ -111,6 +111,60 @@ export function installAutoTest(game: Phaser.Game, params: URLSearchParams): voi
       office.stampSys.debugApply(2, 600, true);
       await sleep(900);
       await shot(`${auto}-result`);
+    } else if (auto === 'accumulate') {
+      // otisky se hromadí na formuláři (vizuální bordel) + pečetidlo „Předat vojákovi"
+      const flaw = enc.data.flaws[0];
+      const reason = Content.all.reasons.find((r) => r.id === flaw?.reasonId) ?? Content.all.reasons[0];
+      office.pendingReason = reason;
+      office.enterStampMode('reject');
+      await sleep(400);
+      for (let i = 0; i < 6; i++) office.stampSys.debugStampOnly(Math.random() * 100 - 50, 600);
+      await sleep(500);
+      await shot(`${auto}-mess`);
+    } else if (auto === 'lightdecree') {
+      // vyhláška o světle: vydej → vtipné okno → klik → zhasne + ztmavne o 40 %
+      const { RuleEngine } = await import('../systems/RuleEngine');
+      const d = RuleEngine.applicableDecrees(enc).find((x: { id: string }) => x.id === 'V_POCHODEN');
+      if (d) office.doIssueDecree(d);
+      await sleep(500);
+      await shot(`${auto}-1-popup`);
+      (office.overlayLayer.list[0] as any)?.emit?.('pointerdown'); // zavři okno → zhasne
+      await sleep(600);
+      await shot(`${auto}-2-dark`);
+    } else if (auto === 'freshdecree') {
+      // #2: vydej dekret → otevři skříň → „⚡ NOVÁ VYHLÁŠKA" v kategorii i na kartě
+      const { RuleEngine } = await import('../systems/RuleEngine');
+      const ds = RuleEngine.applicableDecrees(enc);
+      if (ds.length > 0) RuleEngine.issueDecree(enc, ds[0]);
+      office.openReasonPicker();
+      await sleep(500);
+      await shot(`${auto}-drawers`);
+      const reason = Content.all.reasons.find((r) => r.id === ds[0]?.injectsReason);
+      office.showCabinetDrawer(reason?.category ?? 'vystroj');
+      await sleep(500);
+      await shot(`${auto}-card`);
+    } else if (auto === 'nextbtn') {
+      // #3: úspěch → info box → klik kamkoliv → tlačítko „Další rytíř →" vpravo dole
+      const flaw = enc.data.flaws[0];
+      const reason = Content.all.reasons.find((r) => r.id === flaw?.reasonId) ?? Content.all.reasons[0];
+      office.pendingReason = reason;
+      office.enterStampMode('reject');
+      await sleep(400);
+      office.stampSys.debugApply(2, 600, true); // crisp → úspěch → info box
+      await sleep(1000);
+      (office.overlayLayer.list[0] as any)?.emit?.('pointerdown'); // zavři box klikem
+      await sleep(500);
+      await shot(`${auto}-button`);
+    } else if (auto === 'botched') {
+      // #4: razítko hodně nakřivo → „Pustit jak je" → facka za zpackané razítko
+      const flaw = enc.data.flaws[0];
+      const reason = Content.all.reasons.find((r) => r.id === flaw?.reasonId) ?? Content.all.reasons[0];
+      office.pendingReason = reason;
+      office.enterStampMode('reject');
+      await sleep(400);
+      office.stampSys.debugApply(55, 600, true); // dev > tolerance → crooked → facka
+      await sleep(1100);
+      await shot(`${auto}-facka`);
     } else if (auto === 'wax') {
       // vynuť vosk přes ?wax=1 v URL; vyber správný flaw a vejdi do razítkování
       const flaw = enc.data.flaws[0];
@@ -134,8 +188,11 @@ export function installAutoTest(game: Phaser.Game, params: URLSearchParams): voi
       const cats = office.CATEGORY_ORDER.filter((c: any) =>
         office.cabinetReasons().some((r: any) => (r.category ?? 'vystroj') === c),
       );
-      if (cats.length) {
-        office.showCabinetDrawer(cats[0]);
+      // ?cat=papiry vynutí konkrétní zásuvku (QA legendárních razítek)
+      const wantCat = params.get('cat');
+      const openCat = wantCat && cats.includes(wantCat) ? wantCat : cats[0];
+      if (openCat) {
+        office.showCabinetDrawer(openCat);
         await sleep(500);
         await shot(`${auto}-2-stamps`);
       }
@@ -160,7 +217,10 @@ export function installAutoTest(game: Phaser.Game, params: URLSearchParams): voi
         o.resolveReject(reason);
         await sleep(400);
         o.stampSys.debugApply(2, 600, true);
-        await sleep(3000); // outcome + přechod na dalšího
+        await sleep(1000); // počkej na outcome okno
+        // potvrď „Srozuměno" (nahrazuje dřívější auto-timeout) → další rytíř
+        if (o.busy) { o.overlayLayer.removeAll(true); o.busy = false; o.nextKnight(); }
+        await sleep(700);
       }
       await sleep(800);
       await shot('fullday-end'); // očekáváme DayEnd

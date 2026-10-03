@@ -23,6 +23,27 @@ function hash(s: string): number {
   return h;
 }
 
+export type BeardLen = 'none' | 'short' | 'long';
+
+/**
+ * Délka vousu rytíře — JEDEN zdroj pravdy pro portrét i pro objektivní verdikt
+ * vyhlášek o vousech. Explicitní tagy mají přednost; netagovaný rytíř dostane
+ * délku deterministicky z hashe, aby portrét i posudek vždy souhlasily (nikdy
+ * se nenakreslí vous, který by pravidlo nevidělo, a naopak).
+ */
+export function beardLen(spriteKey: string, tags: string[]): BeardLen {
+  if (tags.includes('vous_dlouhy')) return 'long';
+  if (tags.includes('vous') || tags.includes('vous_kratky') || tags.includes('plnovous')) return 'short';
+  if (spriteKey === 'knight_vaclav') return 'none';
+  // netagovaný rytíř: délku odvodíme deterministicky z dobře promíchaného hashe,
+  // ať reálně existují všechny 3 varianty (sprite klíče „knight_NN" vycházejí
+  // na prostém hashi degenerovaně — skoro všichni by měli vous). Váhy ≈ půl bez
+  // vousu, třetina krátký, zbytek dlouhý.
+  const h = hash(spriteKey);
+  const m = ((h ^ (h >>> 7) ^ (h >>> 13) ^ (h >>> 23)) >>> 0) % 6;
+  return m < 3 ? 'none' : m < 5 ? 'short' : 'long';
+}
+
 export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags: string[]): string {
   const texKey = `portrait:${spriteKey}:${tags.join('.')}`;
   if (scene.textures.exists(texKey)) return texKey;
@@ -34,7 +55,8 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
   const skin = SKINS[(h >> 6) % SKINS.length];
   const hair = HAIRS[(h >> 9) % HAIRS.length];
   const helmet = vaclav ? 3 : (h >> 12) % 4; // 0 kettle, 1 bascinet, 2 kroužková kukla, 3 bez helmy
-  const beard = tags.includes('vous') || (!vaclav && (h >> 15) % 3 === 0);
+  const bl = beardLen(spriteKey, tags); // 'none' | 'short' | 'long'
+  const beard = bl !== 'none';
   const halo = tags.includes('svatozar');
 
   const g = scene.add.graphics();
@@ -87,23 +109,22 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     else px(14, 23, 4, 1, 0x8a5a50);
   }
 
-  // vousy — 3 délky: žádné / plnovous / dlouhé vousy (tag vous_dlouhy)
-  const longBeard = tags.includes('vous_dlouhy');
-  if (beard || longBeard) {
+  // vousy — 3 jasně odlišné délky: žádné / krátký / dlouhý (viz beardLen).
+  // „bez vousu" = úplně hladká tvář (žádný knír), ať vyhláška o vousech čte
+  // jednoznačně z portrétu.
+  const longBeard = bl === 'long';
+  if (beard) {
     px(11, 21, 10, 5, hair);
     px(12, 26, 8, 2, hair);
     px(14, 21, 4, 1, skin); // mezera pro ústa… vlastně knír
     px(14, 22, 4, 1, 0x8a5a50);
     if (longBeard) {
-      // vous sahá přes krk až na varkoč — špičatý
+      // dlouhý vous sahá přes krk až na varkoč — špičatý
       px(12, 28, 8, 3, hair);
       px(13, 31, 6, 2, hair);
       px(14, 33, 4, 2, hair);
       px(15, 35, 2, 2, hair);
     }
-  } else if (feat === 1 || feat === 2) {
-    // knír i bez plnovousu
-    px(13, 22, 6, 1, hair);
   }
 
   // brýle (tag bryle) — kulaté obroučky přes oči

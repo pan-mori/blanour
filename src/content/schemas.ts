@@ -43,6 +43,9 @@ export type ReasonCategory =
   | 'chybi'
   | 'dekret';
 
+/** Vzácnost razítka — barevné odlišení jako v RPG. */
+export type ReasonRarity = 'common' | 'legendary';
+
 /** Důvod zamítnutí — položka v nabídce hráče. */
 export interface Reason {
   id: string; // RZ_…
@@ -50,6 +53,11 @@ export interface Reason {
   label: LString;
   /** Zásuvka razítkové skříně, kam důvod patří (default dle heuristiky v kódu). */
   category?: ReasonCategory;
+  /**
+   * Vzácnost: 'common' (default, bílá) nebo 'legendary' (zlatá) — legendární
+   * razítko je univerzální „vyhnutí se čemukoli", ale po použití varuje.
+   */
+  rarity?: ReasonRarity;
   /**
    * Klíče předmětů (mec, stit, kun…): důvod se NEnabízí v hlavním seznamu,
    * ale objeví se až po kliknutí na odpovídající předmět rytíře (hádanka!).
