@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Validátor obsahu — merge gate pro content agenty.
+ * Validátor obsahu - merge gate pro content agenty.
  * Kontroluje tvar souborů v public/content/ + referenční integritu.
  * Spuštění: npm run validate
  */
@@ -193,7 +193,7 @@ if (errors.length === 0) {
       if (rule) {
         const firstDay = e.day ?? e.minDay;
         if (rule.day > firstDay) {
-          err('encounters.json', e.id, `flaw dle ${f.ruleRef} (den ${rule.day}) by v den ${firstDay} nebyl platný — přidej do requiresRules nebo zvyš minDay`);
+          err('encounters.json', e.id, `flaw dle ${f.ruleRef} (den ${rule.day}) by v den ${firstDay} nebyl platný - přidej do requiresRules nebo zvyš minDay`);
         }
       }
       if (f.doc && !templateIds.has(f.doc)) err('encounters.json', e.id, `flaw.doc "${f.doc}" neexistuje`);
@@ -226,7 +226,7 @@ if (errors.length === 0) {
       if (reason.ruleRef !== d.id) err('decrees.json', d.id, `reason ${d.injectsReason} musí mít ruleRef "${d.id}"`);
     }
     const tagExists = encounters.some((e) => e.knight?.tags?.includes(d.appliesIf.knightTag));
-    if (!tagExists) warn('decrees.json', d.id, `tag "${d.appliesIf.knightTag}" nemá žádný rytíř — dekret je nepoužitelný`);
+    if (!tagExists) warn('decrees.json', d.id, `tag "${d.appliesIf.knightTag}" nemá žádný rytíř - dekret je nepoužitelný`);
   }
 
   // infographics
@@ -245,7 +245,7 @@ if (errors.length === 0) {
   for (const e of encounters) {
     if (Array.isArray(e.flaws) && e.flaws.length === 0 && e.knight?.tags) {
       if (!e.knight.tags.some((t) => decreeTags.has(t))) {
-        err('encounters.json', e.id, 'čisté papíry bez dekretem krytého tagu — hráč nemá legální tah');
+        err('encounters.json', e.id, 'čisté papíry bez dekretem krytého tagu - hráč nemá legální tah');
       }
     }
   }

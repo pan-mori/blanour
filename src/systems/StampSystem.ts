@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS, FONTS, TUNING } from '../config';
+import { COLORS, FONTS, STAMP_STYLE, TUNING } from '../config';
 import { Content } from './Content';
 
 export type StampDecision = 'reject' | 'approve';
@@ -27,7 +27,7 @@ type Phase = 'wax' | 'stamp';
 type WaxState = 'cold' | 'heating' | 'hot' | 'poured';
 
 /**
- * Razítkování 4.0 — dvě fáze:
+ * Razítkování 4.0 - dvě fáze:
  *  FÁZE VOSK (náhodně vyžádaná): vzít červený vosk → nahřát nad svíčkou →
  *    kápnout na kroužek na formuláři (překryje vyznačený znak) → přitisknout
  *    SPRÁVNÉ pečetidlo (K/E/V). Je to podmínka postupu.
@@ -46,7 +46,7 @@ export class StampSystem {
 
   private phase: Phase = 'stamp';
   private recapText = '';
-  private paragraph = ''; // § důvodu — tiskne se pod ZAMÍTNUTO otisk
+  private paragraph = ''; // § důvodu - tiskne se pod ZAMÍTNUTO otisk
 
   // společné
   private tray!: Phaser.GameObjects.Container;
@@ -85,7 +85,7 @@ export class StampSystem {
     return this.active;
   }
 
-  /** Otisky položené na dokument (po dokončení zůstávají ve vrstvě) — pro přetažení
+  /** Otisky položené na dokument (po dokončení zůstávají ve vrstvě) - pro přetažení
    *  celé orazítkované žádosti na rytíře / do spisovny. */
   getImprints(): Phaser.GameObjects.Container[] {
     return this.imprints;
@@ -200,31 +200,54 @@ export class StampSystem {
     this.layer.add(this.hint);
   }
 
-  /** Svíčka pro nahřívání vosku (vedle razítkovníku). Vše v kontejneru kvůli úklidu. */
+  /** Svíčka pro nahřívání vosku (vedle razítkovníku). Vše v kontejneru kvůli úklidu.
+   *  Primárně animovaný sprite (candle_sheet), s fallbackem na kreslenou svíčku. */
   private buildCandle(): void {
     const cx = 1420;
     const cy = 760;
-    const g = this.scene.add.graphics();
-    g.fillStyle(0x3a2a16, 1); g.fillRect(cx - 46, cy + 44, 92, 14);
-    g.fillStyle(0xe8e0d0, 1); g.fillRect(cx - 12, cy - 6, 24, 54);
-    const flame = this.scene.add.graphics();
-    const drawFlame = (s: number) => {
-      flame.clear();
-      flame.fillStyle(0xd4a017, 1);
-      flame.fillTriangle(cx, cy - 36 * s, cx - 11, cy - 4, cx + 11, cy - 4);
-      flame.fillStyle(0xffe080, 1);
-      flame.fillTriangle(cx, cy - 22 * s, cx - 5, cy - 4, cx + 5, cy - 4);
-    };
-    drawFlame(1);
-    this.flameTween = this.scene.tweens.addCounter({
-      from: 90, to: 110, duration: 350, yoyo: true, repeat: -1,
-      onUpdate: (t) => drawFlame((t.getValue() ?? 100) / 100),
-    });
+    const parts: Phaser.GameObjects.GameObject[] = [];
+
+    if (this.scene.textures.exists('candle_sheet')) {
+      if (!this.scene.anims.exists('candle_flicker')) {
+        this.scene.anims.create({
+          key: 'candle_flicker',
+          frames: this.scene.anims.generateFrameNumbers('candle_sheet', { start: 0, end: 3 }),
+          frameRate: 8,
+          repeat: -1,
+        });
+      }
+      // spodek svíčky na úrovni původní kreslené základny (cy+58), výška ~94 px
+      const sprite = this.scene.add.sprite(cx, cy + 58, 'candle_sheet').setOrigin(0.5, 1);
+      sprite.setDisplaySize(94 * (sprite.width / sprite.height), 94);
+      sprite.play('candle_flicker');
+      parts.push(sprite);
+    } else {
+      // fallback: původní kreslená svíčka s plápolajícím plamenem
+      const g = this.scene.add.graphics();
+      g.fillStyle(0x3a2a16, 1); g.fillRect(cx - 46, cy + 44, 92, 14);
+      g.fillStyle(0xe8e0d0, 1); g.fillRect(cx - 12, cy - 6, 24, 54);
+      const flame = this.scene.add.graphics();
+      const drawFlame = (s: number) => {
+        flame.clear();
+        flame.fillStyle(0xd4a017, 1);
+        flame.fillTriangle(cx, cy - 36 * s, cx - 11, cy - 4, cx + 11, cy - 4);
+        flame.fillStyle(0xffe080, 1);
+        flame.fillTriangle(cx, cy - 22 * s, cx - 5, cy - 4, cx + 5, cy - 4);
+      };
+      drawFlame(1);
+      this.flameTween = this.scene.tweens.addCounter({
+        from: 90, to: 110, duration: 350, yoyo: true, repeat: -1,
+        onUpdate: (t) => drawFlame((t.getValue() ?? 100) / 100),
+      });
+      parts.push(g, flame);
+    }
+
     const label = this.scene.add
       .text(cx, cy + 66, Content.ui('candle'), { fontFamily: FONTS.doc, fontSize: '20px', color: '#bfa978' })
       .setOrigin(0.5);
+    parts.push(label);
     this.candleZone = new Phaser.Geom.Circle(cx, cy - 16, 60);
-    this.candle = this.scene.add.container(0, 0, [g, flame, label]).setDepth(40);
+    this.candle = this.scene.add.container(0, 0, parts).setDepth(40);
     this.layer.add(this.candle);
   }
 
@@ -285,9 +308,35 @@ export class StampSystem {
   }
 
   private makeWaxStickParts(): Phaser.GameObjects.GameObject[] {
+    if (this.scene.textures.exists('wax_stick')) {
+      // obrázek voskové tyčinky; výška ~86 px ≈ původní kreslená tyčinka
+      const img = this.scene.add.image(0, 2, 'wax_stick').setOrigin(0.5, 0.5);
+      img.setDisplaySize(86 * (img.width / img.height), 86);
+      return [img];
+    }
     const stickBody = this.scene.add.rectangle(0, 10, 22, 70, 0x8a1810).setStrokeStyle(2, 0x5a1008);
     const tip = this.scene.add.circle(0, -26, 14, 0xa82010).setStrokeStyle(2, 0x5a1008);
     return [stickBody, tip];
+  }
+
+  /** Vizuální rozžhavení neseného vosku (0–100). Obrázek tintujeme do oranžova,
+   *  u kreslené tyčinky rozžhavíme špičku. */
+  private setWaxHeatVisual(heat: number): void {
+    if (!this.carriedWax) return;
+    const hot = Phaser.Display.Color.Interpolate.ColorWithColor(
+      Phaser.Display.Color.ValueToColor(0xa82010),
+      Phaser.Display.Color.ValueToColor(0xff6020), 100, heat).color;
+    const first = this.carriedWax.list[0];
+    if (first instanceof Phaser.GameObjects.Image) {
+      // od poloviny nahřátí postupně rozžhav (tint 0xffffff = beze změny)
+      const t = Phaser.Math.Clamp((heat - 40) / 60, 0, 1);
+      first.setTint(Phaser.Display.Color.Interpolate.ColorWithColor(
+        Phaser.Display.Color.ValueToColor(0xffffff),
+        Phaser.Display.Color.ValueToColor(0xffb060), 100, t * 100).color);
+    } else {
+      const tip = this.carriedWax.list[1] as Phaser.GameObjects.Arc;
+      tip.setFillStyle(hot);
+    }
   }
 
   private pickUpWax(stick: Phaser.GameObjects.Container): void {
@@ -319,7 +368,7 @@ export class StampSystem {
         this.startStampPhase();
       });
     } else {
-      // špatné pečetidlo — vosk zmařen, nalej znovu
+      // špatné pečetidlo - vosk zmařen, nalej znovu
       try { this.scene.sound.play('sfx_slap', { volume: 0.4 }); } catch { /* ok */ }
       this.waxBlob?.destroy();
       this.waxBlob = undefined;
@@ -388,13 +437,13 @@ export class StampSystem {
       .setOrigin(0.5);
 
     const cancel = this.makeCancelButton(x, y + 234);
-    // „Předat dokument vojákovi" — kulaté voskové pečetidlo dole u svíčky (ne v panelu)
+    // „Předat dokument vojákovi" - kulaté voskové pečetidlo dole u svíčky (ne v panelu)
     const commit = this.makeCommitSeal(1410, 946);
     this.tray = this.scene.add.container(0, 0, [panel, label, this.trayStamp, stampHit, this.inkPad, padLabel, ...cancel, ...commit]);
     this.layer.add(this.tray);
   }
 
-  /** „Předat dokument vojákovi" — kulaté voskové pečetidlo (odevzdá otisk; nesedí-li → facka). */
+  /** „Předat dokument vojákovi" - kulaté voskové pečetidlo (odevzdá otisk; nesedí-li → facka). */
   private makeCommitSeal(x: number, y: number): Phaser.GameObjects.GameObject[] {
     const g = this.scene.add.graphics();
     g.fillStyle(0x7a1f12, 1); g.fillCircle(x, y, 52);
@@ -411,7 +460,7 @@ export class StampSystem {
     return [g, sym, lbl, hit];
   }
 
-  /** Odevzdání otisku „jak je" — kvalitu vyhodnotí Office (crisp projde, jinak facka). */
+  /** Odevzdání otisku „jak je" - kvalitu vyhodnotí Office (crisp projde, jinak facka). */
   private commitStamp(): void {
     this.finish({ quality: this.lastQuality ?? 'dry', ok: true });
   }
@@ -437,7 +486,24 @@ export class StampSystem {
     return [bg, tx];
   }
 
+  /** Vybere vzhled razítka podle STAMP_STYLE. Obrázek máme jen pro ZAMÍTNUTO -
+   *  u schválení (i když chybí textura) padáme zpět na kreslené. */
   private makeStampVisual(): Phaser.GameObjects.Container {
+    if (STAMP_STYLE === 'image' && this.decision === 'reject' && this.scene.textures.exists('stamp_pixel')) {
+      return this.makeStampImage();
+    }
+    return this.makeStampDrawn();
+  }
+
+  /** Razítko jako obrázek. Počátek (0,0) je u dřevěného špalíku s nápisem -
+   *  tj. v bodě přítlaku, stejně jako u kresleného razítka (rotace i otisk tam sedí). */
+  private makeStampImage(): Phaser.GameObjects.Container {
+    const img = this.scene.add.image(0, 0, 'stamp_pixel').setOrigin(0.5, 0.76);
+    img.setDisplaySize(262.5, 262.5 * (img.height / img.width));
+    return this.scene.add.container(0, 0, [img]);
+  }
+
+  private makeStampDrawn(): Phaser.GameObjects.Container {
     const color = this.decision === 'reject' ? COLORS.stampRed : COLORS.stampGreen;
     const knob = this.scene.add.ellipse(0, -118, 84, 42, 0x8a5a2b).setStrokeStyle(3, 0x3d2a18);
     const handle = this.scene.add.rectangle(0, -66, 46, 86, 0x6b4a2a).setStrokeStyle(3, 0x3d2a18);
@@ -506,7 +572,7 @@ export class StampSystem {
     if (this.carriedWax) this.carriedWax.setPosition(p.worldX, p.worldY);
   }
 
-  /** Nahřívání vosku — drží-li se LMB nad plamenem. */
+  /** Nahřívání vosku - drží-li se LMB nad plamenem. */
   private onUpdate(): void {
     if (this.phase !== 'wax' || !this.carriedWax) return;
     const p = this.scene.input.activePointer;
@@ -516,10 +582,7 @@ export class StampSystem {
       this.heat = Math.min(100, this.heat + 2.2);
       this.heatMeter?.setSize(296 * (this.heat / 100), 18);
       // vosk se při nahřátí rozzáří
-      const tip = this.carriedWax.list[1] as Phaser.GameObjects.Arc;
-      tip.setFillStyle(Phaser.Display.Color.Interpolate.ColorWithColor(
-        Phaser.Display.Color.ValueToColor(0xa82010),
-        Phaser.Display.Color.ValueToColor(0xff6020), 100, this.heat).color);
+      this.setWaxHeatVisual(this.heat);
       if (this.heat >= 100) {
         this.waxState = 'hot';
         this.setHint(Content.ui('waxPour'));
@@ -617,7 +680,7 @@ export class StampSystem {
     const color = this.decision === 'reject' ? '#a82810' : '#2f7d32';
     const colorNum = Phaser.Display.Color.HexStringToColor(color).color;
     const alpha = quality === 'crisp' ? 0.92 : quality === 'faded' ? 0.35 : quality === 'dry' ? 0.12 : 0.85;
-    // číslo směrnice pod otiskem (jen u zamítnutí, jen při skutečném tisku) —
+    // číslo směrnice pod otiskem (jen u zamítnutí, jen při skutečném tisku) -
     // z plného názvu vytáhneme kompaktní citaci „č. 5/1968", ať se vejde do rámečku
     let para = '';
     if (this.decision === 'reject' && this.paragraph) {
@@ -641,7 +704,7 @@ export class StampSystem {
       const c = this.scene.add.container(x, y, parts);
       c.setAngle(this.angle);
       this.layer.add(c);
-      this.imprints.push(c); // zaznamenej otisk — jde ho setřít
+      this.imprints.push(c); // zaznamenej otisk - jde ho setřít
       return c;
     };
     make(0, 0, alpha);

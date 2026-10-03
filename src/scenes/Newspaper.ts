@@ -63,38 +63,8 @@ export class NewspaperScene extends Phaser.Scene {
       }
     }
 
-    // rostoucí hromada PLATNÝCH vyhlášek, které teď musí úředník sám dodržovat
-    const activeRules = Content.all.rules.filter((r) => GameState.enactedRules.has(r.id));
-    if (activeRules.length > 0) {
-      y = Math.max(y + 20, 520);
-      const bottomLimit = GAME_HEIGHT - 150; // nad tlačítkem
-      this.add.rectangle(cx, y + 10, paperW - 120, 4, 0x1c1a16);
-      this.add
-        .text(cx, y + 48, `⚖ ${Content.ui('helpRules')} (${activeRules.length}) ⚖`, {
-          fontFamily: FONTS.ui,
-          fontSize: '38px',
-          color: '#7a1f12',
-        })
-        .setOrigin(0.5);
-
-      void bottomLimit;
-      // poslední 3 vyhlášky + flavor (celý seznam je pod § ve hře)
-      const shown = activeRules.slice(-3);
-      let ry = y + 90;
-      for (const r of shown) {
-        const t = this.add
-          .text(cx, ry, `§ ${L(r.cislo)}: ${L(r.text)}`, {
-            fontFamily: FONTS.doc, fontSize: '23px', color: black, wordWrap: { width: paperW - 220 }, align: 'center',
-          })
-          .setOrigin(0.5, 0);
-        ry += t.height + 8;
-      }
-      this.add
-        .text(cx, ry + 4, L({ cs: 'Hora tone v papírech. A ty v nich s ní.', en: 'The mountain drowns in paperwork. And you with it.' }), {
-          fontFamily: FONTS.doc, fontSize: '23px', color: sepia, align: 'center', fontStyle: 'italic',
-        })
-        .setOrigin(0.5, 0);
-    }
+    // úvodník = jen zprávy z venku; platné vyhlášky se hráči ukážou až v úřadovně
+    // u prvního rytíře (viz Office.showActiveRulesIntro), ne v novinách.
 
     makeButton(this, cx, GAME_HEIGHT - 90, Content.ui('openOffice'), () => {
       this.scene.start('Office');

@@ -3,17 +3,19 @@ import Phaser from 'phaser';
 /**
  * Výstroj rytíře jako pixel-art předměty na stole.
  * Parsuje volné texty z knight.equipment („obouruční meč (150 cm)")
- * a kreslí deterministické ikony — meče ve velikostních variantách!
+ * a kreslí deterministické ikony - meče ve velikostních variantách!
  */
 
 export interface ParsedItem {
   key: string; // klíč pro hádanky (reason.itemKeys) i kreslení
-  label: string; // původní text — rytířova „odpověď" při kliknutí
+  label: string; // původní text - rytířova „odpověď" při kliknutí
   cm?: number;
   color?: number;
   tails?: number; // lev na štítu: 0 = bez lva, 1/2 = počet ocasů
   symbol?: 'lev2' | 'lev1' | 'empty' | 'orlice'; // znak na štítu
   shieldColor?: number;
+  symbolColor?: number; // barva znaku (plamenná orlice = černá); jinak stříbrná
+  flames?: boolean; // zlaté plameny kolem orlice (svatováclavská „plamenná orlice")
 }
 
 const S = 6; // pixel
@@ -42,6 +44,8 @@ export function parseEquipment(raw: string, tags: string[]): ParsedItem | null {
             : 'empty';
     item.tails = item.symbol === 'lev2' ? 2 : item.symbol === 'lev1' ? 1 : 0;
     item.shieldColor = /modr/.test(s) ? 0x24366b : /zelen/.test(s) ? 0x1d4020 : /čern|vran/.test(s) ? 0x2a2a30 : /žlut|zlat/.test(s) ? 0x7a5a16 : 0x7a1f12;
+    // „plamenná orlice" (svatováclavská) - černá orlice na stříbrném poli + zlaté plameny
+    if (item.symbol === 'orlice' && /plamenn/.test(s)) { item.shieldColor = 0xd8d0c0; item.symbolColor = 0x1c1a16; item.flames = true; }
   } else if (/přilb|helm/.test(s)) item.key = 'prilba';
   else if (/vest/.test(s)) item.key = 'vesta';
   else if (/bot|obuv/.test(s)) item.key = 'boty';
@@ -78,7 +82,7 @@ export function parseEquipment(raw: string, tags: string[]): ParsedItem | null {
 
 /** Vytvoří (jednou) texturu předmětu; vrací klíč textury + rozměry. */
 export function ensureItemTexture(scene: Phaser.Scene, item: ParsedItem): string {
-  const texKey = `item:${item.key}:${item.cm ?? ''}:${item.color ?? ''}:${item.tails ?? ''}:${item.symbol ?? ''}:${item.shieldColor ?? ''}`;
+  const texKey = `item:${item.key}:${item.cm ?? ''}:${item.color ?? ''}:${item.tails ?? ''}:${item.symbol ?? ''}:${item.shieldColor ?? ''}:${item.symbolColor ?? ''}:${item.flames ? 'f' : ''}`;
   if (scene.textures.exists(texKey)) return texKey;
 
   const g = scene.add.graphics();
@@ -123,12 +127,19 @@ export function ensureItemTexture(scene: Phaser.Scene, item: ParsedItem): string
       g.lineStyle(3, 0xd4a017, 1);
       g.strokeRect(1 * S, 0, 14 * S, 16 * S);
       if (item.symbol === 'orlice') {
-        // orlice — tělo, křídla, hlava
-        px(7, 5, 2, 6, sil); // tělo
-        px(3, 6, 4, 1.4, sil); px(2, 7, 2, 2, sil); // levé křídlo
-        px(9, 6, 4, 1.4, sil); px(12, 7, 2, 2, sil); // pravé křídlo
-        px(7, 3, 2, 2, sil); px(6, 2, 4, 1.2, sil); // krk+hlava
-        px(6, 11, 1.4, 2, sil); px(8.6, 11, 1.4, 2, sil); // nohy
+        const ec = item.symbolColor ?? sil; // plamenná orlice = černá
+        if (item.flames) {
+          // zlaté plameny kolem orlice
+          px(2, 4, 1.4, 3, 0xe8a81a); px(12.6, 4, 1.4, 3, 0xe8a81a);
+          px(4, 2.4, 1.2, 2.4, 0xf0c838); px(10.8, 2.4, 1.2, 2.4, 0xf0c838);
+          px(7, 1.2, 1.4, 2, 0xe8a81a);
+        }
+        // orlice - tělo, křídla, hlava
+        px(7, 5, 2, 6, ec); // tělo
+        px(3, 6, 4, 1.4, ec); px(2, 7, 2, 2, ec); // levé křídlo
+        px(9, 6, 4, 1.4, ec); px(12, 7, 2, 2, ec); // pravé křídlo
+        px(7, 3, 2, 2, ec); px(6, 2, 4, 1.2, ec); // krk+hlava
+        px(6, 11, 1.4, 2, ec); px(8.6, 11, 1.4, 2, ec); // nohy
       } else if ((item.tails ?? 0) > 0) {
         px(5, 5, 5, 6, sil);
         px(9, 4, 2.4, 2.4, sil);

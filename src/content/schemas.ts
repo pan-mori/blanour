@@ -10,7 +10,7 @@ export interface LString {
   en?: string;
 }
 
-/** Epocha dne — každý herní den se odehrává v jiném století. */
+/** Epocha dne - každý herní den se odehrává v jiném století. */
 export interface Era {
   day: number; // 1..5
   year: number; // např. 1448
@@ -21,7 +21,7 @@ export interface Era {
   flavor?: LString;
 }
 
-/** Vyhláška — aktivuje se daným dnem a platí do konce hry. */
+/** Vyhláška - aktivuje se daným dnem a platí do konce hry. */
 export interface Rule {
   id: string; // R01…
   day: number; // od kterého dne platí
@@ -31,7 +31,7 @@ export interface Rule {
   reasonId: string;
 }
 
-/** Kategorie důvodu — zásuvka v razítkové skříni. */
+/** Kategorie důvodu - zásuvka v razítkové skříni. */
 export type ReasonCategory =
   | 'formular'
   | 'poplatek'
@@ -43,10 +43,10 @@ export type ReasonCategory =
   | 'chybi'
   | 'dekret';
 
-/** Vzácnost razítka — barevné odlišení jako v RPG. */
+/** Vzácnost razítka - barevné odlišení jako v RPG. */
 export type ReasonRarity = 'common' | 'legendary';
 
-/** Důvod zamítnutí — položka v nabídce hráče. */
+/** Důvod zamítnutí - položka v nabídce hráče. */
 export interface Reason {
   id: string; // RZ_…
   ruleRef: string; // která vyhláška ho kryje
@@ -54,7 +54,7 @@ export interface Reason {
   /** Zásuvka razítkové skříně, kam důvod patří (default dle heuristiky v kódu). */
   category?: ReasonCategory;
   /**
-   * Vzácnost: 'common' (default, bílá) nebo 'legendary' (zlatá) — legendární
+   * Vzácnost: 'common' (default, bílá) nebo 'legendary' (zlatá) - legendární
    * razítko je univerzální „vyhnutí se čemukoli", ale po použití varuje.
    */
   rarity?: ReasonRarity;
@@ -91,7 +91,7 @@ export interface DocTemplate {
 export interface EncounterDoc {
   template: string; // DocTemplate.id
   fields: Record<string, string>; // key -> hodnota (zobrazí se CS/EN beze změny)
-  /** Převázaný provázkem — hráč ho musí nejdřív rozvázat (M2 minihra) */
+  /** Převázaný provázkem - hráč ho musí nejdřív rozvázat (M2 minihra) */
   wrapped?: boolean;
   /** Pečeť na dokumentu: id vzoru pečeti, 'broken', nebo chybí */
   seal?: string;
@@ -107,7 +107,7 @@ export interface Knight {
   intro: LString;
 }
 
-/** Autorsky zapsaná chyba — ground truth pro validaci zamítnutí. */
+/** Autorsky zapsaná chyba - ground truth pro validaci zamítnutí. */
 export interface Flaw {
   reasonId: string;
   ruleRef: string;
@@ -144,7 +144,7 @@ export interface NewsItem {
   body?: LString;
 }
 
-/** „VYDAT NOVOU VYHLÁŠKU" — nouzový dekret. */
+/** „VYDAT NOVOU VYHLÁŠKU" - nouzový dekret. */
 export interface Decree {
   id: string; // V_…
   appliesIf: { knightTag: string };

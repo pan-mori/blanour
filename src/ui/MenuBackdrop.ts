@@ -12,7 +12,7 @@ export function drawMenuMountains(scene: Phaser.Scene): void {
   const g = scene.add.graphics();
   const rnd = new Phaser.Math.RandomDataGenerator(['blanik-menu']);
 
-  // nebe — vodorovné pruhy od tmavé nahoře po teplejší u obzoru
+  // nebe - vodorovné pruhy od tmavé nahoře po teplejší u obzoru
   const skyTop = [0x4a4438, 0x56503f, 0x635a47, 0x6f6450, 0x7c6e54, 0x897a5a];
   const bands = skyTop.length;
   for (let i = 0; i < bands; i++) {
@@ -20,7 +20,7 @@ export function drawMenuMountains(scene: Phaser.Scene): void {
     g.fillRect(0, (H * 0.62 * i) / bands, W, Math.ceil((H * 0.62) / bands) + 1);
   }
 
-  // vrstvy hřebenů (zezadu dopředu) — od modravě šedé po tmavě olivovou
+  // vrstvy hřebenů (zezadu dopředu) - od modravě šedé po tmavě olivovou
   const ridge = (baseY: number, amp: number, color: number, step: number, jitter: number) => {
     g.fillStyle(color, 1);
     let x = -20;
@@ -60,7 +60,7 @@ export function drawMenuMountains(scene: Phaser.Scene): void {
   ridge(H * 0.66, 140, 0x3c4631, 48, 14);
   ridge(H * 0.74, 110, 0x323b28, 40, 16);
 
-  // textura lesa — tečky stromů na kopcích
+  // textura lesa - tečky stromů na kopcích
   for (let i = 0; i < 900; i++) {
     const x = rnd.between(0, W);
     const y = rnd.between(Math.floor(H * 0.6), Math.floor(H * 0.82));

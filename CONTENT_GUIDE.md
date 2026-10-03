@@ -1,11 +1,11 @@
-# CONTENT_GUIDE — příručka pro content agenty
+# CONTENT_GUIDE - příručka pro content agenty
 
 Veškerý herní obsah žije v `public/content/*.json`. **Needitujte žádný TypeScript.**
-Po každé změně spusťte `npm run validate` — musí projít bez chyb (✖). Varování (⚠) opravte, pokud můžete.
+Po každé změně spusťte `npm run validate` - musí projít bez chyb (✖). Varování (⚠) opravte, pokud můžete.
 
 ## Pravidla hry (kontext pro psaní)
 
-Hráč = úředník v hoře Blaník, který hledá v papírech rytířů **skutečnou chybu**, aby mohl zamítnout výjezd. Každá chyba (flaw) se opírá o konkrétní vyhlášku. Čisté papíry = `flaws: []` — pak je každé zamítnutí hráčova chyba (facka).
+Hráč = úředník v hoře Blaník, který hledá v papírech rytířů **skutečnou chybu**, aby mohl zamítnout výjezd. Každá chyba (flaw) se opírá o konkrétní vyhlášku. Čisté papíry = `flaws: []` - pak je každé zamítnutí hráčova chyba (facka).
 
 **5 dní = 5 epoch** (eras.json): 1448 středověk → 1620 po Bílé hoře → 1848 jaro národů → 1952 socialismus → 2026 současnost. Obsah dne MUSÍ sedět do epochy (jazyk, reálie, humor).
 
@@ -14,7 +14,7 @@ Hráč = úředník v hoře Blaník, který hledá v papírech rytířů **skute
 ## Formát souborů
 
 Každý soubor: `{ "version": 1, "items": [...] }` (strings.json má `items` jako objekt).
-Všechny texty jsou **LString**: `{ "cs": "povinné", "en": "smí být prázdné — doplní překladový agent" }`.
+Všechny texty jsou **LString**: `{ "cs": "povinné", "en": "smí být prázdné - doplní překladový agent" }`.
 
 ## Slovník id (konvence)
 
@@ -37,7 +37,7 @@ Všechny texty jsou **LString**: `{ "cs": "povinné", "en": "smí být prázdné
 6. **decree.appliesIf.knightTag** → alespoň jeden rytíř musí tag mít (`knight.tags`)
 7. **document.template** → musí existovat v doc-templates.json; klíče `fields` musí odpovídat šabloně
 
-## Encounter — anatomie
+## Encounter - anatomie
 
 ```jsonc
 {
@@ -72,32 +72,32 @@ Všechny texty jsou **LString**: `{ "cs": "povinné", "en": "smí být prázdné
 
 ## Vizuální tagy rytířů (kreslí se na portrét!)
 
-Tyto tagy v `knight.tags` mají VIZUÁLNÍ podobu na portrétu — hráč vadu VIDÍ:
+Tyto tagy v `knight.tags` mají VIZUÁLNÍ podobu na portrétu - hráč vadu VIDÍ:
 
 | Tag | Co se vykreslí | Herní význam |
 |-----|----------------|--------------|
 | `stit_lev2` | štít se **dvouocasým** lvem | SPRÁVNÁ výbava (kontrast pro hledání) |
 | `stit_lev1` | štít s **jednoocasým** lvem | VADA dle vyhlášky o dvou ocasech |
 | `stit_prazdny` | prázdný štít bez lva | VADA „na štítu nevidím lva" |
-| `srp_kladivo` | srp a kladivo v rukou místo zbraně | VADA — neregulérní výzbroj (ideální 1952!) |
+| `srp_kladivo` | srp a kladivo v rukou místo zbraně | VADA - neregulérní výzbroj (ideální 1952!) |
 | `vesta` | neonová reflexní/BOZP vesta | dle kontextu: splněná vyhláška, NEBO chybí boty… |
 | `vous` | plnovous | pro dekret V_VOUS |
-| `vous_dlouhy` | DLOUHÝ vous až na varkoč | VADA dle R23 (zákaz dlouhých vousů) — reason RZ_VOUS_DLOUHY |
-| `bryle` | brýle přes oči | VADA dle R24 (zákaz brýlí) — reason RZ_BRYLE |
-| `kalich` | kališnický kalich na varkoči | VADA dle R22 (po Bílé hoře) — reason RZ_KALICH |
+| `vous_dlouhy` | DLOUHÝ vous až na varkoč | VADA dle R23 (zákaz dlouhých vousů) - reason RZ_VOUS_DLOUHY |
+| `bryle` | brýle přes oči | VADA dle R24 (zákaz brýlí) - reason RZ_BRYLE |
+| `kalich` | kališnický kalich na varkoči | VADA dle R22 (po Bílé hoře) - reason RZ_KALICH |
 | `stit_orlice` | štít s ORLICÍ | správný znak pro sv. Václava |
-| `urazka_vaclav` | (bez vizuálu) rytíř urazí sv. Václava | VADA dle R25 — reason RZ_URAZKA_VACLAV; dej mu i urážku v `intro` nebo lva místo orlice |
+| `urazka_vaclav` | (bez vizuálu) rytíř urazí sv. Václava | VADA dle R25 - reason RZ_URAZKA_VACLAV; dej mu i urážku v `intro` nebo lva místo orlice |
 | `srp_kladivo` | srp a kladivo místo zbraně | 1952: buď zamítnout (RZ_VYZBROJ), NEBO mu to ve skříni ROZMLUVIT (přezbrojí se, kolo pokračuje) |
 | `svatozar` | zlatá svatozář | sv. Václav; dekret V_SVATOZAR; VÝJIMKA z „chybí do boje" |
 
-**POZN. — vizuální prohřešky se validují OBJEKTIVNĚ z tagu** (vous_dlouhy, bryle, kalich, urazka_vaclav) i z výstroje („chybí do boje": chybí zbraň/kůň/zbroj). Nemusíš je psát do `flaws` — stačí dát tag/výstroj. Barvy štítu: do equipment napiš „modrý/zelený/černý/žlutý štít s …" (3+ barev).
+**POZN. - vizuální prohřešky se validují OBJEKTIVNĚ z tagu** (vous_dlouhy, bryle, kalich, urazka_vaclav) i z výstroje („chybí do boje": chybí zbraň/kůň/zbroj). Nemusíš je psát do `flaws` - stačí dát tag/výstroj. Barvy štítu: do equipment napiš „modrý/zelený/černý/žlutý štít s …" (3+ barev).
 
-Vizuální vada funguje jen ve dvojici s autorským `flaw` + vyhláškou/důvodem — tag sám o sobě nic nevyhodnocuje. Rytíři BEZ vady občas dejte `stit_lev2` (ať má hledání smysl).
+Vizuální vada funguje jen ve dvojici s autorským `flaw` + vyhláškou/důvodem - tag sám o sobě nic nevyhodnocuje. Rytíři BEZ vady občas dejte `stit_lev2` (ať má hledání smysl).
 
 ## Zásady kvality
 
 - Na každý den **4–6 encounterů** v poolu; z toho ~1 s čistými papíry (tlak na dekrety) a ~1 se 2 dokumenty.
-- Chyby dělat **najditelné, ale ne triviální** — hráč musí porovnat dokument s vyhláškou nebo s rytířem.
-- `hint` piš jako suché úřední konstatování — zobrazuje se po správném zamítnutí.
+- Chyby dělat **najditelné, ale ne triviální** - hráč musí porovnat dokument s vyhláškou nebo s rytířem.
+- `hint` piš jako suché úřední konstatování - zobrazuje se po správném zamítnutí.
 - Zprávy: cca půlka `serious` / půlka `absurd`; epochové zprávy přišpendli `minDay == maxDay`.
-- Nic nepřejmenovávej a nemaž existující id — jen přidávej (kód na ně může odkazovat).
+- Nic nepřejmenovávej a nemaž existující id - jen přidávej (kód na ně může odkazovat).

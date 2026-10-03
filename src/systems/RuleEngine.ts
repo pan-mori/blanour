@@ -3,7 +3,7 @@ import { beardLen, type BeardLen } from '../ui/KnightPortrait';
 import { Content } from './Content';
 import { GameState } from './GameState';
 
-/** Encounter rozehraný na stole — vestavěné flaws + flaws vstříknuté dekrety. */
+/** Encounter rozehraný na stole - vestavěné flaws + flaws vstříknuté dekrety. */
 export interface ActiveEncounter {
   data: Encounter;
   syntheticFlaws: Flaw[];
@@ -11,7 +11,7 @@ export interface ActiveEncounter {
 
 /**
  * Ground truth je autorsky zapsaná v encounter.flaws; tady se jen vyhodnocuje.
- * reason.ruleRef smí odkazovat na vyhlášku (R…) NEBO dekret (V…) — dekretové
+ * reason.ruleRef smí odkazovat na vyhlášku (R…) NEBO dekret (V…) - dekretové
  * důvody se aktivují vydáním dekretu (GameState.issuedDecrees).
  */
 export const RuleEngine = {
@@ -49,22 +49,32 @@ export const RuleEngine = {
   /** Je zvolený důvod správný pro tento encounter? */
   validateRejection(enc: ActiveEncounter, reasonId: string, day: number): { ok: boolean; flaw?: Flaw } {
     const active = this.activeRuleIds(day);
-    // legendární razítko je univerzální — platí na kohokoli
+    // legendární razítko je univerzální - platí na kohokoli
     const leg = this.legendaryVerdict(reasonId, active);
     if (leg) return leg;
-    // „Chybí do boje" (R21) se posuzuje OBJEKTIVNĚ z výstroje — platí u každého,
+    // „Chybí do boje" (R21) se posuzuje OBJEKTIVNĚ z výstroje - platí u každého,
     // komu daná věc fakticky chybí, ne jen tam, kde to autor vepsal do flaws.
     const chibi = this.chibiVerdict(enc.data, reasonId, active);
     if (chibi) return chibi;
-    // vizuální prohřešky na portrétu (brýle/kalich/urážka) — objektivně dle tagu
+    // vizuální prohřešky na portrétu (brýle/kalich/urážka) - objektivně dle tagu
     const tagV = this.tagReasonVerdict(enc.data, reasonId, active);
     if (tagV) return tagV;
-    // vyhlášky o vousech (3 délky) — objektivně z vykreslené délky vousu
+    // vyhlášky o vousech (3 délky) - objektivně z vykreslené délky vousu
     const beardV = this.beardVerdict(enc.data, reasonId, active);
     if (beardV) return beardV;
-    // délka meče (RZ_ZBROJAK) — objektivně z viditelné délky, ne jen z autorského flawu
+    // délka meče (RZ_ZBROJAK) - objektivně z viditelné délky, ne jen z autorského flawu
     const sword = this.swordVerdict(enc.data, reasonId, active);
     if (sword) return sword;
+    // kolek a formulář - objektivně proti aktuální úřední podmínce (mění se každé období)
+    const kolekV = this.kolekVerdict(enc.data, reasonId, active);
+    if (kolekV) return kolekV;
+    const formV = this.formVerdict(enc.data, reasonId, active);
+    if (formV) return formV;
+    // co rytíř říká (hanobení knížete) a důvod výjezdu - objektivně z textu
+    const speechV = this.speechVerdict(enc.data, reasonId, active);
+    if (speechV) return speechV;
+    const duvodV = this.reasonFieldVerdict(enc.data, reasonId, active);
+    if (duvodV) return duvodV;
     const flaw = [...enc.data.flaws, ...enc.syntheticFlaws].find(
       (f) => f.reasonId === reasonId && active.has(f.ruleRef),
     );
@@ -80,7 +90,7 @@ export const RuleEngine = {
     };
     const cat = CAT[reasonId];
     if (!cat || !active.has('R21')) return null;
-    // světec (svatozář) do boje gear nepotřebuje — chrání finále se sv. Václavem
+    // světec (svatozář) do boje gear nepotřebuje - chrání finále se sv. Václavem
     if (data.knight.tags.includes('svatozar')) return { ok: false };
     const has = this.hasGear(data.knight.equipment, cat);
     if (has) return { ok: false };
@@ -119,7 +129,7 @@ export const RuleEngine = {
     return { ok: true, flaw: { reasonId, ruleRef: m.rule, hint: { cs: Content.ui(m.hintKey), en: Content.ui(m.hintKey) } } };
   },
 
-  /** Meč nad 120 cm bez průkazu (RZ_ZBROJAK) — objektivně z viditelné délky meče. */
+  /** Meč nad 120 cm bez průkazu (RZ_ZBROJAK) - objektivně z viditelné délky meče. */
   swordVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
     if (reasonId !== 'RZ_ZBROJAK' || !active.has('R03')) return null;
     let maxCm = 0;
@@ -135,6 +145,74 @@ export const RuleEngine = {
     };
   },
 
+  /** Doklady, jejichž platnost se posuzuje OBJEKTIVNĚ proti aktuální úřední podmínce
+   *  (ne z autorského flawu, protože podmínka se mění každé období). */
+  OBJECTIVE_DOC_REASONS: new Set(['RZ_KOLEK', 'RZ_FORMULAR']),
+
+  /** Najdi primární žádost (má pole kolek/formular). */
+  zadostDoc(data: Encounter): { fields: Record<string, string> } | undefined {
+    return data.documents.find((d) => d.template.startsWith('zadost'));
+  },
+
+  /** Kolek neodpovídá aktuálně požadované hodnotě (R01) - objektivně z pole „kolek".
+   *  Baseline „30" se zobrazuje jako aktuální požadavek, takže je vždy správně;
+   *  jiná (nižší/chybějící) hodnota je neplatná. */
+  kolekVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    if (reasonId !== 'RZ_KOLEK' || !active.has('R01')) return null;
+    const doc = this.zadostDoc(data);
+    if (!doc) return null;
+    const raw = String(doc.fields.kolek ?? '').trim();
+    const effStr = raw === '30' ? String(GameState.reqKolek) : raw;
+    const n = parseInt(effStr.replace(/[^0-9]/g, ''), 10);
+    const have = Number.isFinite(n) ? n : -1; // „-" / nečíslo = chybí
+    if (have === GameState.reqKolek) return { ok: false };
+    const shown = raw === '30' ? String(GameState.reqKolek) : raw;
+    return {
+      ok: true,
+      flaw: { reasonId, ruleRef: 'R01', hint: {
+        cs: `Kolek „${shown}", vyhláška žádá ${GameState.reqKolek} grošů.`,
+        en: `Duty stamp "${shown}", decree requires ${GameState.reqKolek} groschen.`,
+      } },
+    };
+  },
+
+  /** Formulář neodpovídá aktuálně platnému (R02) - objektivně z pole „formular".
+   *  Výchozí „B-1448" je baseline a ve hře se zobrazuje jako právě platný formulář,
+   *  takže je vždy v pořádku; jiné (dobové/husitské) formuláře jsou neplatné. */
+  formVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    if (reasonId !== 'RZ_FORMULAR' || !active.has('R02')) return null;
+    const doc = this.zadostDoc(data);
+    if (!doc) return null;
+    const raw = String(doc.fields.formular ?? '');
+    const eff = raw === 'B-1448' ? GameState.reqFormular : raw;
+    if (eff === GameState.reqFormular) return { ok: false };
+    return {
+      ok: true,
+      flaw: { reasonId, ruleRef: 'R02', hint: {
+        cs: `Formulář „${eff}", vyhláška žádá „${GameState.reqFormular}".`,
+        en: `Form "${eff}", decree requires "${GameState.reqFormular}".`,
+      } },
+    };
+  },
+
+  /** Hanobení knížete (R31) - objektivně z toho, co rytíř ŘÍKÁ (jeho hláška). */
+  speechVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    if (reasonId !== 'RZ_HANA_KNIZE' || !active.has('R31')) return null;
+    const t = `${data.knight.intro.cs} ${data.knight.intro.en}`.toLowerCase();
+    const bad = /spáč|pytel ovsa|ať si spí|líná hora|přežran|sleeper|sack of oats|lazy mountain/.test(t);
+    if (!bad) return { ok: false };
+    return { ok: true, flaw: { reasonId, ruleRef: 'R31', hint: { cs: Content.ui('hanaKnizeHint'), en: Content.ui('hanaKnizeHint') } } };
+  },
+
+  /** Důvod výjezdu se neslučuje s vyhláškou (R32) - objektivně z pole „duvod". */
+  reasonFieldVerdict(data: Encounter, reasonId: string, active: Set<string>): { ok: boolean; flaw?: Flaw } | null {
+    if (reasonId !== 'RZ_DUVOD' || !active.has('R32')) return null;
+    const d = String(this.zadostDoc(data)?.fields.duvod ?? '').toLowerCase();
+    const bad = /pivo|horko|počasí|beer/.test(d);
+    if (!bad) return { ok: false };
+    return { ok: true, flaw: { reasonId, ruleRef: 'R32', hint: { cs: Content.ui('duvodHint'), en: Content.ui('duvodHint') } } };
+  },
+
   /** Má rytíř v (viditelné) výstroji zbraň / koně / zbroj? */
   hasGear(equipment: string[], cat: 'weapon' | 'horse' | 'armour'): boolean {
     const RE: Record<typeof cat, RegExp> = {
@@ -148,7 +226,12 @@ export const RuleEngine = {
   /** Má encounter vůbec nějakou platnou chybu? (čisté papíry => ne) */
   hasValidFlaw(enc: ActiveEncounter, day: number): boolean {
     const active = this.activeRuleIds(day);
-    return [...enc.data.flaws, ...enc.syntheticFlaws].some((f) => active.has(f.ruleRef));
+    // autorské flaws (kromě dokladů posuzovaných objektivně - ty se mění každé období)
+    if ([...enc.data.flaws, ...enc.syntheticFlaws]
+      .some((f) => !this.OBJECTIVE_DOC_REASONS.has(f.reasonId) && active.has(f.ruleRef))) return true;
+    if (this.kolekVerdict(enc.data, 'RZ_KOLEK', active)?.ok) return true;
+    if (this.formVerdict(enc.data, 'RZ_FORMULAR', active)?.ok) return true;
+    return false;
   },
 
   /** Důvody, kterými LZE TEĎ tohoto rytíře zamítnout (aktivní + ještě nepoužité). */
@@ -156,8 +239,14 @@ export const RuleEngine = {
     const active = this.activeRuleIds(day);
     const out = new Set<string>();
     for (const f of data.flaws) {
+      // kolek/formulář řešíme objektivně níže (autorský flaw by s měnící se podmínkou lhal)
+      if (this.OBJECTIVE_DOC_REASONS.has(f.reasonId)) continue;
       if (active.has(f.ruleRef) && !GameState.usedReasons.has(f.reasonId)) out.add(f.reasonId);
     }
+    if (!GameState.usedReasons.has('RZ_KOLEK') && this.kolekVerdict(data, 'RZ_KOLEK', active)?.ok) out.add('RZ_KOLEK');
+    if (!GameState.usedReasons.has('RZ_FORMULAR') && this.formVerdict(data, 'RZ_FORMULAR', active)?.ok) out.add('RZ_FORMULAR');
+    if (!GameState.usedReasons.has('RZ_HANA_KNIZE') && this.speechVerdict(data, 'RZ_HANA_KNIZE', active)?.ok) out.add('RZ_HANA_KNIZE');
+    if (!GameState.usedReasons.has('RZ_DUVOD') && this.reasonFieldVerdict(data, 'RZ_DUVOD', active)?.ok) out.add('RZ_DUVOD');
     for (const id of ['RZ_CHYBI_ZBRAN', 'RZ_CHYBI_KUN', 'RZ_CHYBI_ZBROJ']) {
       if (!GameState.usedReasons.has(id) && this.chibiVerdict(data, id, active)?.ok) out.add(id);
     }
@@ -168,7 +257,7 @@ export const RuleEngine = {
       if (!GameState.usedReasons.has(id) && this.beardVerdict(data, id, active)?.ok) out.add(id);
     }
     if (!GameState.usedReasons.has('RZ_ZBROJAK') && this.swordVerdict(data, 'RZ_ZBROJAK', active)?.ok) out.add('RZ_ZBROJAK');
-    // legendární razítka platí univerzálně — dokud jsou aktivní a nepoužitá, řeší kohokoli
+    // legendární razítka platí univerzálně - dokud jsou aktivní a nepoužitá, řeší kohokoli
     for (const r of Content.all.reasons) {
       if (r.rarity === 'legendary' && active.has(r.ruleRef) && !GameState.usedReasons.has(r.id)) out.add(r.id);
     }

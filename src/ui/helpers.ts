@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import { COLORS, FONTS } from '../config';
+import { GameState } from '../systems/GameState';
+import { Music } from '../systems/Music';
 
 export interface ButtonOpts {
   width?: number;
@@ -7,9 +9,22 @@ export interface ButtonOpts {
   color?: number;
   textColor?: string;
   disabled?: boolean;
-  /** Šířka pro zalamování textu — tlačítko se roztáhne na výšku. */
+  /** Šířka pro zalamování textu - tlačítko se roztáhne na výšku. */
   wrap?: number;
   font?: string;
+}
+
+/**
+ * Text, který se bude natáčet (žádost je nakloněná o pár stupňů).
+ * Hra běží v pixelArt módu (NEAREST filtr), takže otočená textura textu
+ * jinak zubatí/rozmazává. LINEAR filtr + vyšší rozlišení canvasu to srovná,
+ * aniž bychom museli vypínat pixelArt pro celou hru.
+ */
+export function crispRotatedText(t: Phaser.GameObjects.Text): Phaser.GameObjects.Text {
+  const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+  t.setResolution(Math.max(2, Math.ceil(dpr)));
+  t.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+  return t;
 }
 
 /** Jednoduché pixelové tlačítko (obdélník + text) s hover efektem. */
@@ -40,7 +55,7 @@ export function makeButton(
   const c = scene.add.container(x, y, [bg, text]);
   c.setSize(w, h);
   if (!opts.disabled) {
-    // hover musí zůstat NEPRŮHLEDNÝ — na světlém podkladu (noviny) jinak prosvítá
+    // hover musí zůstat NEPRŮHLEDNÝ - na světlém podkladu (noviny) jinak prosvítá
     bg.setInteractive({ useHandCursor: true })
       .on('pointerover', () => bg.setFillStyle(0x6a5430, 1))
       .on('pointerout', () => bg.setFillStyle(bgColor))
@@ -57,6 +72,58 @@ export function makeButton(
     bg.setFillStyle(bgColor, 0.4);
     text.setAlpha(0.4);
   }
+  return c;
+}
+
+/**
+ * Ikonka zapnutí/vypnutí hudby (nota) - při ztlumení se přeškrtne.
+ * Stav bere z GameState.audioMuted (přežívá scény i restart), rovnou nastaví
+ * scene.sound.mute a při zapnutí (ne-ztlumení) rozjede hudbu.
+ */
+export function makeMusicToggle(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  size = 72,
+): Phaser.GameObjects.Container {
+  const bg = scene.add.rectangle(0, 0, size, size, COLORS.uiPanelLight).setStrokeStyle(3, COLORS.uiAccent);
+  const icon = scene.add.graphics();
+  const strike = scene.add.graphics();
+  const c = scene.add.container(x, y, [bg, icon, strike]);
+  c.setSize(size, size);
+
+  const redraw = (): void => {
+    const muted = GameState.audioMuted;
+    const col = muted ? 0x8a7a55 : 0xe8d9a8;
+    icon.clear();
+    icon.fillStyle(col, 1);
+    icon.fillCircle(-9, 11, 9); // hlavička noty
+    icon.fillRect(-2, -18, 5, 29); // nožička
+    icon.fillTriangle(3, -18, 3, -2, 17, -10); // praporek
+    strike.clear();
+    if (muted) {
+      strike.lineStyle(5, 0xd14a2a, 1);
+      const r = size * 0.3;
+      strike.lineBetween(-r, -r, r, r);
+    }
+    scene.sound.mute = muted;
+  };
+  redraw();
+
+  bg.setInteractive({ useHandCursor: true })
+    .on('pointerover', () => bg.setFillStyle(0x6a5430, 1))
+    .on('pointerout', () => bg.setFillStyle(COLORS.uiPanelLight))
+    .on('pointerdown', () => {
+      GameState.toggleMuted();
+      if (!GameState.audioMuted) Music.start(scene.sound); // kdyby hudba ještě neběžela
+      redraw();
+      scene.tweens.add({ targets: c, scale: 0.92, duration: 50, yoyo: true });
+      try {
+        scene.sound.play('sfx_click', { volume: 0.35 });
+      } catch {
+        /* zvuk není kritický */
+      }
+    });
   return c;
 }
 

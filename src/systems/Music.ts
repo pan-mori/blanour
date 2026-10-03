@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 /**
- * Hudební playlist — skladby se střídají v zamíchaném pořadí, ať nehraje
+ * Hudební playlist - skladby se střídají v zamíchaném pořadí, ať nehraje
  * pořád jedna dokola. Běží přes globální zvukový manažer hry (přežívá scény).
  */
 const TRACKS = ['music', 'music2', 'music3', 'music4'];
@@ -26,7 +26,7 @@ class MusicImpl {
     }
   }
 
-  /** Spustí playlist (idempotentní — podruhé nic nedělá). */
+  /** Spustí playlist (idempotentní - podruhé nic nedělá). */
   start(sound: Phaser.Sound.BaseSoundManager): void {
     this.sound = sound;
     if (this.started) return;
@@ -37,7 +37,7 @@ class MusicImpl {
   }
 
   private canPlay(sound: Phaser.Sound.BaseSoundManager, key: string): boolean {
-    // v cache může být zvuk i bez instance — zkusíme ho přidat
+    // v cache může být zvuk i bez instance - zkusíme ho přidat
     return (sound.game.cache.audio as Phaser.Cache.BaseCache).exists(key);
   }
 
@@ -59,7 +59,7 @@ class MusicImpl {
       this.current.once(Phaser.Sound.Events.COMPLETE, () => this.playNext());
       this.current.play();
     } catch {
-      /* skladba chybí — zkus další za chvíli, ať to necyklí donekonečna */
+      /* skladba chybí - zkus další za chvíli, ať to necyklí donekonečna */
     }
   }
 }

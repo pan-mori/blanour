@@ -7,7 +7,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    // pravé tlačítko otáčí razítkem — kontextové menu by překáželo
+    // pravé tlačítko otáčí razítkem - kontextové menu by překáželo
     this.input.mouse?.disableContextMenu();
     const ready = Promise.all([
       document.fonts.load('64px "Jersey 10"'),

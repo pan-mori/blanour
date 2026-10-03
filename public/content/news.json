@@ -96,7 +96,7 @@
       "minDay": 1,
       "maxDay": 1,
       "tone": "serious",
-      "headline": { "cs": "Čtrnáct let po Lipanech: kališník s katolíkem se shodnou v jediném — že za všechno může ten druhý.", "en": "Fourteen years after Lipany: Utraquist and Catholic agree on one thing only — it is all the other one's fault." }
+      "headline": { "cs": "Čtrnáct let po Lipanech: kališník s katolíkem se shodnou v jediném - že za všechno může ten druhý.", "en": "Fourteen years after Lipany: Utraquist and Catholic agree on one thing only - it is all the other one's fault." }
     },
     {
       "id": "N_015",
@@ -110,7 +110,7 @@
       "minDay": 1,
       "maxDay": 1,
       "tone": "absurd",
-      "headline": { "cs": "Pražský groš opět zhubl. Mincmistr ujišťuje: „Stříbro v něm jest, jen se nesmí hledati.“", "en": "The Prague groschen has slimmed down again. The mint master assures: \"The silver is in there — one must simply not go looking for it.\"" },
+      "headline": { "cs": "Pražský groš opět zhubl. Mincmistr ujišťuje: „Stříbro v něm jest, jen se nesmí hledati.“", "en": "The Prague groschen has slimmed down again. The mint master assures: \"The silver is in there - one must simply not go looking for it.\"" },
       "body": { "cs": "Vejce stojí dva groše. Slepice se diví.", "en": "An egg costs two groschen. The hen is baffled." }
     },
     {
@@ -266,7 +266,7 @@
       "minDay": 5,
       "maxDay": 5,
       "tone": "absurd",
-      "headline": { "cs": "Kolona na D1 dosáhla 40 kilometrů. Řidiči vzkazují rytířům: „Hlavně teď nevyjíždějte, ještě byste to zdrželi.“", "en": "The D1 traffic jam has reached 40 kilometres. Drivers to the knights: \"Whatever you do, don't ride out now — you'd only hold things up.\"" },
+      "headline": { "cs": "Kolona na D1 dosáhla 40 kilometrů. Řidiči vzkazují rytířům: „Hlavně teď nevyjíždějte, ještě byste to zdrželi.“", "en": "The D1 traffic jam has reached 40 kilometres. Drivers to the knights: \"Whatever you do, don't ride out now - you'd only hold things up.\"" },
       "body": { "cs": "Sjezd na Blaník uzavřen. Pro případný výjezd.", "en": "The Blaník exit ramp is closed. Reserved for the eventual Departure." }
     },
     {
@@ -300,7 +300,7 @@
       "minDay": 5,
       "maxDay": 5,
       "tone": "absurd",
-      "headline": { "cs": "Zavedena STK pro koně. První kůň prošel na druhý pokus; blinkry dohodou — levé ucho, pravé ucho.", "en": "Roadworthiness tests (STK) introduced for horses. The first horse passed on the second try; indicators by convention — left ear, right ear." },
+      "headline": { "cs": "Zavedena STK pro koně. První kůň prošel na druhý pokus; blinkry dohodou - levé ucho, pravé ucho.", "en": "Roadworthiness tests (STK) introduced for horses. The first horse passed on the second try; indicators by convention - left ear, right ear." },
       "body": { "cs": "Emisní kontrola viz nařízení ESG-BL č. 13/2026.", "en": "For emissions, see Regulation ESG-BL No. 13/2026." }
     },
     {

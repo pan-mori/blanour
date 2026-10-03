@@ -35,11 +35,24 @@ export class PreloadScene extends Phaser.Scene {
 
     // pozadí menu (pokud soubor existuje; chybí-li, menu použije kreslenou siluetu)
     this.load.image('menu_bg', 'assets/images/menu_bg.png');
+    // pozadí pro úvodní slideshow (Intro) - velké obrázky; chybí-li, scéna použije tmavé pozadí
+    this.load.image('table_paper', 'assets/images/table_paper.png');
+    // experiment: razítko jako obrázek (viz STAMP_STYLE v config.ts); chybí-li, použije se kreslené
+    this.load.image('stamp_pixel', 'assets/images/pixel_google/stamp_pixel.png');
+    // animovaná svíčka - 4 snímky vedle sebe (208×119 → snímek 52×119)
+    this.load.spritesheet('candle_sheet', 'assets/images/pixel_google/spritesheet_candle_fire.png', {
+      frameWidth: 52,
+      frameHeight: 119,
+    });
+    // vosková tyčinka (pečetní vosk) pro minihru s pečetí; chybí-li, použije se kreslená
+    this.load.image('wax_stick', 'assets/images/pixel_google/seelwax.png');
+    // obrázek „FACKA!" pro cutaway při facce; chybí-li, použije se textový nadpis
+    this.load.image('facka', 'assets/images/pixel_google/facka.png');
     this.load.on('loaderror', (f: Phaser.Loader.File) => {
-      if (f.key === 'menu_bg') console.info('menu_bg.png zatím není — použije se kreslené pozadí');
+      if (f.key === 'menu_bg') console.info('menu_bg.png zatím není - použije se kreslené pozadí');
     });
 
-    // audio (CC0 — viz CREDITS.md)
+    // audio (CC0 - viz CREDITS.md)
     this.load.audio('music', 'assets/audio/music_loop.mp3');
     this.load.audio('music2', 'assets/audio/music_loop2.mp3');
     this.load.audio('music3', 'assets/audio/music_loop3.ogg');
@@ -60,7 +73,7 @@ export class PreloadScene extends Phaser.Scene {
         missing.push(key);
         continue;
       }
-      // soubory mají tvar { version, items } — strings.json má { version, items: {k: LString} }
+      // soubory mají tvar { version, items } - strings.json má { version, items: {k: LString} }
       bundle[key] = data.items ?? data;
     }
     if (missing.length > 0) {
@@ -80,7 +93,7 @@ export class PreloadScene extends Phaser.Scene {
     const lang = params.get('lang');
     if (lang === 'cs' || lang === 'en') GameState.lang = lang;
     const start = params.get('start');
-    const allowed = ['Menu', 'Newspaper', 'Office', 'DayEnd', 'Ending', 'Lab'];
+    const allowed = ['Menu', 'Intro', 'Newspaper', 'Office', 'DayEnd', 'Ending', 'Lab'];
     if (start && allowed.includes(start)) {
       GameState.reset();
       const day = Number(params.get('day') ?? 1);

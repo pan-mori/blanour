@@ -130,7 +130,7 @@
     },
     {
       "id": "jzd",
-      "title": { "cs": "Evidenční list koně — JZD Blaník", "en": "Horse Registration Sheet — United Agricultural Cooperative Blaník" },
+      "title": { "cs": "Evidenční list koně - JZD Blaník", "en": "Horse Registration Sheet - United Agricultural Cooperative Blaník" },
       "size": [520, 280],
       "stampZone": [330, 180, 160, 80],
       "fields": [
@@ -141,7 +141,7 @@
     },
     {
       "id": "datovka",
-      "title": { "cs": "Potvrzení o doručení do datové schránky", "en": "Proof of Delivery — Official State Inbox (Data Box)" },
+      "title": { "cs": "Potvrzení o doručení do datové schránky", "en": "Proof of Delivery - Official State Inbox (Data Box)" },
       "size": [520, 280],
       "stampZone": [330, 180, 160, 80],
       "fields": [

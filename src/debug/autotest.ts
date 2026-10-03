@@ -23,7 +23,7 @@ export function installAutoTest(game: Phaser.Game, params: URLSearchParams): voi
 
   const run = async () => {
     await sleep(5000); // Boot + Preload + skok do Office
-    // TS `private` je jen compile-time — pro testy saháme dovnitř záměrně
+    // TS `private` je jen compile-time - pro testy saháme dovnitř záměrně
     const office = game.scene.getScene('Office') as any;
     const enc = office.enc;
     if (!enc) {
@@ -224,6 +224,23 @@ export function installAutoTest(game: Phaser.Game, params: URLSearchParams): voi
       }
       await sleep(800);
       await shot('fullday-end'); // očekáváme DayEnd
+    } else if (auto === 'vaclav') {
+      // FINÁLE: tři různé chyby, kníže vrací 2× (každé razítko na jiný kroužek) → výhra
+      const ids = ['RZ_KOPYTO', 'RZ_PRILOHA', 'RZ_KONVERZE'];
+      for (let s = 0; s < 3; s++) {
+        office.resolveReject(Content.all.reasons.find((r) => r.id === ids[s]));
+        await sleep(500);
+        office.stampSys.debugApply(4, 700, true); // razítko na aktuální kroužek
+        await sleep(s < 2 ? 2100 : 800); // u vrácení čekej na delayedCall + info box
+        await shot(`vaclav-${s + 1}`);
+        if (s < 2) {
+          (office.overlayLayer.list[0] as any)?.emit?.('pointerdown'); // zavři „najdi jinou chybu"
+          await sleep(700);
+        }
+      }
+      (office.overlayLayer.list[0] as any)?.emit?.('pointerdown'); // zavři výhru → DayEnd
+      await sleep(900);
+      await shot('vaclav-after');
     }
     console.log('AUTOTEST hotovo:', auto);
   };

@@ -7,6 +7,7 @@ import { RuleEngine } from './RuleEngine';
 /** Sestaví frontu encounterů pro den a vydává je po jednom. */
 class EncounterManagerImpl {
   private queue: ActiveEncounter[] = [];
+  private history: ActiveEncounter[] = []; // už odbavení rytíři (pro cheat „o rytíře zpět")
   current: ActiveEncounter | null = null;
   total = 0;
   index = 0;
@@ -15,7 +16,10 @@ class EncounterManagerImpl {
     const seen = GameState.seenEncounterIds;
     const active = RuleEngine.activeRuleIds(day);
 
-    const pinned = Content.all.encounters.filter((e) => e.day === day && !seen.has(e.id));
+    const pinnedAll = Content.all.encounters.filter((e) => e.day === day && !seen.has(e.id));
+    // sv. Václav (ENC_008) je finálový boss → vždy jako POSLEDNÍ rytíř dne
+    const finale = pinnedAll.filter((e) => e.id === 'ENC_008');
+    const pinned = pinnedAll.filter((e) => e.id !== 'ENC_008');
     const pool = Content.all.encounters.filter(
       (e) =>
         e.day === undefined &&
@@ -25,7 +29,7 @@ class EncounterManagerImpl {
     );
 
     // GARANCE ŘEŠITELNOSTI + CHYTŘÍ RYTÍŘI: v rámci dne rezervujeme KAŽDÉMU rytíři
-    // jiný (dosud nepoužitý) důvod — stejné razítko tak nejde dát dvakrát.
+    // jiný (dosud nepoužitý) důvod - stejné razítko tak nejde dát dvakrát.
     const dayReserved = new Set<string>(GameState.usedReasons);
     const flawBag = pool.filter((e) => RuleEngine.rejectableNow(e, day));
     const decreeBag = pool.filter((e) => !RuleEngine.rejectableNow(e, day) && RuleEngine.decreeCoverable(e));
@@ -55,7 +59,7 @@ class EncounterManagerImpl {
     const picked: Encounter[] = [...pinned];
     while (picked.length < quota) {
       let next: Encounter | null = null;
-      // dekretové (čisté papíry) jen když je rozpočet — jinak radši kratší den
+      // dekretové (čisté papíry) jen když je rozpočet - jinak radši kratší den
       if (decreeBudget > 0 && decreeBag.length > 0 && Math.random() < 0.4) {
         next = weightedPick(decreeBag);
         if (next) decreeBudget--;
@@ -65,8 +69,10 @@ class EncounterManagerImpl {
       picked.push(next);
     }
 
+    picked.push(...finale); // boss na konec
     for (const e of picked) seen.add(e.id);
     this.queue = picked.map((data) => ({ data, syntheticFlaws: [] }));
+    this.history = [];
     this.total = this.queue.length;
     this.index = 0;
     this.current = null;
@@ -85,6 +91,7 @@ class EncounterManagerImpl {
     const e = Content.all.encounters.find((x) => x.id === id);
     if (!e) return false;
     this.queue = [{ data: e, syntheticFlaws: [] }];
+    this.history = [];
     this.total = 1;
     this.index = 0;
     this.current = null;
@@ -93,8 +100,20 @@ class EncounterManagerImpl {
 
   /** Další rytíř na přepážku; null = den u konce. */
   next(): ActiveEncounter | null {
+    if (this.current) this.history.push(this.current);
     this.current = this.queue.shift() ?? null;
     if (this.current) this.index++;
+    return this.current;
+  }
+
+  /** CHEAT: o rytíře zpět. Vrátí předchozího (current pošle zpět do fronty),
+   *  nebo null, když jsme na prvním rytíři (stav se nemění). */
+  prev(): ActiveEncounter | null {
+    const p = this.history.pop();
+    if (!p) return null;
+    if (this.current) this.queue.unshift(this.current);
+    this.current = p;
+    this.index = Math.max(1, this.index - 1);
     return this.current;
   }
 }

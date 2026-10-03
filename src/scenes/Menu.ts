@@ -14,7 +14,7 @@ export class MenuScene extends Phaser.Scene {
   create(): void {
     const cx = GAME_WIDTH / 2;
 
-    // hudba (playlist 4 skladeb) — autoplay policy: dokud hráč neklikne, je audio
+    // hudba (playlist 4 skladeb) - autoplay policy: dokud hráč neklikne, je audio
     // zamčené, proto startujeme až po events.UNLOCKED (jinak se play ztratí do ticha)
     const startMusic = () => Music.start(this.sound);
     Music.setVolumeFactor(1); // v menu plná hlasitost (ztišení z vyhlášky o decibelech se nepřenáší)
@@ -59,14 +59,17 @@ export class MenuScene extends Phaser.Scene {
     this.makeFlag(cx - 90, 690, 'cs', GameState.lang === 'cs', () => setLang('cs'));
     this.makeFlag(cx + 90, 690, 'en', GameState.lang === 'en', () => setLang('en'));
 
-    makeButton(this, cx, 810, Content.ui('howTo'), () => this.showHowTo(), { fontSize: 30 });
+    // úvodní příběhová slideshow (lze spustit kdykoli z menu)
+    makeButton(this, cx, 800, Content.ui('story'), () => this.scene.start('Intro'), { fontSize: 34, width: 460 });
 
-    // přepínač zvuku — label se mění na místě (bez restartu scény)
+    makeButton(this, cx, 885, Content.ui('howTo'), () => this.showHowTo(), { fontSize: 30 });
+
+    // přepínač zvuku - label se mění na místě (bez restartu scény)
     const musicLabel = () => `${Content.ui('music')}: ${this.sound.mute ? Content.ui('off') : Content.ui('on')}`;
     const musicBtn = makeButton(
       this,
       cx,
-      900,
+      965,
       musicLabel(),
       () => {
         this.sound.mute = GameState.toggleMuted();
@@ -77,9 +80,9 @@ export class MenuScene extends Phaser.Scene {
       { fontSize: 30, width: 560 },
     );
 
-    // kontrola diakritiky (pangram) — nenápadně v patičce
+    // kontrola diakritiky (pangram) - nenápadně v patičce
     this.add
-      .text(cx, GAME_HEIGHT - 60, 'Příliš žluťoučký kůň úpěl ďábelské ódy — © Odbor blanických výjezdů', {
+      .text(cx, GAME_HEIGHT - 60, 'Příliš žluťoučký kůň úpěl ďábelské ódy - © Odbor blanických výjezdů', {
         fontFamily: FONTS.doc,
         fontSize: '24px',
         color: '#6b5b40',
@@ -92,7 +95,7 @@ export class MenuScene extends Phaser.Scene {
     this.makeDebugBug(90, GAME_HEIGHT - 70);
   }
 
-  /** Malý brouček (ladybug) vlevo dole — otevře DEBUG LAB s minihrami. */
+  /** Malý brouček (ladybug) vlevo dole - otevře DEBUG LAB s minihrami. */
   private makeDebugBug(x: number, y: number): void {
     const g = this.add.graphics();
     g.fillStyle(0xc0392b, 1); g.fillEllipse(x, y, 34, 30); // tělo
@@ -147,7 +150,7 @@ export class MenuScene extends Phaser.Scene {
       g.fillRect(x0 + w / 2 - 7, y0, 14, h);
       g.fillRect(x0, y0 + h / 2 - 7, w, 14);
     }
-    // rámeček — zlatý u aktivního, tmavý u neaktivního
+    // rámeček - zlatý u aktivního, tmavý u neaktivního
     g.lineStyle(active ? 5 : 3, active ? 0xd4a017 : 0x14100c, 1);
     g.strokeRect(x0, y0, w, h);
 

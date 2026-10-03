@@ -15,12 +15,12 @@ export interface RunStats {
 
 /**
  * Jediný zdroj pravdy o běhu hry. Prostý singleton modul (žádný Phaser registry)
- * — typová bezpečnost, testovatelnost. Scény čtou/mění přes metody, které vracejí
+ * - typová bezpečnost, testovatelnost. Scény čtou/mění přes metody, které vracejí
  * Transition, takže logika toku hry žije tady a ne po scénách.
  */
 class GameStateImpl {
   lang: Lang = 'cs';
-  /** Ztlumení zvuku — NASTAVENÍ (ne stav běhu). Zdroj pravdy je tady (in-memory),
+  /** Ztlumení zvuku - NASTAVENÍ (ne stav běhu). Zdroj pravdy je tady (in-memory),
    *  takže restart scény (např. přepnutí jazyka) hodnotu nepřehodí. */
   audioMuted: boolean = this.readMuted();
   day = 1;
@@ -28,20 +28,28 @@ class GameStateImpl {
   decreesLeft = TUNING.decrees;
   endingType: EndingType | null = null;
   stats: RunStats = this.freshStats();
-  /** Vyhlášky vydané hráčem během hry (decree ids) — platí do konce běhu. */
+  /** Vyhlášky vydané hráčem během hry (decree ids) - platí do konce běhu. */
   issuedDecrees: string[] = [];
-  /** Vyhlášky, které úředník uvedl v platnost (R…). Rostou každý den — od mála po mnoho. */
+  /** Vyhlášky, které úředník uvedl v platnost (R…). Rostou každý den - od mála po mnoho. */
   enactedRules = new Set<string>();
-  /** Vyhlášky zvolené ve večerním úřadování (R…), které ještě NEJSOU v platnosti —
+  /** Vyhlášky zvolené ve večerním úřadování (R…), které ještě NEJSOU v platnosti -
    *  čekají v šuplíku „Podpultové vyhlášky" a hráč je musí aktivně zahrát na rytíře. */
   pendingRules: string[] = [];
-  /** Důvody zamítnutí už POUŽITÉ v tomto runu — stejné razítko nejde dvakrát. */
+  /** Důvody zamítnutí už POUŽITÉ v tomto runu - stejné razítko nejde dvakrát. */
   usedReasons = new Set<string>();
   seenEncounterIds = new Set<string>();
   seenNewsIds = new Set<string>();
 
-  /** Startovní (málo) vyhlášek — s těmi se úřaduje první den. */
+  /** Úřední podmínky dvou základních vyhlášek (R01 kolek, R02 formulář), které se
+   *  mění startem každého období (dne) - hodnota kolku a typ platného formuláře. */
+  reqKolek = 30;
+  reqFormular = 'B-1448';
+
+  /** Startovní (málo) vyhlášek - s těmi se úřaduje první den. */
   static readonly BASE_RULES = ['R01', 'R02'];
+  /** Možné hodnoty kolku (grošů) a platných formulářů - losuje se každé období. */
+  static readonly KOLEK_POOL = [10, 20, 30];
+  static readonly FORM_POOL = ['B-1448', 'C-1500', 'R-1627', 'K-1850', 'D-1969', 'E-2026'];
 
   private freshStats(): RunStats {
     return { rejected: 0, rejectedWrong: 0, decreesUsed: 0, coffees: 0 };
@@ -67,9 +75,22 @@ class GameStateImpl {
     this.issuedDecrees = [];
     this.enactedRules = new Set(GameStateImpl.BASE_RULES);
     this.pendingRules = [];
+    this.rollEraRules();
     this.usedReasons.clear();
     this.seenEncounterIds.clear();
     this.seenNewsIds.clear();
+  }
+
+  /** Přelosuje úřední podmínky (kolek + formulář) pro nové období. */
+  rollEraRules(): void {
+    const P = GameStateImpl;
+    this.reqKolek = P.KOLEK_POOL[Math.floor(Math.random() * P.KOLEK_POOL.length)];
+    this.reqFormular = P.FORM_POOL[Math.floor(Math.random() * P.FORM_POOL.length)];
+  }
+
+  /** Doplní do textu aktuální úřední hodnoty: {kolek} a {formular}. */
+  fillVars(s: string): string {
+    return s.replace(/\{kolek\}/g, String(this.reqKolek)).replace(/\{formular\}/g, this.reqFormular);
   }
 
   enactRule(id: string): void {
@@ -111,7 +132,7 @@ class GameStateImpl {
     return 'cutaway';
   }
 
-  /** Hráč orazítkoval SCHVÁLENO — rytíři vyjedou. */
+  /** Hráč orazítkoval SCHVÁLENO - rytíři vyjedou. */
   approve(): Transition {
     this.endingType = 'released';
     return 'ending:released';
@@ -133,6 +154,8 @@ class GameStateImpl {
       return 'ending:survived';
     }
     this.day++;
+    this.lives = TUNING.lives; // po konci dne se životy doplní do plna
+    this.rollEraRules(); // nové období → nová cena kolku a platný formulář
     return 'newspaper';
   }
 }

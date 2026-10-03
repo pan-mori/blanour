@@ -39,7 +39,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    // projekt je na /mnt/c (WSL) — inotify tam nefunguje, bez pollingu
+    // projekt je na /mnt/c (WSL) - inotify tam nefunguje, bez pollingu
     // vite nevidí změny souborů a servíruje starou verzi
     watch: { usePolling: true, interval: 400 },
   },

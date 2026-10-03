@@ -33,7 +33,7 @@ Pak otevři v prohlížeči:
 http://localhost:5173
 ```
 
-Vite má hot-reload — po úpravě kódu nebo obsahu (`public/content/*.json`) se stránka
+Vite má hot-reload - po úpravě kódu nebo obsahu (`public/content/*.json`) se stránka
 obnoví sama; když ne, dej **F5**.
 
 > Na Windows funguje `npm run dev` stejně v PowerShellu i CMD. Ve WSL taky.
@@ -53,7 +53,7 @@ obnoví sama; když ne, dej **F5**.
 
 ## DEBUG LAB (testování miniher)
 
-V hlavním menu je **vlevo dole brouček 🐞 LAB** — otevře rozcestník, kde jde každou
+V hlavním menu je **vlevo dole brouček 🐞 LAB** - otevře rozcestník, kde jde každou
 minihru spustit samostatně: razítko (ZAMÍTNUTO/SCHVÁLENO), vosková pečeť a provázek.
 Rychlé spuštění z URL viz parametr `lab` níže.
 
@@ -80,10 +80,10 @@ Přidej za adresu, např. `http://localhost:5173/?start=Office&day=3`:
 ## Struktura projektu
 
 ```
-public/content/     obsah hry (JSON) — encountery, vyhlášky, důvody, zprávy…
+public/content/     obsah hry (JSON) - encountery, vyhlášky, důvody, zprávy…
 src/scenes/         Boot, Preload, Menu, Newspaper, Office (jádro), DayEnd, Ending, Lab (debug)
 src/systems/        GameState, Content/i18n, EncounterManager, RuleEngine, StampSystem
 src/ui/             procedurální pixel-art (portréty, ikony předmětů, pozadí)
-src/content/        schemas.ts — kontrakt mezi kódem a obsahem
-scripts/            validate-content.mjs — validátor obsahu
+src/content/        schemas.ts - kontrakt mezi kódem a obsahem
+scripts/            validate-content.mjs - validátor obsahu
 ```

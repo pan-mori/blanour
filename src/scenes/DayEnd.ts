@@ -3,6 +3,7 @@ import { COLORS, FONTS, GAME_HEIGHT, GAME_WIDTH, TUNING } from '../config';
 import type { Rule } from '../content/schemas';
 import { Content, L } from '../systems/Content';
 import { GameState } from '../systems/GameState';
+import { RuleEngine } from '../systems/RuleEngine';
 import { makeButton, title } from '../ui/helpers';
 
 /** Konec dne: statistiky + legislativní fáze (úředník vydá ≥2 nové vyhlášky). */
@@ -28,7 +29,7 @@ export class DayEndScene extends Phaser.Scene {
     const isLast = GameState.day >= TUNING.days;
 
     this.add.rectangle(cx, GAME_HEIGHT / 2, 1500, GAME_HEIGHT - 60, COLORS.uiPanel).setStrokeStyle(4, COLORS.uiAccent);
-    title(this, cx, 70, `${Content.ui('dayDone')} ${GameState.day} — L.P. ${era.year}`, 52);
+    title(this, cx, 70, `${Content.ui('dayDone')} ${GameState.day} - L.P. ${era.year}`, 52);
 
     // statistiky kompaktně
     const s = GameState.stats;
@@ -43,7 +44,7 @@ export class DayEndScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     if (isLast) {
-      // poslední den — žádná legislativa, rovnou konec
+      // poslední den - žádná legislativa, rovnou konec
       const pool = Content.all.infographics.filter((i) => i.kind === 'dayend');
       if (pool.length > 0) {
         this.add
@@ -61,7 +62,7 @@ export class DayEndScene extends Phaser.Scene {
 
     // ---------- legislativní fáze ----------
     const nextDay = GameState.day + 1;
-    // vyhlášky o vousech (3 délky) — nikdy nesmí být v platnosti všechny 3 naráz,
+    // vyhlášky o vousech (3 délky) - nikdy nesmí být v platnosti všechny 3 naráz,
     // jinak by žádná délka vousu nebyla legální. Vždy nech aspoň jednu povolenou:
     // do nabídky pusť tolik vousových vyhlášek, aby ani výběr 2 nedal dohromady 3.
     const BEARD_RULES = new Set(['R23', 'R29', 'R30']);
@@ -83,20 +84,22 @@ export class DayEndScene extends Phaser.Scene {
     this.minPick = Math.min(2, candidates.length); // vybírá se PŘESNĚ 2 (min i max)
 
     this.add
-      .text(cx, 205, Content.ui('legislaTitle'), { fontFamily: FONTS.title, fontSize: '48px', color: '#d4a017' })
+      .text(cx, 196, Content.ui('legislaTitle'), { fontFamily: FONTS.title, fontSize: '48px', color: '#d4a017' })
       .setOrigin(0.5);
-    this.add
-      .text(cx, 250, Content.ui('legislaHint'), {
-        fontFamily: FONTS.doc, fontSize: '25px', color: '#ffb3a7', align: 'center', wordWrap: { width: 1300 },
+    // hint pod hlavičku s mezerou (roste dolů); karty pak začnou až pod ním
+    const hint = this.add
+      .text(cx, 240, Content.ui('legislaHint'), {
+        fontFamily: FONTS.doc, fontSize: '25px', color: '#ffb3a7', align: 'center', wordWrap: { width: 1300 }, lineSpacing: 4,
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5, 0);
 
-    // karty vyhlášek — 2 sloupce
+    // karty vyhlášek - 2 sloupce
     const perRow = 2;
     const cw = 700;
     const gapX = 40;
     const x0 = cx - (perRow * cw + (perRow - 1) * gapX) / 2;
-    let colY = [320, 320];
+    const colY0 = Math.max(320, Math.ceil(hint.y + hint.height + 26));
+    let colY = [colY0, colY0];
     candidates.forEach((r, i) => {
       const col = i % perRow;
       const card = this.makeRuleCard(x0 + col * (cw + gapX), colY[col], cw, r);
@@ -108,7 +111,7 @@ export class DayEndScene extends Phaser.Scene {
       .setOrigin(0.5);
     this.nextBtn = makeButton(this, cx, GAME_HEIGHT - 80, Content.ui('nextDay'), () => {
       if (this.selected.size < this.minPick) return;
-      // vyhlášky se NEuvedou v platnost rovnou — přistanou v šuplíku a hráč je
+      // vyhlášky se NEuvedou v platnost rovnou - přistanou v šuplíku a hráč je
       // musí druhý den aktivně zahrát ze „Podpultových vyhlášek" na rytíře
       for (const id of this.selected) GameState.addPendingRule(id);
       const t = GameState.nextDay();
@@ -118,22 +121,36 @@ export class DayEndScene extends Phaser.Scene {
   }
 
   private makeRuleCard(x: number, y: number, w: number, r: Rule): Phaser.GameObjects.Container {
-    const txt = this.add.text(70, 12, `${L(r.cislo)}: ${L(r.text)}`, {
+    // legendární vyhláška (odemyká univerzální razítko) → oranžový rámeček s hlavičkou
+    const legendary = RuleEngine.isLegendary(r.reasonId);
+    const ORANGE = 0xe07b1a;
+    const headH = legendary ? 36 : 0;
+    const txt = this.add.text(70, 12 + headH, `${L(r.cislo)}: ${L(r.text)}`, {
       fontFamily: FONTS.doc, fontSize: '20px', color: '#1c1a16', wordWrap: { width: w - 100 }, lineSpacing: 2,
     });
-    const h = Math.max(txt.height + 28, 72);
-    const card = this.add.rectangle(0, 0, w, h, 0xe6dcc0).setStrokeStyle(3, 0x8a7a55).setOrigin(0, 0);
-    const check = this.add.rectangle(36, h / 2, 34, 34, 0xf0e6c8).setStrokeStyle(3, 0x7a1f12);
-    const tick = this.add.text(36, h / 2, '✓', { fontFamily: FONTS.ui, fontSize: '28px', color: '#2f7d32' })
+    const contentH = Math.max(txt.height + 28, 72);
+    const h = contentH + headH;
+    const cy = headH + contentH / 2; // střed obsahové části (pod hlavičkou)
+    const card = this.add.rectangle(0, 0, w, h, 0xe6dcc0).setStrokeStyle(legendary ? 4 : 3, legendary ? ORANGE : 0x8a7a55).setOrigin(0, 0);
+    const check = this.add.rectangle(36, cy, 34, 34, 0xf0e6c8).setStrokeStyle(3, 0x7a1f12);
+    const tick = this.add.text(36, cy, '✓', { fontFamily: FONTS.ui, fontSize: '28px', color: '#2f7d32' })
       .setOrigin(0.5).setVisible(false);
-    const c = this.add.container(x, y, [card, txt, check, tick]);
+    const children: Phaser.GameObjects.GameObject[] = [card, txt, check, tick];
+    if (legendary) {
+      const headBar = this.add.rectangle(0, 0, w, headH, ORANGE).setOrigin(0, 0);
+      const headTxt = this.add
+        .text(w / 2, headH / 2, `★ ${Content.ui('rarityLegendary')} ★`, { fontFamily: FONTS.ui, fontSize: '20px', color: '#1c1206' })
+        .setOrigin(0.5);
+      children.push(headBar, headTxt);
+    }
+    const c = this.add.container(x, y, children);
     c.setData('h', h);
     card.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
       if (this.selected.has(r.id)) {
         this.selected.delete(r.id);
         card.setFillStyle(0xe6dcc0); tick.setVisible(false); check.setFillStyle(0xf0e6c8);
       } else {
-        // vybírá se PŘESNĚ 2 — třetí výběr se neumožní
+        // vybírá se PŘESNĚ 2 - třetí výběr se neumožní
         if (this.selected.size >= this.minPick) {
           this.tweens.add({ targets: this.needTxt, scale: 1.2, duration: 80, yoyo: true });
           return;

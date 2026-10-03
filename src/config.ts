@@ -1,14 +1,23 @@
-/** Globální konstanty a ladicí hodnoty — všechno tuning na jednom místě. */
+/** Globální konstanty a ladicí hodnoty - všechno tuning na jednom místě. */
 
 export const GAME_WIDTH = 1920;
 export const GAME_HEIGHT = 1080;
 
+/**
+ * Experiment: vzhled razítka.
+ *  'drawn' = původní kreslené razítko (knoflík + držák + cedulka).
+ *  'image' = obrázek assets/images/pixel_google/stamp_pixel.png (jen ZAMÍTNUTO;
+ *            u SCHVÁLENO se stejně použije kreslené, obrázek pro schválení nemáme).
+ * Přepni sem a zpět podle toho, který se ti bude líbit víc.
+ */
+export const STAMP_STYLE: 'drawn' | 'image' = 'image';
+
 export const FONTS = {
-  /** Psací stroj — texty dokumentů, delší čtení (čitelnost především!) */
+  /** Psací stroj - texty dokumentů, delší čtení (čitelnost především!) */
   doc: '"IBM Plex Mono", monospace',
-  /** UI — tlačítka, popisky, HUD. Sjednoceno na čitelný mono (dřív pixel). */
+  /** UI - tlačítka, popisky, HUD. Sjednoceno na čitelný mono (dřív pixel). */
   ui: '"IBM Plex Mono", monospace',
-  /** Velké nadpisy — pixelová identita (Jersey 10, čitelný pixel font). */
+  /** Velké nadpisy - pixelová identita (Jersey 10, čitelný pixel font). */
   title: '"Jersey 10", "IBM Plex Mono", monospace',
 } as const;
 
@@ -30,14 +39,14 @@ export const COLORS = {
 
 export const TUNING = {
   lives: 3,
-  decrees: 3, // „podpultové vyhlášky" — max 3 na celý run
+  decrees: 3, // „podpultové vyhlášky" - max 3 na celý run
   days: 5,
   /** Trpělivost rytíře na jeden encounter (ms); vyprší => facka */
   patienceMs: 90_000,
   /** Od kolika zbývajících ms začne ukazatel varovně blikat */
   patienceWarnMs: 20_000,
   stamp: {
-    /** Max odchylka otisku od kroužku (stupně) — úředník razítkuje ledabyle, ne přesně */
+    /** Max odchylka otisku od kroužku (stupně) - úředník razítkuje ledabyle, ne přesně */
     angleTolDeg: 32,
     /** Přítlak (ms): pod minimem bledý, nad maximem rozmazaný */
     pressMinMs: 350,

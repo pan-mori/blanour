@@ -5,8 +5,8 @@
       "id": "RZ_KOLEK",
       "ruleRef": "R01",
       "label": {
-        "cs": "Chybějící nebo nedostatečný kolek (30 grošů)",
-        "en": "Missing or insufficient duty stamp (30 groschen)"
+        "cs": "Chybějící nebo nesprávná hodnota kolku",
+        "en": "Missing or incorrect duty-stamp value"
       },
       "category": "poplatek"
     },
@@ -80,8 +80,8 @@
       "id": "RZ_PECET",
       "ruleRef": "R07",
       "label": {
-        "cs": "Listina se zlomenou pečetí — neplatná",
-        "en": "Document with a broken seal — void"
+        "cs": "Listina se zlomenou pečetí - neplatná",
+        "en": "Document with a broken seal - void"
       },
       "category": "pecet"
     },
@@ -200,8 +200,8 @@
       "id": "RZ_LEV_CHYBI",
       "ruleRef": "R14",
       "label": {
-        "cs": "Na štítě chybí lev — zpátky a opravit",
-        "en": "No lion on the shield — go back and fix it"
+        "cs": "Na štítě chybí lev - zpátky a opravit",
+        "en": "No lion on the shield - go back and fix it"
       },
       "itemKeys": [
         "stit"
@@ -237,8 +237,8 @@
       "id": "RZ_VYZBROJ",
       "ruleRef": "R17",
       "label": {
-        "cs": "Neregulérní výzbroj — srp a kladivo nejsou zbraň",
-        "en": "Irregular armament — the sickle and hammer are not weapons"
+        "cs": "Neregulérní výzbroj - srp a kladivo nejsou zbraň",
+        "en": "Irregular armament - the sickle and hammer are not weapons"
       },
       "itemKeys": [
         "srp",
@@ -250,8 +250,8 @@
       "id": "RZ_BOZP",
       "ruleRef": "R18",
       "label": {
-        "cs": "Neúplné OOPP — chybí pracovní obuv (pokuta 500 Kč)",
-        "en": "Incomplete PPE — work boots missing (500 CZK fine)"
+        "cs": "Neúplné OOPP - chybí pracovní obuv (pokuta 500 Kč)",
+        "en": "Incomplete PPE - work boots missing (500 CZK fine)"
       },
       "itemKeys": [
         "vesta",
@@ -273,8 +273,8 @@
       "id": "RZ_ZDRAVY",
       "ruleRef": "R20",
       "label": {
-        "cs": "Způsobilý k výjezdu — způsobilí se šetří (směrnice č. 20)",
-        "en": "Fit to ride out — the fit are to be preserved (Directive No. 20)"
+        "cs": "Způsobilý k výjezdu - způsobilí se šetří (směrnice č. 20)",
+        "en": "Fit to ride out - the fit are to be preserved (Directive No. 20)"
       },
       "category": "papiry",
       "rarity": "legendary"
@@ -284,8 +284,8 @@
       "ruleRef": "R21",
       "category": "chybi",
       "label": {
-        "cs": "Bez zbraně — s čím chce do boje?",
-        "en": "No weapon — what will he fight with?"
+        "cs": "Bez zbraně - s čím chce do boje?",
+        "en": "No weapon - what will he fight with?"
       }
     },
     {
@@ -293,8 +293,8 @@
       "ruleRef": "R21",
       "category": "chybi",
       "label": {
-        "cs": "Bez koně — pěšky na bitvu nedojde",
-        "en": "No horse — he won't walk to the battle"
+        "cs": "Bez koně - pěšky na bitvu nedojde",
+        "en": "No horse - he won't walk to the battle"
       }
     },
     {
@@ -302,8 +302,8 @@
       "ruleRef": "R21",
       "category": "chybi",
       "label": {
-        "cs": "Bez zbroje — padne hned v první řeži",
-        "en": "No armour — he'll fall in the first clash"
+        "cs": "Bez zbroje - padne hned v první řeži",
+        "en": "No armour - he'll fall in the first clash"
       }
     },
     {
@@ -338,8 +338,8 @@
       "ruleRef": "R29",
       "category": "vira",
       "label": {
-        "cs": "Krátký vous — napodobování úřední bradky (zákaz)",
-        "en": "Short beard — imitating the clerk's goatee (forbidden)"
+        "cs": "Krátký vous - napodobování úřední bradky (zákaz)",
+        "en": "Short beard - imitating the clerk's goatee (forbidden)"
       }
     },
     {
@@ -352,12 +352,57 @@
       }
     },
     {
+      "id": "RZ_HANA_KNIZE",
+      "ruleRef": "R31",
+      "category": "vira",
+      "label": {
+        "cs": "Hanobení knížete v ústním projevu",
+        "en": "Disparaging the prince aloud"
+      }
+    },
+    {
+      "id": "RZ_DUVOD",
+      "ruleRef": "R32",
+      "category": "papiry",
+      "label": {
+        "cs": "Důvod výjezdu se neslučuje s vyhláškou",
+        "en": "Departure reason conflicts with the decree"
+      }
+    },
+    {
+      "id": "RZ_KOPYTO",
+      "ruleRef": "R33",
+      "category": "papiry",
+      "label": {
+        "cs": "Souhlas koně podepsán kopytem (neplatný podpis)",
+        "en": "Horse's consent signed with a hoof (invalid signature)"
+      }
+    },
+    {
+      "id": "RZ_PRILOHA",
+      "ruleRef": "R34",
+      "category": "papiry",
+      "label": {
+        "cs": "Chybí doložená příloha (odkaz na nepřiložený dokument)",
+        "en": "Cited attachment not enclosed (reference to a missing document)"
+      }
+    },
+    {
+      "id": "RZ_KONVERZE",
+      "ruleRef": "R35",
+      "category": "papiry",
+      "label": {
+        "cs": "Výtisk z datové schránky bez autorizované konverze (pouhá kopie)",
+        "en": "Data-box printout without authorized conversion (a mere copy)"
+      }
+    },
+    {
       "id": "RZ_BRYLE",
       "ruleRef": "R24",
       "category": "papiry",
       "label": {
-        "cs": "Brejle — kdo čtyři oči má, dvakrát čte vyhlášky a dvakrát pochybuje",
-        "en": "Spectacles — four eyes read the decrees twice and doubt them twice"
+        "cs": "Brejle - kdo čtyři oči má, dvakrát čte vyhlášky a dvakrát pochybuje",
+        "en": "Spectacles - four eyes read the decrees twice and doubt them twice"
       }
     },
     {

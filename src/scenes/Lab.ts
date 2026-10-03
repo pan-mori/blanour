@@ -8,7 +8,7 @@ import { drawOfficeBackdrop } from '../ui/Backdrop';
 import { makeButton } from '../ui/helpers';
 
 /**
- * DEBUG LAB — samostatné spouštění jednotlivých miniher mimo běh hry.
+ * DEBUG LAB - samostatné spouštění jednotlivých miniher mimo běh hry.
  * Dostupné z hlavního menu (tlačítko s broučkem vlevo dole). Každou minihru
  * lze otestovat izolovaně: razítkování, vosková pečeť, rozvázání provázku.
  */
@@ -48,7 +48,7 @@ export class LabScene extends Phaser.Scene {
     this.cleanup();
     const cx = GAME_WIDTH / 2;
     const head = this.add
-      .text(cx, 140, 'DEBUG — MINIHRY', { fontFamily: FONTS.title, fontSize: '74px', color: '#d4a017' })
+      .text(cx, 140, 'DEBUG - MINIHRY', { fontFamily: FONTS.title, fontSize: '74px', color: '#d4a017' })
       .setOrigin(0.5);
     const sub = this.add
       .text(cx, 210, 'Vyber minihru a vyzkoušej ji izolovaně.', {
@@ -58,10 +58,10 @@ export class LabScene extends Phaser.Scene {
     this.ui.add([head, sub]);
 
     const games: Array<[string, () => void]> = [
-      ['① Razítko — ZAMÍTNUTO', () => this.runStamp('reject', false)],
-      ['② Razítko — SCHVÁLENO', () => this.runStamp('approve', false)],
+      ['① Razítko - ZAMÍTNUTO', () => this.runStamp('reject', false)],
+      ['② Razítko - SCHVÁLENO', () => this.runStamp('approve', false)],
       ['③ Vosková pečeť + razítko', () => this.runStamp('reject', true)],
-      ['④ Provázek — rozvázání balíku', () => this.runWrap()],
+      ['④ Provázek - rozvázání balíku', () => this.runWrap()],
       [Content.ui('labRulesTest'), () => this.showRulesTest()],
     ];
     let y = 300;
@@ -98,7 +98,7 @@ export class LabScene extends Phaser.Scene {
 
   private runStamp(decision: StampDecision, wax: boolean): void {
     this.cleanup();
-    this.addLabHeader(wax ? 'Vosková pečeť + razítko' : decision === 'reject' ? 'Razítko — ZAMÍTNUTO' : 'Razítko — SCHVÁLENO');
+    this.addLabHeader(wax ? 'Vosková pečeť + razítko' : decision === 'reject' ? 'Razítko - ZAMÍTNUTO' : 'Razítko - SCHVÁLENO');
 
     const w = 640;
     const h = 560;
@@ -120,7 +120,7 @@ export class LabScene extends Phaser.Scene {
       wax,
       recap,
       paragraph,
-      (r) => this.showResult(`✓ Hotovo — kvalita otisku: ${r.quality}`, () => this.runStamp(decision, wax)),
+      (r) => this.showResult(`✓ Hotovo - kvalita otisku: ${r.quality}`, () => this.runStamp(decision, wax)),
       () => this.showMenu(),
     );
   }
@@ -167,7 +167,7 @@ export class LabScene extends Phaser.Scene {
 
   private runWrap(): void {
     this.cleanup();
-    this.addLabHeader('Provázek — rozvázání balíku');
+    this.addLabHeader('Provázek - rozvázání balíku');
     const w = 560;
     const h = 460;
     const x = GAME_WIDTH / 2 - w / 2;

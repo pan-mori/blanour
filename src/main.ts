@@ -10,6 +10,7 @@ import { GAME_HEIGHT, GAME_WIDTH } from './config';
 import { BootScene } from './scenes/Boot';
 import { PreloadScene } from './scenes/Preload';
 import { MenuScene } from './scenes/Menu';
+import { IntroScene } from './scenes/Intro';
 import { NewspaperScene } from './scenes/Newspaper';
 import { OfficeScene } from './scenes/Office';
 import { DayEndScene } from './scenes/DayEnd';
@@ -20,7 +21,7 @@ import { installAutoTest } from './debug/autotest';
 const params = new URLSearchParams(location.search);
 
 const game = new Phaser.Game({
-  // ?renderer=canvas — nouzovka pro prostředí s rozbitým WebGL
+  // ?renderer=canvas - nouzovka pro prostředí s rozbitým WebGL
   type: params.get('renderer') === 'canvas' ? Phaser.CANVAS : Phaser.AUTO,
   parent: 'game',
   width: GAME_WIDTH,
@@ -32,7 +33,7 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, PreloadScene, MenuScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene, LabScene],
+  scene: [BootScene, PreloadScene, MenuScene, IntroScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene, LabScene],
 });
 
 // Debug/test hák: ?shot=nazev&wait=4500 → po čekání POSTne PNG snímek hry

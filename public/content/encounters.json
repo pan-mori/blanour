@@ -159,7 +159,7 @@
             "jmeno": "Radslav Spěchal",
             "duvod": "spěchá to",
             "formular": "B-1448",
-            "kolek": "—"
+            "kolek": "-"
           }
         }
       ],
@@ -248,8 +248,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Meč, pánev — v boji je to jedno. Hlavně že je revoluce!",
-          "en": "Sword, frying pan — same thing in battle. The revolution is what matters!"
+          "cs": "Meč, pánev - v boji je to jedno. Hlavně že je revoluce!",
+          "en": "Sword, frying pan - same thing in battle. The revolution is what matters!"
         }
       },
       "documents": [
@@ -277,8 +277,8 @@
           "doc": "vystroj",
           "field": "polozky",
           "hint": {
-            "cs": "List deklaruje meč a bílého koně — na sobě má pánev a koně hnědého.",
-            "en": "Manifest declares a sword and a white steed — he carries a frying pan and rides a brown one."
+            "cs": "List deklaruje meč a bílého koně - na sobě má pánev a koně hnědého.",
+            "en": "Manifest declares a sword and a white steed - he carries a frying pan and rides a brown one."
           }
         }
       ]
@@ -353,7 +353,7 @@
           "kopí sv. Václava",
           "svatozář",
           "kůň bílý (Ardo)",
-          "štít se stříbrnou orlicí"
+          "štít s plamennou orlicí (černá)"
         ],
         "intro": {
           "cs": "Synu. Pět set let čekám. Papíry mám v pořádku. Já vím, že ty to víš.",
@@ -378,7 +378,38 @@
           }
         }
       ],
-      "flaws": [],
+      "flaws": [
+        {
+          "reasonId": "RZ_KOPYTO",
+          "ruleRef": "R33",
+          "doc": "gdpr",
+          "field": "souhlas",
+          "hint": {
+            "cs": "Souhlas „ANO (kopytem)“ - kůň Ardo není svéprávná osoba, podpis je neplatný.",
+            "en": "Consent \"YES (by hoof)\" - the horse Ardo is not a competent person, the signature is void."
+          }
+        },
+        {
+          "reasonId": "RZ_PRILOHA",
+          "ruleRef": "R34",
+          "doc": "zadost_dat",
+          "field": "duvod",
+          "hint": {
+            "cs": "Žádost se odvolává na přílohu „500 let čekání, PDF/A“, ta ale fyzicky chybí.",
+            "en": "The application cites an attachment \"500 years of waiting, PDF/A\" that is not actually enclosed."
+          }
+        },
+        {
+          "reasonId": "RZ_KONVERZE",
+          "ruleRef": "R35",
+          "doc": "zadost_dat",
+          "field": "formular",
+          "hint": {
+            "cs": "E-žádost je „výtisk z datové schránky“ bez doložky o autorizované konverzi - jen kopie.",
+            "en": "The e-application is a \"data-box printout\" without an authorized-conversion clause - only a copy."
+          }
+        }
+      ],
       "outcomes": {
         "rejectBad": {
           "cs": "Václav mlčí. Facka od světce bolí dvojnásob.",
@@ -412,7 +443,7 @@
           "template": "zadost",
           "fields": {
             "jmeno": "Jaroslav ze Lhoty",
-            "duvod": "pivo dražší než oves — znamení konce",
+            "duvod": "pivo dražší než oves - znamení konce",
             "formular": "B-1448b (koncept)",
             "kolek": "30"
           }
@@ -460,8 +491,8 @@
           "přilba"
         ],
         "intro": {
-          "cs": "Dvě hodiny na Bílé hoře, pravili, a tři sta let na úřadech. Nuže — já raději vyjedu hned, pane písaři.",
-          "en": "Two hours at White Mountain, they said, and three hundred years at the offices. So — I'd rather ride out now, master scribe."
+          "cs": "Dvě hodiny na Bílé hoře, pravili, a tři sta let na úřadech. Nuže - já raději vyjedu hned, pane písaři.",
+          "en": "Two hours at White Mountain, they said, and three hundred years at the offices. So - I'd rather ride out now, master scribe."
         }
       },
       "documents": [
@@ -511,8 +542,8 @@
           "mošna s listinami"
         ],
         "intro": {
-          "cs": "Nejhorší časy, pane! I zimní král si prý hledá letní brigádu. Pečeti vezu v mošně — cestou se nic nestalo. Skoro nic.",
-          "en": "The worst of times, sir! Even the Winter King is said to be seeking a summer job. My seals are in the satchel — nothing happened on the way. Almost nothing."
+          "cs": "Nejhorší časy, pane! I zimní král si prý hledá letní brigádu. Pečeti vezu v mošně - cestou se nic nestalo. Skoro nic.",
+          "en": "The worst of times, sir! Even the Winter King is said to be seeking a summer job. My seals are in the satchel - nothing happened on the way. Almost nothing."
         }
       },
       "documents": [
@@ -572,8 +603,8 @@
           "kůň bílý"
         ],
         "intro": {
-          "cs": "Berou nám víru i noviny, dvakrát cenzurované. Toto jest jistě nejhorší hodina národa — pusťte mne, než ji přeloží do němčiny.",
-          "en": "They take our faith and our newspapers, censored twice over. Surely this is the nation's darkest hour — let me out before they translate it into German."
+          "cs": "Berou nám víru i noviny, dvakrát cenzurované. Toto jest jistě nejhorší hodina národa - pusťte mne, než ji přeloží do němčiny.",
+          "en": "They take our faith and our newspapers, censored twice over. Surely this is the nation's darkest hour - let me out before they translate it into German."
         }
       },
       "documents": [
@@ -603,8 +634,8 @@
           "doc": "vira",
           "field": "vyznani",
           "hint": {
-            "cs": "Osvědčení zní na víru podobojí. Patent žádá víru osvědčenou konzistoří — a konzistoř podobojí nepočítá.",
-            "en": "The certificate attests to faith in both kinds. The patent demands faith certified by the consistory — and the consistory counts both kinds as neither."
+            "cs": "Osvědčení zní na víru podobojí. Patent žádá víru osvědčenou konzistoří - a konzistoř podobojí nepočítá.",
+            "en": "The certificate attests to faith in both kinds. The patent demands faith certified by the consistory - and the consistory counts both kinds as neither."
           }
         }
       ],
@@ -696,8 +727,8 @@
           "kůň vraný"
         ],
         "intro": {
-          "cs": "Konstituce, pane úředníku! Četl jste? Revoluce odložena na po obědě — vyjedeme-li hned, stihneme ji právě včas!",
-          "en": "The Constitution, dear clerk! Have you read it? The revolution is postponed until after lunch — if we ride out now, we'll be right on time!"
+          "cs": "Konstituce, pane úředníku! Četl jste? Revoluce odložena na po obědě - vyjedeme-li hned, stihneme ji právě včas!",
+          "en": "The Constitution, dear clerk! Have you read it? The revolution is postponed until after lunch - if we ride out now, we'll be right on time!"
         }
       },
       "documents": [
@@ -792,7 +823,7 @@
       "outcomes": {
         "rejectOk": {
           "cs": "„Za svobodu bych položil život! Ale tři zlatky, to je moc.“",
-          "en": "\"For freedom I'd lay down my life! But three gulden — that's too much.\""
+          "en": "\"For freedom I'd lay down my life! But three gulden - that's too much.\""
         }
       }
     },
@@ -846,7 +877,7 @@
           "field": "polozky",
           "hint": {
             "cs": "List deklaruje kokardu červenobílou. Na prsou má černožlutou, barvy císařské.",
-            "en": "The manifest declares a red-and-white cockade. On his chest sits a black-and-yellow one — the Emperor's colours."
+            "en": "The manifest declares a red-and-white cockade. On his chest sits a black-and-yellow one - the Emperor's colours."
           }
         }
       ],
@@ -873,8 +904,8 @@
           "kůň vraný"
         ],
         "intro": {
-          "cs": "Tisk žádá svobodu a národ formulář! Já mám rovnou petici — tři sta podpisů, pane, z toho dvě stě čitelných!",
-          "en": "The press demands freedom and the nation a form! I've gone and brought a petition — three hundred signatures, sir, two hundred of them legible!"
+          "cs": "Tisk žádá svobodu a národ formulář! Já mám rovnou petici - tři sta podpisů, pane, z toho dvě stě čitelných!",
+          "en": "The press demands freedom and the nation a form! I've gone and brought a petition - three hundred signatures, sir, two hundred of them legible!"
         }
       },
       "documents": [
@@ -942,7 +973,7 @@
           "template": "dolozka",
           "fields": {
             "drzitel": "Antonín Vzorný",
-            "vybor": "POTVRZENO — uliční výbor sluje č. 3"
+            "vybor": "POTVRZENO - uliční výbor sluje č. 3"
           },
           "seal": "pecet_vybor"
         },
@@ -1014,15 +1045,15 @@
           "doc": "posudek",
           "field": "vyhotoven",
           "hint": {
-            "cs": "Posudek vyhotoven v únoru 1948 — starší třiceti dnů.",
-            "en": "Assessment drawn up in February 1948 — older than thirty days."
+            "cs": "Posudek vyhotoven v únoru 1948 - starší třiceti dnů.",
+            "en": "Assessment drawn up in February 1948 - older than thirty days."
           }
         }
       ],
       "outcomes": {
         "rejectOk": {
           "cs": "„Starší třiceti dnů, ale zato z měsíce, který komise dodnes doporučuje.“",
-          "en": "\"Older than thirty days, yes — but from a month the committee recommends to this day.\""
+          "en": "\"Older than thirty days, yes - but from a month the committee recommends to this day.\""
         }
       }
     },
@@ -1045,8 +1076,8 @@
           "kůň vraný"
         ],
         "intro": {
-          "cs": "Prý kdo nic nedělá, nic nezkazí — a dostane metál. Já chci aspoň vyjet na pole. S vlastním koněm, když dovolíte.",
-          "en": "They say he who does nothing spoils nothing — and gets a medal. I just want to ride out to my field. On my own horse, if you please."
+          "cs": "Prý kdo nic nedělá, nic nezkazí - a dostane metál. Já chci aspoň vyjet na pole. S vlastním koněm, když dovolíte.",
+          "en": "They say he who does nothing spoils nothing - and gets a medal. I just want to ride out to my field. On my own horse, if you please."
         }
       },
       "documents": [
@@ -1106,8 +1137,8 @@
           "kůň bílý"
         ],
         "intro": {
-          "cs": "Váš uliční výbor úřaduje jen v úterý za lichého úplňku. Tak jsem zašel na Říp — tam měli otevřeno.",
-          "en": "Your street committee only sits on Tuesdays, during odd-numbered full moons. So I popped over to Mount Říp — they were open."
+          "cs": "Váš uliční výbor úřaduje jen v úterý za lichého úplňku. Tak jsem zašel na Říp - tam měli otevřeno.",
+          "en": "Your street committee only sits on Tuesdays, during odd-numbered full moons. So I popped over to Mount Říp - they were open."
         }
       },
       "documents": [
@@ -1124,7 +1155,7 @@
           "template": "dolozka",
           "fields": {
             "drzitel": "Řehoř",
-            "vybor": "POTVRZENO — uliční výbor hory Říp"
+            "vybor": "POTVRZENO - uliční výbor hory Říp"
           }
         }
       ],
@@ -1143,7 +1174,7 @@
       "outcomes": {
         "rejectOk": {
           "cs": "„Tak to je poprvé, co někomu vadí, že praotec Čech něco orazítkoval.“",
-          "en": "\"Well, that's a first — someone objecting to Forefather Czech stamping something.\""
+          "en": "\"Well, that's a first - someone objecting to Forefather Czech stamping something.\""
         }
       }
     },
@@ -1166,8 +1197,8 @@
           "notebook"
         ],
         "intro": {
-          "cs": "Dálnice je dokončená! Teda od pondělka v opravě, ale vede okolo objížďka. Národu je nejhůř — teď, nebo nikdy!",
-          "en": "The motorway is finished! Well, under repair from Monday, but there's a detour around it. The nation's darkest hour — now or never!"
+          "cs": "Dálnice je dokončená! Teda od pondělka v opravě, ale vede okolo objížďka. Národu je nejhůř - teď, nebo nikdy!",
+          "en": "The motorway is finished! Well, under repair from Monday, but there's a detour around it. The nation's darkest hour - now or never!"
         }
       },
       "documents": [
@@ -1185,7 +1216,7 @@
           "fields": {
             "odesilatel": "Ing. Květoslav, rytíř",
             "id_zpravy": "DZ-000001",
-            "stav": "NEDORUČENO — v hoře není signál"
+            "stav": "NEDORUČENO - v hoře není signál"
           }
         }
       ],
@@ -1264,7 +1295,7 @@
           "field": "emisni_trida",
           "hint": {
             "cs": "Kůň zařazen do emisní třídy G. Bez zelené plakety, která se nevydává, nevyjede.",
-            "en": "The horse is rated emission class G. Without the green sticker — which is not issued — it stays in."
+            "en": "The horse is rated emission class G. Without the green sticker - which is not issued - it stays in."
           }
         }
       ],
@@ -1351,8 +1382,8 @@
           "plnovous upravený"
         ],
         "intro": {
-          "cs": "Devět z deseti rytířů vyhořelo z nevyhoření — já jsem ten desátý a streamuju to. Čekání u přepážky, díl čtyřicátý třetí. Pozdravte diváky.",
-          "en": "Nine in ten knights burned out from never riding out — I'm the tenth, and I'm streaming it. Waiting at the Counter, episode forty-three. Say hi to the viewers."
+          "cs": "Devět z deseti rytířů vyhořelo z nevyhoření - já jsem ten desátý a streamuju to. Čekání u přepážky, díl čtyřicátý třetí. Pozdravte diváky.",
+          "en": "Nine in ten knights burned out from never riding out - I'm the tenth, and I'm streaming it. Waiting at the Counter, episode forty-three. Say hi to the viewers."
         }
       },
       "documents": [
@@ -1370,7 +1401,7 @@
           "fields": {
             "odesilatel": "Radim, rytíř a obsahový tvůrce",
             "id_zpravy": "DZ-734562",
-            "stav": "DORUČENO — fikcí, po 10 dnech"
+            "stav": "DORUČENO - fikcí, po 10 dnech"
           }
         },
         {
@@ -1385,7 +1416,7 @@
       "outcomes": {
         "rejectBad": {
           "cs": "„A máme to na záznamu, přátelé. Úřad versus národ, lajk a odběr.“ Zamítnutí má do večera milion zhlédnutí.",
-          "en": "\"And it's all on camera, folks. The Office versus the Nation — like and subscribe.\" The rejection hits a million views by nightfall."
+          "en": "\"And it's all on camera, folks. The Office versus the Nation - like and subscribe.\" The rejection hits a million views by nightfall."
         }
       }
     },
@@ -1646,7 +1677,7 @@
         ],
         "intro": {
           "cs": "Přijela rudá armáda, tak jsem se převlíkl! Meč jsem zakopal, srp a kladivo je teď moje výzbroj. Hlavně rychle, než si někdo všimne, kde jsem ho zakopal.",
-          "en": "The Red Army rolled in, so I changed outfits! Buried the sword — the sickle and hammer are my armament now. Quickly, before anyone notices where I buried it."
+          "en": "The Red Army rolled in, so I changed outfits! Buried the sword - the sickle and hammer are my armament now. Quickly, before anyone notices where I buried it."
         }
       },
       "documents": [
@@ -1675,14 +1706,14 @@
           "field": "polozky",
           "hint": {
             "cs": "V rukou srp a kladivo. Dle směrnice č. 17/1952 nástroje budovatelské, nikoliv výzbroj rytířská.",
-            "en": "A sickle and hammer in hand. Per Directive No. 17/1952, tools of construction — not knightly armament."
+            "en": "A sickle and hammer in hand. Per Directive No. 17/1952, tools of construction - not knightly armament."
           }
         }
       ],
       "outcomes": {
         "rejectOk": {
-          "cs": "„Neregulérní výzbroj. Šupej se převliknout, rytíři — takhle bys vyjel za špatnou stranu.“",
-          "en": "\"Irregular armament. Hop to it and change, knight — dressed like that, you'd ride out for the wrong side.\""
+          "cs": "„Neregulérní výzbroj. Šupej se převliknout, rytíři - takhle bys vyjel za špatnou stranu.“",
+          "en": "\"Irregular armament. Hop to it and change, knight - dressed like that, you'd ride out for the wrong side.\""
         },
         "rejectBad": {
           "cs": "„Já věděl, že ta hvězda je málo! Měl jsem přimalovat dvě!“",
@@ -1726,7 +1757,7 @@
           "template": "vystroj",
           "fields": {
             "polozky": "meč krátký, přilba EN 397, reflexní vesta, obuv S3 s ocelovou špičkou",
-            "kun": "—"
+            "kun": "-"
           }
         }
       ],
@@ -1744,8 +1775,8 @@
       ],
       "outcomes": {
         "rejectOk": {
-          "cs": "„Helma je, vesta je — a kde máte BOTY?! Máte to za pět stovek.“ Patrik si to zapíše do registru rizik.",
-          "en": "\"Helmet's on, vest's on — and where are your BOOTS?! That'll be five hundred.\" Patrik logs it in the risk register."
+          "cs": "„Helma je, vesta je - a kde máte BOTY?! Máte to za pět stovek.“ Patrik si to zapíše do registru rizik.",
+          "en": "\"Helmet's on, vest's on - and where are your BOOTS?! That'll be five hundred.\" Patrik logs it in the risk register."
         }
       }
     },
@@ -1787,7 +1818,7 @@
           "fields": {
             "zbran": "meč dlouhý (115 cm)",
             "ukovano": "l. P. 1398",
-            "stav": "V ŘÍZENÍ — fronta u cechu od r. 1399"
+            "stav": "V ŘÍZENÍ - fronta u cechu od r. 1399"
           }
         }
       ],
@@ -1798,8 +1829,8 @@
           "doc": "bakh",
           "field": "stav",
           "hint": {
-            "cs": "Meč ukován l. P. 1398 — před rokem 1400. Atest BAKH v řízení není atest vydaný.",
-            "en": "The sword was forged A.D. 1398 — before the year 1400. A BAKH attestation in progress is not an attestation issued."
+            "cs": "Meč ukován l. P. 1398 - před rokem 1400. Atest BAKH v řízení není atest vydaný.",
+            "en": "The sword was forged A.D. 1398 - before the year 1400. A BAKH attestation in progress is not an attestation issued."
           }
         }
       ],
@@ -1829,7 +1860,7 @@
         ],
         "intro": {
           "cs": "Emisní kontrola? Prošla… skoro. A STK? Kůň je veterán, na veterány se STK nevztahuje! …nebo jo?",
-          "en": "Emissions test? Passed… almost. And the roadworthiness test? The horse is a veteran — veterans are exempt! …aren't they?"
+          "en": "Emissions test? Passed… almost. And the roadworthiness test? The horse is a veteran - veterans are exempt! …aren't they?"
         }
       },
       "documents": [
@@ -1859,7 +1890,7 @@
           "field": "emisni_trida",
           "hint": {
             "cs": "Emisní třída F, horší než E. Zelená plaketa se nevydává, tudíž ji kůň nemá.",
-            "en": "Emission class F — worse than E. The green sticker is not issued; therefore the horse does not have one."
+            "en": "Emission class F - worse than E. The green sticker is not issued; therefore the horse does not have one."
           }
         }
       ],
@@ -1889,8 +1920,8 @@
           "kůň vraný (klape na půl míle)"
         ],
         "intro": {
-          "cs": "To klapání? To je rytmus doby, pane písaři! Kůň má krok jako zvon — zvon je taky slyšet, a nikdo ho nezamítá!",
-          "en": "That clatter? That's the rhythm of the age, master scribe! The horse steps like a bell — bells are loud too, and nobody rejects a bell!"
+          "cs": "To klapání? To je rytmus doby, pane písaři! Kůň má krok jako zvon - zvon je taky slyšet, a nikdo ho nezamítá!",
+          "en": "That clatter? That's the rhythm of the age, master scribe! The horse steps like a bell - bells are loud too, and nobody rejects a bell!"
         }
       },
       "documents": [
@@ -1906,7 +1937,7 @@
         {
           "template": "vystroj",
           "fields": {
-            "polozky": "kopí, přilba, podkovy — cejch cechu l. P. 1446 (propadlý)",
+            "polozky": "kopí, přilba, podkovy - cejch cechu l. P. 1446 (propadlý)",
             "kun": "vraný"
           }
         }
@@ -1947,8 +1978,8 @@
           "přilba po dědovi"
         ],
         "intro": {
-          "cs": "Přilbu mám po dědovi z východní fronty — prý nosí smůlu, ale hlavu mám zdravou jako řípa! Komise mi způsobilost potvrdila písemně.",
-          "en": "The helmet's from my grandfather, from the eastern front — they say it brings bad luck, but my head is sound as a bell! The committee certified my fitness in writing."
+          "cs": "Přilbu mám po dědovi z východní fronty - prý nosí smůlu, ale hlavu mám zdravou jako řípa! Komise mi způsobilost potvrdila písemně.",
+          "en": "The helmet's from my grandfather, from the eastern front - they say it brings bad luck, but my head is sound as a bell! The committee certified my fitness in writing."
         }
       },
       "documents": [
@@ -1985,8 +2016,8 @@
       ],
       "outcomes": {
         "rejectOk": {
-          "cs": "„Zdráv a způsobilý — tedy zůstáváte, soudruhu. Kdybyste byl blázen, nesmíte. Takhle nesmíte tím spíš.“",
-          "en": "\"Healthy and fit — so you stay, comrade. If you were mad, you couldn't go. Being sane, you can go even less.\""
+          "cs": "„Zdráv a způsobilý - tedy zůstáváte, soudruhu. Kdybyste byl blázen, nesmíte. Takhle nesmíte tím spíš.“",
+          "en": "\"Healthy and fit - so you stay, comrade. If you were mad, you couldn't go. Being sane, you can go even less.\""
         },
         "rejectBad": {
           "cs": "„Dědova přilba! Já věděl, že nosí smůlu!“ Facka zazvoní o přilbu, až to slyší celá sluj.",
@@ -2012,8 +2043,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Meč? Ten jsem nechal doma na stole, pane písaři. Nabrousím ho cestou — do bitvy je daleko a brousek najdu všude.",
-          "en": "Sword? Left it at home on the table, master scribe. I'll sharpen it on the way — the battle's a long ride off and there's a whetstone everywhere."
+          "cs": "Meč? Ten jsem nechal doma na stole, pane písaři. Nabrousím ho cestou - do bitvy je daleko a brousek najdu všude.",
+          "en": "Sword? Left it at home on the table, master scribe. I'll sharpen it on the way - the battle's a long ride off and there's a whetstone everywhere."
         }
       },
       "documents": [
@@ -2029,7 +2060,7 @@
         {
           "template": "vystroj",
           "fields": {
-            "polozky": "přilba, štít; zbraň: — (doma, k nabroušení)",
+            "polozky": "přilba, štít; zbraň: - (doma, k nabroušení)",
             "kun": "hnědý"
           }
         }
@@ -2039,8 +2070,8 @@
           "reasonId": "RZ_CHYBI_ZBRAN",
           "ruleRef": "R21",
           "hint": {
-            "cs": "Rytíř nemá žádnou zbraň — ani na stole, ani na výstrojním listu. Vyhláška č. 21/1448 žádá alespoň jednu.",
-            "en": "The knight bears no weapon — none on the desk, none on the manifest. Decree No. 21/1448 demands at least one."
+            "cs": "Rytíř nemá žádnou zbraň - ani na stole, ani na výstrojním listu. Vyhláška č. 21/1448 žádá alespoň jednu.",
+            "en": "The knight bears no weapon - none on the desk, none on the manifest. Decree No. 21/1448 demands at least one."
           }
         }
       ],
@@ -2071,8 +2102,8 @@
           "sedlo"
         ],
         "intro": {
-          "cs": "Kůň přijde za chvíli, šel se napást. Sedlo mám s sebou, to je to hlavní — kůň je jen to, co se pod sedlo přidělá.",
-          "en": "The horse will be along shortly, he's gone to graze. I've got the saddle with me, that's the main thing — a horse is just what you fasten under a saddle."
+          "cs": "Kůň přijde za chvíli, šel se napást. Sedlo mám s sebou, to je to hlavní - kůň je jen to, co se pod sedlo přidělá.",
+          "en": "The horse will be along shortly, he's gone to graze. I've got the saddle with me, that's the main thing - a horse is just what you fasten under a saddle."
         }
       },
       "documents": [
@@ -2089,7 +2120,7 @@
           "template": "vystroj",
           "fields": {
             "polozky": "meč krátký (95 cm), přilba, štít, sedlo",
-            "kun": "— (šel se napást)"
+            "kun": "- (šel se napást)"
           }
         }
       ],
@@ -2129,8 +2160,8 @@
           "kabátec sváteční"
         ],
         "intro": {
-          "cs": "Zbroj? Zbroj je těžká, pane, a venku je horko. V bitvě se stejně nejvíc běhá — a kdo běží rychle, toho nikdo neseká.",
-          "en": "Armour? Armour is heavy, sir, and it's hot outside. Battles are mostly running anyway — and nobody hacks at a man who runs fast."
+          "cs": "Zbroj? Zbroj je těžká, pane, a venku je horko. V bitvě se stejně nejvíc běhá - a kdo běží rychle, toho nikdo neseká.",
+          "en": "Armour? Armour is heavy, sir, and it's hot outside. Battles are mostly running anyway - and nobody hacks at a man who runs fast."
         }
       },
       "documents": [
@@ -2156,8 +2187,8 @@
           "reasonId": "RZ_CHYBI_ZBROJ",
           "ruleRef": "R21",
           "hint": {
-            "cs": "Na rytíři ani kus zbroje — přilba žádná, štít žádný, plát žádný. Vyhláška č. 21/1448 žádá alespoň jeden.",
-            "en": "Not a single piece of armour on the knight — no helmet, no shield, no plate. Decree No. 21/1448 demands at least one."
+            "cs": "Na rytíři ani kus zbroje - přilba žádná, štít žádný, plát žádný. Vyhláška č. 21/1448 žádá alespoň jeden.",
+            "en": "Not a single piece of armour on the knight - no helmet, no shield, no plate. Decree No. 21/1448 demands at least one."
           }
         }
       ],
@@ -2189,7 +2220,7 @@
         ],
         "intro": {
           "cs": "Katolík jsem, od úterka, a mám to písemně! Ten kalich na varkoči? To je pohár. Na víno. Vždyť i vy, pane, si občas přihnete.",
-          "en": "I'm a Catholic — since Tuesday — and I have it in writing! The chalice on the tabard? That's a goblet. For wine. Even you take a drink now and then, sir."
+          "en": "I'm a Catholic - since Tuesday - and I have it in writing! The chalice on the tabard? That's a goblet. For wine. Even you take a drink now and then, sir."
         }
       },
       "documents": [
@@ -2250,8 +2281,8 @@
           "kůň bílý"
         ],
         "intro": {
-          "cs": "Růženec? Měl jsem, posvěcený! Prohrál jsem ho v kostky s jedním jezuitou. Ale víru mám — tu vám nikdo neprohraje.",
-          "en": "Rosary? I had one, blessed and all! Lost it at dice to a Jesuit. But I still have my faith — nobody can gamble that away for you."
+          "cs": "Růženec? Měl jsem, posvěcený! Prohrál jsem ho v kostky s jedním jezuitou. Ale víru mám - tu vám nikdo neprohraje.",
+          "en": "Rosary? I had one, blessed and all! Lost it at dice to a Jesuit. But I still have my faith - nobody can gamble that away for you."
         }
       },
       "documents": [
@@ -2279,8 +2310,8 @@
           "reasonId": "RZ_RUZENEC_CHYBI",
           "ruleRef": "R22",
           "hint": {
-            "cs": "Patent č. 22/1620 žádá růženec posvěcený. Rytíř nemá žádný — ani neposvěcený. Jezuita ho nevrátí.",
-            "en": "Imperial Patent No. 22/1620 demands a blessed rosary. The knight has none — not even an unblessed one. The Jesuit won't give it back."
+            "cs": "Patent č. 22/1620 žádá růženec posvěcený. Rytíř nemá žádný - ani neposvěcený. Jezuita ho nevrátí.",
+            "en": "Imperial Patent No. 22/1620 demands a blessed rosary. The knight has none - not even an unblessed one. The Jesuit won't give it back."
           }
         }
       ],
@@ -2368,8 +2399,8 @@
           "kůň vraný"
         ],
         "intro": {
-          "cs": "Luk, sekera, dýka, palcát — kdo má víc zbraní, má víc práva vyjet! Meč? Sto devatenáct centimetrů, měřeno od jílce. Jílec se nepočítá, jílcem se neseká.",
-          "en": "Bow, axe, dagger, mace — the more weapons a man has, the more right he has to ride out! The sword? One hundred and nineteen centimetres, measured from the hilt. The hilt doesn't count — you don't cut with the hilt."
+          "cs": "Luk, sekera, dýka, palcát - kdo má víc zbraní, má víc práva vyjet! Meč? Sto devatenáct centimetrů, měřeno od jílce. Jílec se nepočítá, jílcem se neseká.",
+          "en": "Bow, axe, dagger, mace - the more weapons a man has, the more right he has to ride out! The sword? One hundred and nineteen centimetres, measured from the hilt. The hilt doesn't count - you don't cut with the hilt."
         }
       },
       "documents": [
@@ -2398,8 +2429,8 @@
           "doc": "zbrojak",
           "field": "zbran",
           "hint": {
-            "cs": "Průkaz kat. H zní na meč o 119 cm. Na stole leží meč o 130 cm. Jedenáct centimetrů bez průkazu — a jílec se počítá.",
-            "en": "The category H permit covers a 119 cm sword. The sword on the desk is 130 cm. Eleven centimetres without a permit — and the hilt does count."
+            "cs": "Průkaz kat. H zní na meč o 119 cm. Na stole leží meč o 130 cm. Jedenáct centimetrů bez průkazu - a jílec se počítá.",
+            "en": "The category H permit covers a 119 cm sword. The sword on the desk is 130 cm. Eleven centimetres without a permit - and the hilt does count."
           }
         }
       ],
@@ -2431,8 +2462,8 @@
           "kůň bílý"
         ],
         "intro": {
-          "cs": "Praporec za národ, korouhev za zemi, brnění pro jistotu. Výstrojní list sepsán do posledního hřebu — počítejte, pane, mám čas. Revoluce je přece odložena na po obědě.",
-          "en": "A banner for the nation, a standard for the land, plate armour just in case. The manifest lists everything down to the last nail — count away, sir, I have time. The revolution's been postponed until after lunch anyway."
+          "cs": "Praporec za národ, korouhev za zemi, brnění pro jistotu. Výstrojní list sepsán do posledního hřebu - počítejte, pane, mám čas. Revoluce je přece odložena na po obědě.",
+          "en": "A banner for the nation, a standard for the land, plate armour just in case. The manifest lists everything down to the last nail - count away, sir, I have time. The revolution's been postponed until after lunch anyway."
         }
       },
       "documents": [
@@ -2485,8 +2516,8 @@
           "kůň bílý (sdílený)"
         ],
         "intro": {
-          "cs": "Minimalismus, pane. Meč, kůň, a dost. Zbroj je přežitek fosilní ekonomiky — váží, rezaví a nerozkládá se. Kůň je sdílený, přes aplikaci.",
-          "en": "Minimalism, sir. A sword, a horse, done. Armour is a relic of the fossil economy — heavy, rusty and non-biodegradable. The horse is shared, via an app."
+          "cs": "Minimalismus, pane. Meč, kůň, a dost. Zbroj je přežitek fosilní ekonomiky - váží, rezaví a nerozkládá se. Kůň je sdílený, přes aplikaci.",
+          "en": "Minimalism, sir. A sword, a horse, done. Armour is a relic of the fossil economy - heavy, rusty and non-biodegradable. The horse is shared, via an app."
         }
       },
       "documents": [
@@ -2520,15 +2551,15 @@
           "reasonId": "RZ_CHYBI_ZBROJ",
           "ruleRef": "R21",
           "hint": {
-            "cs": "Vyhláška č. 21/1448 minimalismus nezná. Bez kusu zbroje se nevyjíždí — ani udržitelně.",
-            "en": "Decree No. 21/1448 knows no minimalism. No piece of armour, no riding out — not even sustainably."
+            "cs": "Vyhláška č. 21/1448 minimalismus nezná. Bez kusu zbroje se nevyjíždí - ani udržitelně.",
+            "en": "Decree No. 21/1448 knows no minimalism. No piece of armour, no riding out - not even sustainably."
           }
         }
       ],
       "outcomes": {
         "rejectOk": {
-          "cs": "„Zbroj… dobře. Půjčím si ji. Přes aplikaci.“ Tobiáš odchází. Aplikace hlásí: nejbližší volná zbroj — rok 1448.",
-          "en": "\"Armour… fine. I'll rent some. Via an app.\" Tobiáš leaves. The app reports: nearest available armour — the year 1448."
+          "cs": "„Zbroj… dobře. Půjčím si ji. Přes aplikaci.“ Tobiáš odchází. Aplikace hlásí: nejbližší volná zbroj - rok 1448.",
+          "en": "\"Armour… fine. I'll rent some. Via an app.\" Tobiáš leaves. The app reports: nearest available armour - the year 1448."
         }
       }
     },
@@ -2555,8 +2586,8 @@
           "korouhev rudá"
         ],
         "intro": {
-          "cs": "Odznak úderníka, soudruhu! Za překročení normy ve spánku o čtyřicet procent. Posudek mám — čerstvý jako ranní noviny. Z minulého měsíce.",
-          "en": "A shock-worker's badge, comrade! For exceeding the sleep quota by forty percent. I have my assessment — fresh as the morning paper. From last month."
+          "cs": "Odznak úderníka, soudruhu! Za překročení normy ve spánku o čtyřicet procent. Posudek mám - čerstvý jako ranní noviny. Z minulého měsíce.",
+          "en": "A shock-worker's badge, comrade! For exceeding the sleep quota by forty percent. I have my assessment - fresh as the morning paper. From last month."
         }
       },
       "documents": [
@@ -2573,7 +2604,7 @@
           "template": "dolozka",
           "fields": {
             "drzitel": "Bedřich",
-            "vybor": "POTVRZENO — uliční výbor sluje č. 2"
+            "vybor": "POTVRZENO - uliční výbor sluje č. 2"
           },
           "seal": "pecet_vybor"
         },
@@ -2594,8 +2625,8 @@
           "doc": "posudek",
           "field": "vyhotoven",
           "hint": {
-            "cs": "Posudek vyhotoven před 45 dny — starší třiceti. Odznak úderníka posudek nenahrazuje, ani když se leskne.",
-            "en": "Assessment drawn up 45 days ago — older than thirty. A shock-worker's badge does not replace an assessment, however brightly it shines."
+            "cs": "Posudek vyhotoven před 45 dny - starší třiceti. Odznak úderníka posudek nenahrazuje, ani když se leskne.",
+            "en": "Assessment drawn up 45 days ago - older than thirty. A shock-worker's badge does not replace an assessment, however brightly it shines."
           }
         }
       ],
@@ -2623,8 +2654,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Oholil jsem se do krve kvůli vyhlášce o vousech, pane písaři! Lazebník si vzal dvacet grošů — na kolek zbylo deset. Ale brada je hladká jak pergamen, sáhněte si!",
-          "en": "I shaved myself bloody over the beard decree, master scribe! The barber took twenty groschen — ten were left for the stamp. But the chin is smooth as parchment, go on, feel it!"
+          "cs": "Oholil jsem se do krve kvůli vyhlášce o vousech, pane písaři! Lazebník si vzal dvacet grošů - na kolek zbylo deset. Ale brada je hladká jak pergamen, sáhněte si!",
+          "en": "I shaved myself bloody over the beard decree, master scribe! The barber took twenty groschen - ten were left for the stamp. But the chin is smooth as parchment, go on, feel it!"
         }
       },
       "documents": [
@@ -2677,8 +2708,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Vous mám přesně na píď, měřil mi ho sám cechmistr lazebníků — žádné riziko třmenu! A meč? Ten je starší než vous. Ale atest má. Měl. Má.",
-          "en": "My beard is exactly one span, measured by the master of the barbers' guild himself — no stirrup hazard! And the sword? Older than the beard. But it has its attestation. Had. Has."
+          "cs": "Vous mám přesně na píď, měřil mi ho sám cechmistr lazebníků - žádné riziko třmenu! A meč? Ten je starší než vous. Ale atest má. Měl. Má.",
+          "en": "My beard is exactly one span, measured by the master of the barbers' guild himself - no stirrup hazard! And the sword? Older than the beard. But it has its attestation. Had. Has."
         }
       },
       "documents": [
@@ -2696,7 +2727,7 @@
           "fields": {
             "zbran": "meč dlouhý (110 cm)",
             "ukovano": "l. P. 1399",
-            "stav": "VYDÁN l. P. 1410 — platnost do l. P. 1440"
+            "stav": "VYDÁN l. P. 1410 - platnost do l. P. 1440"
           }
         }
       ],
@@ -2741,8 +2772,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Vous je moje čest, pane písaři! Naposled se stříhal za Karla IV. — a to jen proto, že si do něj císař omylem sedl. Do třmenu se mi nikdy nezamotal. Do kola od vozu dvakrát, ale to vyhláška neřeší.",
-          "en": "The beard is my honour, master scribe! It was last trimmed under Charles IV — and only because the Emperor accidentally sat on it. It has never once tangled in a stirrup. In a cartwheel twice, but the decree doesn't cover that."
+          "cs": "Vous je moje čest, pane písaři! Naposled se stříhal za Karla IV. - a to jen proto, že si do něj císař omylem sedl. Do třmenu se mi nikdy nezamotal. Do kola od vozu dvakrát, ale to vyhláška neřeší.",
+          "en": "The beard is my honour, master scribe! It was last trimmed under Charles IV - and only because the Emperor accidentally sat on it. It has never once tangled in a stirrup. In a cartwheel twice, but the decree doesn't cover that."
         }
       },
       "documents": [
@@ -2789,8 +2820,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Bez brejlí nevidím na vyhlášky, pane. S brejlemi je vidím — a prý je to horší, protože pak kladu dotazy. Čtyřiadvacítku jsem si přečetl dvakrát a pořád nevím, komu to pomůže.",
-          "en": "Without my spectacles I can't see the decrees, sir. With them I can — which is apparently worse, because then I ask questions. I read No. 24 twice and I still don't know who it helps."
+          "cs": "Bez brejlí nevidím na vyhlášky, pane. S brejlemi je vidím - a prý je to horší, protože pak kladu dotazy. Čtyřiadvacítku jsem si přečetl dvakrát a pořád nevím, komu to pomůže.",
+          "en": "Without my spectacles I can't see the decrees, sir. With them I can - which is apparently worse, because then I ask questions. I read No. 24 twice and I still don't know who it helps."
         }
       },
       "documents": [
@@ -2811,8 +2842,8 @@
           "en": "Vladislav takes off the spectacles, squints at you, and finds the exit on the third try. The decree thereby becomes unquestionable."
         },
         "rejectBad": {
-          "cs": "„Já tu vyhlášku četl dvakrát — a vy, pane, zřejmě ani jednou!“ Facka je bez brejlí překvapivě přesná.",
-          "en": "\"I read that decree twice — and you, sir, apparently not even once!\" For a man without spectacles, the slap is surprisingly accurate."
+          "cs": "„Já tu vyhlášku četl dvakrát - a vy, pane, zřejmě ani jednou!“ Facka je bez brejlí překvapivě přesná.",
+          "en": "\"I read that decree twice - and you, sir, apparently not even once!\" For a man without spectacles, the slap is surprisingly accurate."
         }
       }
     },
@@ -2838,8 +2869,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Brejle? To jsou čtecí skla, pane — jen na drobné písmo v patentech, bez nich nerozeznám konzistoř od konfiskace. Osvědčení mám, pěkně čitelné, od bratří. Kterých bratří? Těch… bratří.",
-          "en": "Spectacles? These are reading glasses, sir — only for the fine print in the patents; without them I can't tell a consistory from a confiscation. I have my certificate, nicely legible, from the brethren. Which brethren? The… brethren."
+          "cs": "Brejle? To jsou čtecí skla, pane - jen na drobné písmo v patentech, bez nich nerozeznám konzistoř od konfiskace. Osvědčení mám, pěkně čitelné, od bratří. Kterých bratří? Těch… bratří.",
+          "en": "Spectacles? These are reading glasses, sir - only for the fine print in the patents; without them I can't tell a consistory from a confiscation. I have my certificate, nicely legible, from the brethren. Which brethren? The… brethren."
         }
       },
       "documents": [
@@ -2857,7 +2888,7 @@
           "fields": {
             "drzitel": "Mistr Daniel Brejlovec z Litomyšle",
             "vyznani": "katolické",
-            "vydano": "l. P. 1620 — Jednota bratrská (konzistoř měla zavřeno)"
+            "vydano": "l. P. 1620 - Jednota bratrská (konzistoř měla zavřeno)"
           }
         }
       ],
@@ -2868,8 +2899,8 @@
           "doc": "vira",
           "field": "vydano",
           "hint": {
-            "cs": "Osvědčení nevydala konzistoř, nýbrž Jednota bratrská. Patent č. 8/1620 žádá víru osvědčenou konzistoří — a drobné písmo na tom nic nemění.",
-            "en": "The certificate was issued not by the consistory but by the Unity of the Brethren. Patent No. 8/1620 demands faith certified by the consistory — and fine print changes nothing."
+            "cs": "Osvědčení nevydala konzistoř, nýbrž Jednota bratrská. Patent č. 8/1620 žádá víru osvědčenou konzistoří - a drobné písmo na tom nic nemění.",
+            "en": "The certificate was issued not by the consistory but by the Unity of the Brethren. Patent No. 8/1620 demands faith certified by the consistory - and fine print changes nothing."
           }
         }
       ],
@@ -2900,8 +2931,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Kníže? Ten spáč v hoře? Leží tam jak pytel ovsa — a oves je dnes levnější než pivo, jak píšou. Já bych dávno vyjel, i bez něj. Co on vlastně těch pět set let dělá? Chrápe za národ?",
-          "en": "The Duke? That sleeper in the mountain? He lies there like a sack of oats — and oats are cheaper than beer these days, so the papers say. I'd have ridden out long ago, with or without him. What has he even been doing these five hundred years? Snoring for the nation?"
+          "cs": "Kníže? Ten spáč v hoře? Leží tam jak pytel ovsa - a oves je dnes levnější než pivo, jak píšou. Já bych dávno vyjel, i bez něj. Co on vlastně těch pět set let dělá? Chrápe za národ?",
+          "en": "The Duke? That sleeper in the mountain? He lies there like a sack of oats - and oats are cheaper than beer these days, so the papers say. I'd have ridden out long ago, with or without him. What has he even been doing these five hundred years? Snoring for the nation?"
         }
       },
       "documents": [
@@ -2922,8 +2953,8 @@
           "en": "From deep within the mountain comes a quiet snore. Or a growl. Zdislav pales, bows toward the rock, and tiptoes out."
         },
         "rejectBad": {
-          "cs": "„Já tu veřejně urážím knížete a vy mi vytýkáte PAPÍRY? Kníže všechno slyší — a vy nic.“",
-          "en": "\"I stand here publicly insulting the Duke and you fault my PAPERS? The Duke hears all — and you hear nothing.\""
+          "cs": "„Já tu veřejně urážím knížete a vy mi vytýkáte PAPÍRY? Kníže všechno slyší - a vy nic.“",
+          "en": "\"I stand here publicly insulting the Duke and you fault my PAPERS? The Duke hears all - and you hear nothing.\""
         }
       }
     },
@@ -2949,8 +2980,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Orlice je pro slabochy, pane písaři — pták, co sedí na štítě a čeká, až ho někdo spasí. Já mám lva! Dva ocasy, drápy, zuby. Orlici jsem přemaloval včera; kníže si svou slepici může nechat.",
-          "en": "The eagle is for weaklings, master scribe — a bird that sits on a shield waiting to be saved. I have a lion! Two tails, claws, teeth. I painted over the eagle yesterday; the Duke can keep his chicken."
+          "cs": "Orlice je pro slabochy, pane písaři - pták, co sedí na štítě a čeká, až ho někdo spasí. Já mám lva! Dva ocasy, drápy, zuby. Orlici jsem přemaloval včera; kníže si svou slepici může nechat.",
+          "en": "The eagle is for weaklings, master scribe - a bird that sits on a shield waiting to be saved. I have a lion! Two tails, claws, teeth. I painted over the eagle yesterday; the Duke can keep his chicken."
         }
       },
       "documents": [
@@ -2971,8 +3002,8 @@
           "en": "\"A chicken…\" the mountain whispers. Soběslav leaves, and the lion on his shield looks a little smaller. Someone from Stará Boleslav has made excuses to the Duke before."
         },
         "rejectBad": {
-          "cs": "„Na lva si netroufnete, tak zamítáte papír? Václav by se za vás styděl — a to už je co říct.“",
-          "en": "\"You don't dare touch the lion, so you reject the paper? Wenceslas would be ashamed of you — and that's saying something.\""
+          "cs": "„Na lva si netroufnete, tak zamítáte papír? Václav by se za vás styděl - a to už je co říct.“",
+          "en": "\"You don't dare touch the lion, so you reject the paper? Wenceslas would be ashamed of you - and that's saying something.\""
         }
       }
     },
@@ -2996,8 +3027,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Modrá, pane — barva Panny Marie. Lev o dvou ocasech, růženec od arcibiskupa, pečeť celá. Po Bílé hoře se vyplatí mít v pořádku všechno. I barvy.",
-          "en": "Blue, sir — the colour of the Virgin Mary. A two-tailed lion, a rosary from the archbishop, the seal intact. After White Mountain it pays to have everything in order. Even the colours."
+          "cs": "Modrá, pane - barva Panny Marie. Lev o dvou ocasech, růženec od arcibiskupa, pečeť celá. Po Bílé hoře se vyplatí mít v pořádku všechno. I barvy.",
+          "en": "Blue, sir - the colour of the Virgin Mary. A two-tailed lion, a rosary from the archbishop, the seal intact. After White Mountain it pays to have everything in order. Even the colours."
         }
       },
       "documents": [
@@ -3048,8 +3079,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Orlice, pane! Plamenná, svatováclavská — o tři století starší než lev. Vždyť i nařízení věčné č. 25 praví: lev místo orlice uráží knížete! Tak jsem si pro jistotu dal orlici. Zelený štít? Barva naděje, pane. Jaro národů.",
-          "en": "The eagle, sir! Flaming, St. Wenceslas's own — three centuries older than the lion. Why, even Eternal Ordinance No. 25 says: a lion in place of the eagle insults the Duke! So to be safe, I went with the eagle. The green shield? The colour of hope, sir. The Springtime of Nations."
+          "cs": "Orlice, pane! Plamenná, svatováclavská - o tři století starší než lev. Vždyť i nařízení věčné č. 25 praví: lev místo orlice uráží knížete! Tak jsem si pro jistotu dal orlici. Zelený štít? Barva naděje, pane. Jaro národů.",
+          "en": "The eagle, sir! Flaming, St. Wenceslas's own - three centuries older than the lion. Why, even Eternal Ordinance No. 25 says: a lion in place of the eagle insults the Duke! So to be safe, I went with the eagle. The green shield? The colour of hope, sir. The Springtime of Nations."
         }
       },
       "documents": [
@@ -3068,8 +3099,8 @@
           "reasonId": "RZ_LEV_CHYBI",
           "ruleRef": "R14",
           "hint": {
-            "cs": "Na štítě orlice, nikoli lev. Nařízení č. 14/1848 orlici nezná — lev se tudíž považuje za nepřítomného. Že lev uráží knížete, je věc nařízení č. 25, nikoli č. 14.",
-            "en": "An eagle on the shield, not a lion. Ordinance No. 14/1848 knows no eagle — the lion is therefore deemed absent. That a lion insults the Duke is a matter for Ordinance No. 25, not No. 14."
+            "cs": "Na štítě orlice, nikoli lev. Nařízení č. 14/1848 orlici nezná - lev se tudíž považuje za nepřítomného. Že lev uráží knížete, je věc nařízení č. 25, nikoli č. 14.",
+            "en": "An eagle on the shield, not a lion. Ordinance No. 14/1848 knows no eagle - the lion is therefore deemed absent. That a lion insults the Duke is a matter for Ordinance No. 25, not No. 14."
           }
         }
       ],
@@ -3101,8 +3132,8 @@
           "kůň hnědý"
         ],
         "intro": {
-          "cs": "Štít černý, bez znaku — smutek za národ, pane. Lva jsem sejmul a schoval do truhly, dokud nebude za co ho nosit. Až národ povstane, přibiju ho zpátky. Zatím nosím jen tu černou. Sluší mi.",
-          "en": "A black shield, no device — mourning for the nation, sir. I took the lion down and locked it in a chest until there's a reason to wear it. When the nation rises, I'll nail it back on. For now I wear only the black. It suits me."
+          "cs": "Štít černý, bez znaku - smutek za národ, pane. Lva jsem sejmul a schoval do truhly, dokud nebude za co ho nosit. Až národ povstane, přibiju ho zpátky. Zatím nosím jen tu černou. Sluší mi.",
+          "en": "A black shield, no device - mourning for the nation, sir. I took the lion down and locked it in a chest until there's a reason to wear it. When the nation rises, I'll nail it back on. For now I wear only the black. It suits me."
         }
       },
       "documents": [
@@ -3121,8 +3152,8 @@
           "reasonId": "RZ_LEV_CHYBI",
           "ruleRef": "R14",
           "hint": {
-            "cs": "Štít černý, bez znaku. Lev v truhle je lev nepřítomný — nařízení č. 14/1848 smutek jako heraldickou figuru nezná. Zpátky a opravit.",
-            "en": "A black shield, no device. A lion in a chest is a lion absent — Ordinance No. 14/1848 does not recognize mourning as a heraldic charge. Go back and fix it."
+            "cs": "Štít černý, bez znaku. Lev v truhle je lev nepřítomný - nařízení č. 14/1848 smutek jako heraldickou figuru nezná. Zpátky a opravit.",
+            "en": "A black shield, no device. A lion in a chest is a lion absent - Ordinance No. 14/1848 does not recognize mourning as a heraldic charge. Go back and fix it."
           }
         }
       ],
@@ -3152,8 +3183,8 @@
           "kůň hnědý (evidence JZD č. 0417)"
         ],
         "intro": {
-          "cs": "Srp a kladivo, soudruhu úředníku, to je dnes jediná správná výzbroj! Meč je feudální přežitek. Srpem seču, kladivem buším — a na plakátě to vypadá o sto procent líp než nějaký rytíř s mečem.",
-          "en": "The sickle and hammer, comrade clerk — the only correct armament today! The sword is a feudal relic. I reap with the sickle, I pound with the hammer — and on a poster it looks a hundred percent better than some knight with a sword."
+          "cs": "Srp a kladivo, soudruhu úředníku, to je dnes jediná správná výzbroj! Meč je feudální přežitek. Srpem seču, kladivem buším - a na plakátě to vypadá o sto procent líp než nějaký rytíř s mečem.",
+          "en": "The sickle and hammer, comrade clerk - the only correct armament today! The sword is a feudal relic. I reap with the sickle, I pound with the hammer - and on a poster it looks a hundred percent better than some knight with a sword."
         }
       },
       "documents": [
@@ -3170,7 +3201,7 @@
           "template": "dolozka",
           "fields": {
             "drzitel": "Jaromír",
-            "vybor": "POTVRZENO — uliční výbor sluje č. 1"
+            "vybor": "POTVRZENO - uliční výbor sluje č. 1"
           },
           "seal": "pecet_vybor"
         }
@@ -3180,15 +3211,15 @@
           "reasonId": "RZ_VYZBROJ",
           "ruleRef": "R17",
           "hint": {
-            "cs": "V rukou srp a kladivo. Dle směrnice č. 17/1952 nástroje budovatelské, nikoliv bojové — bojovat se s nimi smí toliko na plakátě.",
-            "en": "A sickle and hammer in hand. Per Directive No. 17/1952, tools of construction, not combat — fighting with them is permitted only on posters."
+            "cs": "V rukou srp a kladivo. Dle směrnice č. 17/1952 nástroje budovatelské, nikoliv bojové - bojovat se s nimi smí toliko na plakátě.",
+            "en": "A sickle and hammer in hand. Per Directive No. 17/1952, tools of construction, not combat - fighting with them is permitted only on posters."
           }
         }
       ],
       "outcomes": {
         "rejectOk": {
-          "cs": "„Soudruhu, srp je na obilí a kladivo na hřebíky. Do boje se chodí s mečem — i za socialismu.“ Jaromír odchází hledat, kde zakopal ten feudální přežitek.",
-          "en": "\"Comrade, the sickle is for grain and the hammer for nails. One goes to battle with a sword — even under socialism.\" Jaromír leaves to find where he buried that feudal relic."
+          "cs": "„Soudruhu, srp je na obilí a kladivo na hřebíky. Do boje se chodí s mečem - i za socialismu.“ Jaromír odchází hledat, kde zakopal ten feudální přežitek.",
+          "en": "\"Comrade, the sickle is for grain and the hammer for nails. One goes to battle with a sword - even under socialism.\" Jaromír leaves to find where he buried that feudal relic."
         },
         "rejectBad": {
           "cs": "„Zamítáte dělnickou třídu, soudruhu? To si zapamatujeme. V trojím vyhotovení.“",
@@ -3216,8 +3247,8 @@
           "kůň Vítězslav (hnědý, soukromý)"
         ],
         "intro": {
-          "cs": "Srp mám z pole, kladivo z dílny, soudruhu — výzbroj pracujícího lidu! Koně mám po strýčkovi. Po kterém strýčkovi? Po tom, co měl… víc polí, než bylo zdrávo. Ale kůň za to nemůže!",
-          "en": "The sickle is from the field, the hammer from the workshop, comrade — the armament of the working people! The horse is from my uncle. Which uncle? The one who had… more fields than was healthy. But the horse can't help that!"
+          "cs": "Srp mám z pole, kladivo z dílny, soudruhu - výzbroj pracujícího lidu! Koně mám po strýčkovi. Po kterém strýčkovi? Po tom, co měl… víc polí, než bylo zdrávo. Ale kůň za to nemůže!",
+          "en": "The sickle is from the field, the hammer from the workshop, comrade - the armament of the working people! The horse is from my uncle. Which uncle? The one who had… more fields than was healthy. But the horse can't help that!"
         }
       },
       "documents": [
@@ -3235,7 +3266,7 @@
           "fields": {
             "kun": "Vítězslav, hnědý, 9 let",
             "drzitel": "Božena (převod z kulackého majetku)",
-            "evidence": "NEEVIDOVÁN — převod v řízení od r. 1950"
+            "evidence": "NEEVIDOVÁN - převod v řízení od r. 1950"
           },
           "wrapped": true
         }
@@ -3245,8 +3276,8 @@
           "reasonId": "RZ_VYZBROJ",
           "ruleRef": "R17",
           "hint": {
-            "cs": "Srp a kladivo místo zbraně. Směrnice č. 17/1952: nástroje budovatelské, nikoliv výzbroj rytířská — ani v rukou traktoristky.",
-            "en": "A sickle and hammer instead of a weapon. Directive No. 17/1952: tools of construction, not knightly armament — not even in a tractor driver's hands."
+            "cs": "Srp a kladivo místo zbraně. Směrnice č. 17/1952: nástroje budovatelské, nikoliv výzbroj rytířská - ani v rukou traktoristky.",
+            "en": "A sickle and hammer instead of a weapon. Directive No. 17/1952: tools of construction, not knightly armament - not even in a tractor driver's hands."
           }
         },
         {
@@ -3255,8 +3286,8 @@
           "doc": "jzd",
           "field": "evidence",
           "hint": {
-            "cs": "Kůň Vítězslav není evidován u JZD Blaník — převod z kulackého majetku je v řízení od r. 1950. Soukromé držení je přežitek, byť zděděný.",
-            "en": "The horse Vítězslav is not registered with the Blaník Cooperative — the transfer from kulak property has been pending since 1950. Private ownership is a relic, even an inherited one."
+            "cs": "Kůň Vítězslav není evidován u JZD Blaník - převod z kulackého majetku je v řízení od r. 1950. Soukromé držení je přežitek, byť zděděný.",
+            "en": "The horse Vítězslav is not registered with the Blaník Cooperative - the transfer from kulak property has been pending since 1950. Private ownership is a relic, even an inherited one."
           }
         }
       ],
@@ -3266,8 +3297,8 @@
           "en": "\"Vítězslav, hear that? We're relics. Both of us.\" Božena slings the sickle over her shoulder and leads the horse back to a stable that isn't yet a cooperative."
         },
         "rejectBad": {
-          "cs": "„Traktoristku zamítnout! To si přečte celý uliční výbor — a číst umějí všichni, od letoška.“",
-          "en": "\"Rejecting a tractor driver! The whole street committee will read about this — and they can all read now, since this year.\""
+          "cs": "„Traktoristku zamítnout! To si přečte celý uliční výbor - a číst umějí všichni, od letoška.“",
+          "en": "\"Rejecting a tractor driver! The whole street committee will read about this - and they can all read now, since this year.\""
         }
       }
     },

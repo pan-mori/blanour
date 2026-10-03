@@ -9,8 +9,8 @@
         "en": "Decree No. 1/1448"
       },
       "text": {
-        "cs": "Každá žádost o výjezd musí být opatřena kolkem v hodnotě 30 grošů.",
-        "en": "Every departure application must bear a duty stamp worth 30 groschen."
+        "cs": "Každá žádost o výjezd musí být opatřena kolkem v hodnotě {kolek} grošů.",
+        "en": "Every departure application must bear a duty stamp worth {kolek} groschen."
       },
       "reasonId": "RZ_KOLEK"
     },
@@ -22,8 +22,8 @@
         "en": "Decree No. 2/1448"
       },
       "text": {
-        "cs": "Žádost se podává výhradně na formuláři B-1448. Formuláře z dob husitských jsou neplatné.",
-        "en": "Applications must use form B-1448 exclusively. Hussite-era forms are void."
+        "cs": "Žádost se podává výhradně na aktuálně platném formuláři {formular}. Formuláře z jiných období jsou neplatné.",
+        "en": "Applications must use the currently valid form {formular} exclusively. Forms from other eras are void."
       },
       "reasonId": "RZ_FORMULAR"
     },
@@ -191,8 +191,8 @@
         "en": "Decree No. 15/1448"
       },
       "text": {
-        "cs": "Meč ukovaný před rokem 1400 smí do boje toliko s platným lejstrem BAKH — Bezpečnostním Atestem Kutná Hora. Atest v řízení není atest vydaný.",
-        "en": "A sword forged before the year 1400 may go to battle only with a valid BAKH paper — the Kutná Hora Safety Attestation. An attestation in progress is not an attestation issued."
+        "cs": "Meč ukovaný před rokem 1400 smí do boje toliko s platným lejstrem BAKH - Bezpečnostním Atestem Kutná Hora. Atest v řízení není atest vydaný.",
+        "en": "A sword forged before the year 1400 may go to battle only with a valid BAKH paper - the Kutná Hora Safety Attestation. An attestation in progress is not an attestation issued."
       },
       "reasonId": "RZ_BAKH"
     },
@@ -204,8 +204,8 @@
         "en": "Decree No. 16/1448"
       },
       "text": {
-        "cs": "Podkovy propadlé zkoušce podkovářského cechu jsou příliš hlučné a postrádají prvky odrazné. S takovými se nevyjíždí — srazila by vás první vozová hradba.",
-        "en": "Horseshoes that failed the farriers' guild inspection are too loud and lack reflective elements. No riding out on those — the first wagon fort would run you down."
+        "cs": "Podkovy propadlé zkoušce podkovářského cechu jsou příliš hlučné a postrádají prvky odrazné. S takovými se nevyjíždí - srazila by vás první vozová hradba.",
+        "en": "Horseshoes that failed the farriers' guild inspection are too loud and lack reflective elements. No riding out on those - the first wagon fort would run you down."
       },
       "reasonId": "RZ_PODKOVY"
     },
@@ -217,8 +217,8 @@
         "en": "Central Committee Directive No. 17/1968"
       },
       "text": {
-        "cs": "Do boje se vyjíždí s výzbrojí rytířskou dle evidenčního vzoru. Srp a kladivo jsou nástroje budovatelské, nikoliv bojové — bojovat se s nimi smí toliko na plakátě.",
-        "en": "One rides into battle with knightly armament per the registered pattern. The sickle and hammer are tools of construction, not combat — fighting with them is permitted only on posters."
+        "cs": "Do boje se vyjíždí s výzbrojí rytířskou dle evidenčního vzoru. Srp a kladivo jsou nástroje budovatelské, nikoliv bojové - bojovat se s nimi smí toliko na plakátě.",
+        "en": "One rides into battle with knightly armament per the registered pattern. The sickle and hammer are tools of construction, not combat - fighting with them is permitted only on posters."
       },
       "reasonId": "RZ_VYZBROJ"
     },
@@ -321,10 +321,75 @@
         "en": "Decree No. 30/1448"
       },
       "text": {
-        "cs": "Hladká tvář postrádá mužnou vážnost blanického vojska. Bez vousu se nevyjíždí — oholený rytíř nevyjede.",
-        "en": "A smooth face lacks the manly gravitas of the Blaník host. No departure without a beard — a clean-shaven knight shall not ride out."
+        "cs": "Hladká tvář postrádá mužnou vážnost blanického vojska. Bez vousu se nevyjíždí - oholený rytíř nevyjede.",
+        "en": "A smooth face lacks the manly gravitas of the Blaník host. No departure without a beard - a clean-shaven knight shall not ride out."
       },
       "reasonId": "RZ_VOUS_ZADNY"
+    },
+    {
+      "id": "R31",
+      "day": 2,
+      "cislo": {
+        "cs": "Nařízení věčné č. 31",
+        "en": "Eternal Order No. 31"
+      },
+      "text": {
+        "cs": "Hanobení spícího knížete (sv. Václava) slovem při přepážce je urážkou majestátu. Kdo kníže tupí, nevyjede.",
+        "en": "Disparaging the sleeping prince (St. Wenceslas) aloud at the counter is lèse-majesté. Whoever insults the prince shall not ride out."
+      },
+      "reasonId": "RZ_HANA_KNIZE"
+    },
+    {
+      "id": "R32",
+      "day": 2,
+      "cislo": {
+        "cs": "Vyhláška č. 32/1448",
+        "en": "Decree No. 32/1448"
+      },
+      "text": {
+        "cs": "Výjezd blanického vojska se povoluje jen z důvodů vážných a státních. Malicherné pohnutky (cena piva, počasí) se zamítají.",
+        "en": "The Blaník host may depart only for grave matters of state. Petty motives (the price of beer, the weather) shall be rejected."
+      },
+      "reasonId": "RZ_DUVOD"
+    },
+    {
+      "id": "R33",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení GDPR-BL č. 33",
+        "en": "GDPR-BL Order No. 33"
+      },
+      "text": {
+        "cs": "Souhlas se zpracováním údajů koně musí být podepsán svéprávnou osobou. Otisk kopyta se za platný podpis nepovažuje.",
+        "en": "Consent to processing a horse's data must be signed by a legally competent person. A hoofprint does not count as a valid signature."
+      },
+      "reasonId": "RZ_KOPYTO"
+    },
+    {
+      "id": "R34",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení věčné č. 34",
+        "en": "Eternal Order No. 34"
+      },
+      "text": {
+        "cs": "Žádost odkazující na přílohu musí mít tuto přílohu fyzicky doloženu. Odkaz na nepřiloženou přílohu činí žádost neúplnou.",
+        "en": "An application citing an attachment must physically enclose it. A reference to an absent attachment renders the application incomplete."
+      },
+      "reasonId": "RZ_PRILOHA"
+    },
+    {
+      "id": "R35",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení věčné č. 35",
+        "en": "Eternal Order No. 35"
+      },
+      "text": {
+        "cs": "Výtisk z datové schránky je bez doložky o autorizované konverzi pouhou kopií bez právní účinnosti originálu.",
+        "en": "A printout from a data box, without an authorized-conversion clause, is a mere copy lacking the legal effect of the original."
+      },
+      "reasonId": "RZ_KONVERZE"
     },
     {
       "id": "R24",

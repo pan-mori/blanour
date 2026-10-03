@@ -12,7 +12,7 @@ export const LIBRARY_RECT = { x: 1628, y: 212, w: 268, h: 286 } as const;
 /**
  * Procedurální pozadí úřadovny v jeskyni: krápníky, kamenná zeď,
  * police s šanony, dřevo stolu s léty, svíčka s teplou září.
- * Záměrně nízký kontrast — papíry a UI musí zůstat hlavní.
+ * Záměrně nízký kontrast - papíry a UI musí zůstat hlavní.
  */
 export function drawOfficeBackdrop(scene: Phaser.Scene): void {
   const g = scene.add.graphics();
@@ -70,7 +70,7 @@ export function drawOfficeBackdrop(scene: Phaser.Scene): void {
     }
   }
 
-  // stůl — dřevo s léty
+  // stůl - dřevo s léty
   g.fillStyle(COLORS.desk, 1);
   g.fillRect(0, GAME_HEIGHT - 480, GAME_WIDTH, 480);
   g.fillStyle(COLORS.deskDark, 1);
@@ -98,7 +98,7 @@ export function drawOfficeBackdrop(scene: Phaser.Scene): void {
   // knihovna/spisovna se svitky pod svíčkou (na zadní stěně, za papíry)
   drawLibrary(scene, g, rnd);
 
-  // vinětace — ztmavené rohy
+  // vinětace - ztmavené rohy
   g.fillStyle(0x000000, 0.35);
   g.fillRect(0, 0, GAME_WIDTH, 26);
   g.fillRect(0, 0, 26, GAME_HEIGHT);
@@ -146,7 +146,7 @@ function drawLibrary(scene: Phaser.Scene, g: Phaser.GameObjects.Graphics, rnd: P
       // tělo svitku
       g.fillStyle(parch, 1);
       g.fillRect(sx, top, rw, rollH);
-      // čelo role (elipsa) — světlejší
+      // čelo role (elipsa) - světlejší
       g.fillStyle(Phaser.Display.Color.ValueToColor(parch).brighten(12).color, 1);
       g.fillEllipse(sx + rw / 2, top + 7, rw, 14);
       // dírka uprostřed role

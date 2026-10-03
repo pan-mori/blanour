@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 
 /**
  * Procedurální pixel-art portrét rytíře (busta). Deterministický podle
- * sprite klíče — stejný rytíř vypadá vždy stejně. Kreslí se jednou do
+ * sprite klíče - stejný rytíř vypadá vždy stejně. Kreslí se jednou do
  * textury `portrait:<key>` na mřížce 32×40, pixel = 12 px.
  */
 
@@ -26,7 +26,7 @@ function hash(s: string): number {
 export type BeardLen = 'none' | 'short' | 'long';
 
 /**
- * Délka vousu rytíře — JEDEN zdroj pravdy pro portrét i pro objektivní verdikt
+ * Délka vousu rytíře - JEDEN zdroj pravdy pro portrét i pro objektivní verdikt
  * vyhlášek o vousech. Explicitní tagy mají přednost; netagovaný rytíř dostane
  * délku deterministicky z hashe, aby portrét i posudek vždy souhlasily (nikdy
  * se nenakreslí vous, který by pravidlo nevidělo, a naopak).
@@ -37,7 +37,7 @@ export function beardLen(spriteKey: string, tags: string[]): BeardLen {
   if (spriteKey === 'knight_vaclav') return 'none';
   // netagovaný rytíř: délku odvodíme deterministicky z dobře promíchaného hashe,
   // ať reálně existují všechny 3 varianty (sprite klíče „knight_NN" vycházejí
-  // na prostém hashi degenerovaně — skoro všichni by měli vous). Váhy ≈ půl bez
+  // na prostém hashi degenerovaně - skoro všichni by měli vous). Váhy ≈ půl bez
   // vousu, třetina krátký, zbytek dlouhý.
   const h = hash(spriteKey);
   const m = ((h ^ (h >>> 7) ^ (h >>> 13) ^ (h >>> 23)) >>> 0) % 6;
@@ -69,7 +69,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
   px(4, 31, 24, 9, tabard);
   px(6, 29, 20, 2, tabard);
   px(14, 32, 4, 8, accent); // svislý pruh
-  px(10, 34, 12, 2, accent); // břevno — dohromady kříž
+  px(10, 34, 12, 2, accent); // břevno - dohromady kříž
   px(4, 31, 2, 9, METAL_DARK); // nárameníky
   px(26, 31, 2, 9, METAL_DARK);
 
@@ -81,7 +81,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
   px(10, 14, 1, 9, skin);
   px(21, 14, 1, 9, skin);
 
-  // rysy obličeje — variace dle hashe (obočí, nos, úsměv, znaménko)
+  // rysy obličeje - variace dle hashe (obočí, nos, úsměv, znaménko)
   const feat = (h >> 18) % 4;
   // oči
   px(13, 18, 2, 1, 0x1c1a16);
@@ -109,7 +109,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     else px(14, 23, 4, 1, 0x8a5a50);
   }
 
-  // vousy — 3 jasně odlišné délky: žádné / krátký / dlouhý (viz beardLen).
+  // vousy - 3 jasně odlišné délky: žádné / krátký / dlouhý (viz beardLen).
   // „bez vousu" = úplně hladká tvář (žádný knír), ať vyhláška o vousech čte
   // jednoznačně z portrétu.
   const longBeard = bl === 'long';
@@ -119,7 +119,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     px(14, 21, 4, 1, skin); // mezera pro ústa… vlastně knír
     px(14, 22, 4, 1, 0x8a5a50);
     if (longBeard) {
-      // dlouhý vous sahá přes krk až na varkoč — špičatý
+      // dlouhý vous sahá přes krk až na varkoč - špičatý
       px(12, 28, 8, 3, hair);
       px(13, 31, 6, 2, hair);
       px(14, 33, 4, 2, hair);
@@ -127,7 +127,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     }
   }
 
-  // brýle (tag bryle) — kulaté obroučky přes oči
+  // brýle (tag bryle) - kulaté obroučky přes oči
   if (tags.includes('bryle')) {
     const fr = 0x2a2a2a;
     px(12, 17, 4, 3, 0xcfe4ee); // levé sklo
@@ -163,7 +163,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     px(9, 10, 14, 2, 0xd4a017);
     px(15, 4, 2, 3, 0xd4a017);
   } else {
-    // bez helmy — vlasy
+    // bez helmy - vlasy
     px(10, 8, 12, 5, hair);
     px(9, 10, 2, 6, hair);
     px(21, 10, 2, 6, hair);
@@ -175,7 +175,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     g.strokeEllipse(16 * S, 3.5 * S, 16 * S, 4 * S);
   }
 
-  // ---------- VIZUÁLNÍ VADY / DOPLŇKY (vrstvené dle tagů — „NFT opice" princip) ----------
+  // ---------- VIZUÁLNÍ VADY / DOPLŇKY (vrstvené dle tagů - „NFT opice" princip) ----------
 
   // reflexní/BOZP vesta přes varkoč
   if (tags.includes('vesta')) {
@@ -189,19 +189,21 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     // násada kladiva + hlava
     px(26, 24, 2, 12, 0x6b4a2a);
     px(23, 23, 8, 3, 0x8a929e);
-    // srp — čepel obloukem
+    // srp - čepel obloukem
     px(2, 24, 2, 10, 0x6b4a2a);
     px(2, 21, 6, 2, 0xb8c0cc);
     px(7, 22, 2, 4, 0xb8c0cc);
   }
 
-  // štít v levém dolním rohu busty — barva dle hashe (≥3), znak dle tagu
+  // štít v levém dolním rohu busty - barva dle hashe (≥3), znak dle tagu
   const SHIELD_COLORS = [0x7a1f12, 0x24366b, 0x1d4020, 0x3a2a16, 0x4b2a6b];
   const shieldTag = tags.find(
     (t) => t === 'stit_lev2' || t === 'stit_lev1' || t === 'stit_prazdny' || t === 'stit_orlice',
   );
   if (shieldTag) {
-    const sc = vaclav ? 0xb02020 : SHIELD_COLORS[(h >> 22) % SHIELD_COLORS.length];
+    // svatý Václav nese „plamennou orlici" - černou orlici na stříbrném poli se zlatými plameny
+    const plamenna = vaclav && shieldTag === 'stit_orlice';
+    const sc = plamenna ? 0xd8d0c0 : vaclav ? 0xb02020 : SHIELD_COLORS[(h >> 22) % SHIELD_COLORS.length];
     px(1, 26, 11, 11, sc);
     px(2, 37, 9, 2, sc);
     px(4, 39, 5, 1, sc);
@@ -209,25 +211,31 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     g.strokeRect(1 * S, 26 * S, 11 * S, 13 * S);
     const sil = 0xe8e0d0;
     if (shieldTag === 'stit_orlice') {
-      // orlice (svatováclavská) — tělo, dvě křídla, hlava
-      px(6, 30, 1, 5, sil); // tělo
-      px(3, 31, 3, 1, sil); px(2, 32, 2, 2, sil); // levé křídlo
-      px(7, 31, 3, 1, sil); px(9, 32, 2, 2, sil); // pravé křídlo
-      px(6, 28, 1, 2, sil); // krk
-      px(5, 27, 3, 1, sil); // hlava (rozpětí)
-      px(5, 35, 1, 2, sil); px(7, 35, 1, 2, sil); // nohy
+      const ec = plamenna ? 0x1c1a16 : sil; // plamenná orlice = černá
+      if (plamenna) {
+        // zlaté plameny kolem orlice
+        px(2, 28, 1, 3, 0xe8a81a); px(10, 28, 1, 3, 0xe8a81a);
+        px(3.5, 27, 1, 1.4, 0xf0c838); px(8.5, 27, 1, 1.4, 0xf0c838);
+      }
+      // orlice (svatováclavská) - tělo, dvě křídla, hlava
+      px(6, 30, 1, 5, ec); // tělo
+      px(3, 31, 3, 1, ec); px(2, 32, 2, 2, ec); // levé křídlo
+      px(7, 31, 3, 1, ec); px(9, 32, 2, 2, ec); // pravé křídlo
+      px(6, 28, 1, 2, ec); // krk
+      px(5, 27, 3, 1, ec); // hlava (rozpětí)
+      px(5, 35, 1, 2, ec); px(7, 35, 1, 2, ec); // nohy
     } else if (shieldTag !== 'stit_prazdny') {
-      // stříbrný lev ve skoku — VÝRAZNÉ ocasy (herní info!)
+      // stříbrný lev ve skoku - VÝRAZNÉ ocasy (herní info!)
       px(5, 31, 4, 4, sil); px(8, 30, 2, 2, sil);
       px(5, 35, 1, 3, sil); px(8, 35, 1, 2, sil);
       px(3, 28, 1, 5, sil); px(2, 27, 1, 2, sil); // první ocas + háček
       if (shieldTag === 'stit_lev2') {
-        px(5, 27, 1, 4, sil); px(6, 26, 1, 2, sil); // druhý ocas — poctivý dvouocasý lev
+        px(5, 27, 1, 4, sil); px(6, 26, 1, 2, sil); // druhý ocas - poctivý dvouocasý lev
       }
     }
   }
 
-  // kališnický kalich na varkoči (husitský symbol) — po Bílé hoře zapovězený
+  // kališnický kalich na varkoči (husitský symbol) - po Bílé hoře zapovězený
   if (tags.includes('kalich')) {
     const gold = 0xe8c020;
     px(15, 33, 2, 3, gold); // noha kalicha
@@ -238,7 +246,7 @@ export function ensureKnightTexture(scene: Phaser.Scene, spriteKey: string, tags
     px(18, 31, 1, 2, gold);
   }
 
-  // růženec — šňůra korálků s křížkem u krku (katolický)
+  // růženec - šňůra korálků s křížkem u krku (katolický)
   if (tags.includes('ruzenec')) {
     const bead = 0xd8d0c0;
     for (let i = 0; i < 6; i++) px(10 + i, 28 + Math.abs(i - 2.5) * 0.6, 1, 1, bead);
