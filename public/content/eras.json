@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "day": 1,
+      "year": 1448,
+      "label": {
+        "cs": "Pozdní středověk",
+        "en": "Late Middle Ages"
+      },
+      "masthead": {
+        "cs": "Blanický poutník",
+        "en": "The Blaník Pilgrim"
+      },
+      "flavor": {
+        "cs": "Psáno brkem při louči.",
+        "en": "Written by quill, by torchlight."
+      }
+    },
+    {
+      "day": 2,
+      "year": 1620,
+      "label": {
+        "cs": "Po Bílé hoře",
+        "en": "After White Mountain"
+      },
+      "masthead": {
+        "cs": "Cžeské Nowiny Pobělohorské",
+        "en": "Bohemian Post-Battle Gazette"
+      },
+      "flavor": {
+        "cs": "Cenzurováno. Dvakrát.",
+        "en": "Censored. Twice."
+      }
+    },
+    {
+      "day": 3,
+      "year": 1848,
+      "label": {
+        "cs": "Jaro národů",
+        "en": "Spring of Nations"
+      },
+      "masthead": {
+        "cs": "C. k. Vlastenecké listy",
+        "en": "Imperial-Royal Patriotic Times"
+      },
+      "flavor": {
+        "cs": "Povoleno c. k. místodržitelstvím.",
+        "en": "Approved by the I.-R. Governorate."
+      }
+    },
+    {
+      "day": 4,
+      "year": 1968,
+      "label": {
+        "cs": "Bratrská pomoc",
+        "en": "Fraternal Assistance"
+      },
+      "masthead": {
+        "cs": "Rudé právo podhorské",
+        "en": "Red Truth of the Foothills"
+      },
+      "flavor": {
+        "cs": "Dočasný pobyt vojsk. Na čtyřicet let.",
+        "en": "A temporary stationing of troops. For forty years."
+      }
+    },
+    {
+      "day": 5,
+      "year": 2026,
+      "label": {
+        "cs": "Současnost",
+        "en": "Present Day"
+      },
+      "masthead": {
+        "cs": "Blaník NOW (online)",
+        "en": "Blaník NOW (online)"
+      },
+      "flavor": {
+        "cs": "Přijímáme cookies i oplatky.",
+        "en": "We accept cookies and wafers alike."
+      }
+    }
+  ]
+}

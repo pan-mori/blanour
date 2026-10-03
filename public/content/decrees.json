@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "V_VOUS",
+      "appliesIf": { "knightTag": "vous" },
+      "text": { "cs": "S okamžitou platností se zakazuje výjezd s plnovousem delším než píď. Bezpečnost především.", "en": "Effective immediately, departure with a beard longer than a span is prohibited. Safety first." },
+      "injectsReason": "RZ_VOUS"
+    },
+    {
+      "id": "V_REFLEX",
+      "appliesIf": { "knightTag": "kun_bily" },
+      "text": { "cs": "Od dnešního dne je pro bílé koně povinná reflexní vesta. V hoře je tma.", "en": "As of today, hi-vis vests are mandatory for white horses. It is dark inside the mountain." },
+      "injectsReason": "RZ_REFLEX"
+    },
+    {
+      "id": "V_MEC",
+      "appliesIf": { "knightTag": "mec" },
+      "text": { "cs": "S okamžitou platností podléhají veškeré meče inventarizaci. Meč bez vyraženého inventárního čísla nesmí opustit horu. Razidlo se momentálně hledá.", "en": "Effective immediately, all swords are subject to inventory. No sword may leave the mountain without a stamped inventory number. The number punch is currently being located." },
+      "injectsReason": "RZ_INVENTURA"
+    },
+    {
+      "id": "V_KOPI",
+      "appliesIf": { "knightTag": "kopi" },
+      "text": { "cs": "Z důvodu revize chodby B se do odvolání zakazuje výjezd s kopím přesahujícím světlou výšku chodby. Měření se po dobu revize neprovádí.", "en": "Due to the inspection of corridor B, departure with a lance exceeding the corridor's clearance height is prohibited until further notice. No measuring will be performed for the duration of the inspection." },
+      "injectsReason": "RZ_KOPI"
+    },
+    {
+      "id": "V_STIT",
+      "appliesIf": { "knightTag": "stit" },
+      "text": { "cs": "Erbovní znamení na štítech podléhají schválení heraldické komise. Komise se sejde, jakmile bude usnášeníschopná.", "en": "Heraldic devices on shields are subject to approval by the heraldic commission. The commission shall convene as soon as it has a quorum." },
+      "injectsReason": "RZ_ERB"
+    },
+    {
+      "id": "V_VRANY",
+      "appliesIf": { "knightTag": "kun_vrany" },
+      "text": { "cs": "Vraný kůň se v šeru hory považuje za úředně nespatřeného. Co nebylo úředně spatřeno, nemůže úředně vyjet.", "en": "In the gloom of the mountain, a black horse is deemed officially unsighted. What has not been officially sighted cannot officially ride out." },
+      "injectsReason": "RZ_VRANY"
+    },
+    {
+      "id": "V_SVATOZAR",
+      "appliesIf": { "knightTag": "svatozar" },
+      "text": { "cs": "Svatozář se pro účely výjezdu považuje za vyhrazené světelné zařízení. Bez platné revizní zprávy se zhasíná.", "en": "For departure purposes, a halo is classified as a regulated lighting fixture. Without a valid inspection report, it shall be switched off." },
+      "injectsReason": "RZ_SVATOZAR"
+    },
+    {
+      "id": "V_POLNICE",
+      "appliesIf": { "knightTag": "polnice" },
+      "text": { "cs": "Signální polnice překračuje hlukový limit sluje (30 dB). Troubení ruší zimní spánek netopýra velkého, druhu zvláště chráněného. Bez výjimky orgánu ochrany přírody se netroubí.", "en": "The signal bugle exceeds the cave's noise limit (30 dB). Its blast disturbs the hibernation of the greater mouse-eared bat, a specially protected species. No bugling without an exemption from the nature-protection authority." },
+      "injectsReason": "RZ_POLNICE"
+    },
+    {
+      "id": "V_POCHODEN",
+      "appliesIf": { "knightTag": "pochoden" },
+      "text": { "cs": "V hoře platí zákaz otevřeného ohně dle požárního řádu sluje. Pochodeň bez revize hasicího přístroje a proškolení o požární ochraně je nepřípustným zdrojem rizika. Školení se nekoná.", "en": "An open-flame ban applies inside the mountain per the cave fire code. A torch without a fire-extinguisher inspection and fire-safety training is an impermissible source of risk. No training is held." },
+      "injectsReason": "RZ_POCHODEN"
+    },
+    {
+      "id": "V_SUD",
+      "appliesIf": { "knightTag": "sud" },
+      "text": { "cs": "Soudek medoviny podléhá spotřební dani z lihu. Bez kolku finanční správy a negativní dechové zkoušky jezdce se nevyjíždí. Dýchátko je na opravě.", "en": "A keg of mead is subject to excise duty on spirits. No riding out without a tax-authority stamp and a negative breath test of the rider. The breathalyser is being repaired." },
+      "injectsReason": "RZ_SUD"
+    },
+    {
+      "id": "V_MAPA",
+      "appliesIf": { "knightTag": "mapa" },
+      "text": { "cs": "Mapa cest z hory je předmětem státního tajemství. Kartografické dílo bez schvalovací doložky zeměměřického úřadu nesmí opustit sluj. Úřad mapy zásadně neschvaluje.", "en": "A map of the routes out of the mountain is a state secret. No cartographic work may leave the cave without an approval endorsement from the surveying office. The office approves no maps on principle." },
+      "injectsReason": "RZ_MAPA"
+    },
+    {
+      "id": "V_OSTRUHY",
+      "appliesIf": { "knightTag": "ostruhy" },
+      "text": { "cs": "Ostruhy jsou dle zákona na ochranu zvířat bodným nástrojem. K jejich užití je třeba veterinární výjimka, kterou vydává komise, jež se nescházívá.", "en": "Under the animal-protection act, spurs are a pointed instrument. Their use requires a veterinary exemption, issued by a commission that does not convene." },
+      "injectsReason": "RZ_OSTRUHY"
+    },
+    {
+      "id": "V_SEDLO",
+      "appliesIf": { "knightTag": "sedlo" },
+      "text": { "cs": "Sedlo je evidenčním majetkem sluje a musí nést inventární štítek. Majetek bez štítku je úředně nenalezen a co není nalezeno, nemůže být osedláno.", "en": "The saddle is registered cave property and must bear an inventory tag. Property without a tag is officially not found, and what is not found cannot be saddled." },
+      "injectsReason": "RZ_SEDLO"
+    }
+  ]
+}

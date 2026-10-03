@@ -1,0 +1,343 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "R01",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 1/1448",
+        "en": "Decree No. 1/1448"
+      },
+      "text": {
+        "cs": "Každá žádost o výjezd musí být opatřena kolkem v hodnotě 30 grošů.",
+        "en": "Every departure application must bear a duty stamp worth 30 groschen."
+      },
+      "reasonId": "RZ_KOLEK"
+    },
+    {
+      "id": "R02",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 2/1448",
+        "en": "Decree No. 2/1448"
+      },
+      "text": {
+        "cs": "Žádost se podává výhradně na formuláři B-1448. Formuláře z dob husitských jsou neplatné.",
+        "en": "Applications must use form B-1448 exclusively. Hussite-era forms are void."
+      },
+      "reasonId": "RZ_FORMULAR"
+    },
+    {
+      "id": "R03",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 3/1620",
+        "en": "Imperial Patent No. 3/1620"
+      },
+      "text": {
+        "cs": "Meč delší 120 cm vyžaduje zbrojní průkaz kategorie H (Historická).",
+        "en": "Swords longer than 120 cm require a weapons permit, category H (Historical)."
+      },
+      "reasonId": "RZ_ZBROJAK"
+    },
+    {
+      "id": "R04",
+      "day": 3,
+      "cislo": {
+        "cs": "C. k. nařízení č. 4/1848",
+        "en": "I.-R. Ordinance No. 4/1848"
+      },
+      "text": {
+        "cs": "Výstroj rytíře musí do poslední přilby souhlasit s výstrojním listem.",
+        "en": "A knight's equipment must match the equipment manifest down to the last helmet."
+      },
+      "reasonId": "RZ_VYSTROJ"
+    },
+    {
+      "id": "R05",
+      "day": 4,
+      "cislo": {
+        "cs": "Směrnice ÚV č. 5/1968",
+        "en": "Central Committee Directive No. 5/1968"
+      },
+      "text": {
+        "cs": "K výjezdu z hory je třeba výjezdní doložka potvrzená uličním výborem sluje.",
+        "en": "Departure from the mountain requires an exit permit endorsed by the cave street committee."
+      },
+      "reasonId": "RZ_DOLOZKA"
+    },
+    {
+      "id": "R06",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení GDPR-BL č. 6/2026",
+        "en": "Regulation GDPR-BL No. 6/2026"
+      },
+      "text": {
+        "cs": "Každý vyjíždějící rytíř musí doložit souhlas se zpracováním osobních údajů koně.",
+        "en": "Every departing knight must provide consent for the processing of their horse's personal data."
+      },
+      "reasonId": "RZ_GDPR"
+    },
+    {
+      "id": "R07",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 7/1620",
+        "en": "Imperial Patent No. 7/1620"
+      },
+      "text": {
+        "cs": "Listina opatřená pečetí zlomenou jest neplatná a hledí se na ni, jako by nebyla. Na listinu, jako by nebyla, se nehledí vůbec.",
+        "en": "A document bearing a broken seal is void and shall be regarded as if it were not. A document as if it were not shall not be regarded at all."
+      },
+      "reasonId": "RZ_PECET"
+    },
+    {
+      "id": "R08",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 8/1620",
+        "en": "Imperial Patent No. 8/1620"
+      },
+      "text": {
+        "cs": "Výjezd se povoluje toliko osobám víry řádně osvědčené konzistoří. Víra podobojí se pro úřední účely nepočítá ani jednou.",
+        "en": "Departure is granted solely to persons whose faith is duly certified by the consistory. For official purposes, faith in both kinds counts in neither."
+      },
+      "reasonId": "RZ_VIRA"
+    },
+    {
+      "id": "R09",
+      "day": 3,
+      "cislo": {
+        "cs": "C. k. nařízení č. 9/1848",
+        "en": "I.-R. Ordinance No. 9/1848"
+      },
+      "text": {
+        "cs": "Výjezd se povoluje pouze osobám bez nedoplatků vůči c. k. eráru. Dokládá se potvrzením o bezdlužnosti. Revoluce nedoplatky nepromíjí.",
+        "en": "Departure is granted only to persons with no arrears owed to the I.-R. Treasury. Proof: a certificate of no outstanding debts. Revolution does not waive arrears."
+      },
+      "reasonId": "RZ_BEZDLUZNOST"
+    },
+    {
+      "id": "R10",
+      "day": 4,
+      "cislo": {
+        "cs": "Směrnice ÚV č. 10/1968",
+        "en": "Central Committee Directive No. 10/1968"
+      },
+      "text": {
+        "cs": "K žádosti se přikládá kádrový posudek ne starší 30 dnů. Posudek posudku se nevyžaduje, ale doporučuje.",
+        "en": "Applications must include a cadre assessment no older than 30 days. An assessment of the assessment is not required, but is recommended."
+      },
+      "reasonId": "RZ_POSUDEK"
+    },
+    {
+      "id": "R11",
+      "day": 4,
+      "cislo": {
+        "cs": "Směrnice ÚV č. 11/1968",
+        "en": "Central Committee Directive No. 11/1968"
+      },
+      "text": {
+        "cs": "Každý kůň v hoře podléhá evidenci JZD Blaník. Kůň v soukromém držení je přežitek a přežitky nevyjíždějí.",
+        "en": "Every horse in the mountain is subject to registration with the United Agricultural Cooperative Blaník. A privately held horse is a relic of the past, and relics do not ride out."
+      },
+      "reasonId": "RZ_JZD"
+    },
+    {
+      "id": "R12",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení e-Blaník č. 12/2026",
+        "en": "e-Blaník Regulation No. 12/2026"
+      },
+      "text": {
+        "cs": "Žádosti o výjezd se podávají výhradně datovou schránkou. K listinné žádosti se přikládá listinné potvrzení o jejím řádném elektronickém doručení.",
+        "en": "Departure applications are filed exclusively via the official state inbox (data box). Paper applications must include a paper certificate of their proper electronic delivery."
+      },
+      "reasonId": "RZ_DATOVKA"
+    },
+    {
+      "id": "R13",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení ESG-BL č. 13/2026",
+        "en": "Regulation ESG-BL No. 13/2026"
+      },
+      "text": {
+        "cs": "Každý kůň doloží ESG certifikát. Koně emisní třídy E a horší nesmějí opustit horu bez zelené plakety, která se nevydává.",
+        "en": "Every horse must present an ESG certificate. Horses of emission class E or worse may not leave the mountain without the green sticker, which is not issued."
+      },
+      "reasonId": "RZ_ESG"
+    },
+    {
+      "id": "R14",
+      "day": 3,
+      "cislo": {
+        "cs": "C. k. nařízení č. 14/1848",
+        "en": "I.-R. Ordinance No. 14/1848"
+      },
+      "text": {
+        "cs": "Na štítě vyjíždějícího rytíře budiž vyobrazen lev český, a to o dvou ocasech. Lev o jednom ocase se považuje za lva rozpracovaného, štít bez lva za lva nepřítomného. S rozpracovaným ani nepřítomným lvem se nevyjíždí.",
+        "en": "The shield of a departing knight shall display the Bohemian lion, with two tails. A one-tailed lion is deemed a lion in progress; a shield without a lion, a lion absent. One rides out with neither."
+      },
+      "reasonId": "RZ_LEV_OCAS"
+    },
+    {
+      "id": "R15",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 15/1448",
+        "en": "Decree No. 15/1448"
+      },
+      "text": {
+        "cs": "Meč ukovaný před rokem 1400 smí do boje toliko s platným lejstrem BAKH — Bezpečnostním Atestem Kutná Hora. Atest v řízení není atest vydaný.",
+        "en": "A sword forged before the year 1400 may go to battle only with a valid BAKH paper — the Kutná Hora Safety Attestation. An attestation in progress is not an attestation issued."
+      },
+      "reasonId": "RZ_BAKH"
+    },
+    {
+      "id": "R16",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 16/1448",
+        "en": "Decree No. 16/1448"
+      },
+      "text": {
+        "cs": "Podkovy propadlé zkoušce podkovářského cechu jsou příliš hlučné a postrádají prvky odrazné. S takovými se nevyjíždí — srazila by vás první vozová hradba.",
+        "en": "Horseshoes that failed the farriers' guild inspection are too loud and lack reflective elements. No riding out on those — the first wagon fort would run you down."
+      },
+      "reasonId": "RZ_PODKOVY"
+    },
+    {
+      "id": "R17",
+      "day": 4,
+      "cislo": {
+        "cs": "Směrnice ÚV č. 17/1968",
+        "en": "Central Committee Directive No. 17/1968"
+      },
+      "text": {
+        "cs": "Do boje se vyjíždí s výzbrojí rytířskou dle evidenčního vzoru. Srp a kladivo jsou nástroje budovatelské, nikoliv bojové — bojovat se s nimi smí toliko na plakátě.",
+        "en": "One rides into battle with knightly armament per the registered pattern. The sickle and hammer are tools of construction, not combat — fighting with them is permitted only on posters."
+      },
+      "reasonId": "RZ_VYZBROJ"
+    },
+    {
+      "id": "R18",
+      "day": 5,
+      "cislo": {
+        "cs": "Nařízení BOZP-BL č. 18/2026",
+        "en": "Regulation OSH-BL No. 18/2026"
+      },
+      "text": {
+        "cs": "K výjezdu jsou povinné úplné osobní ochranné pracovní prostředky: přilba, reflexní vesta a pracovní obuv s ocelovou špičkou. Za každý chybějící prvek pokuta 500 Kč.",
+        "en": "Departure requires full personal protective equipment: helmet, hi-vis vest, and steel-toe work boots. Each missing item carries a 500 CZK fine."
+      },
+      "reasonId": "RZ_BOZP"
+    },
+    {
+      "id": "R19",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 19/1620",
+        "en": "Imperial Patent No. 19/1620"
+      },
+      "text": {
+        "cs": "Výjezd smí povoliti toliko úředník, který již sám vyjel. Žádný úředník dosud nevyjel. Úřad děkuje za pochopení.",
+        "en": "Departure may be authorized only by an official who has himself ridden out. No official has ridden out to date. The office thanks you for your understanding."
+      },
+      "reasonId": "RZ_UREDNIK"
+    },
+    {
+      "id": "R20",
+      "day": 4,
+      "cislo": {
+        "cs": "Směrnice ÚV č. 20/1968",
+        "en": "Central Committee Directive No. 20/1968"
+      },
+      "text": {
+        "cs": "Kdo chce vyjet zachránit národ, jest zjevně duševně zdráv. Rytíř, jehož posudek výslovně potvrzuje způsobilost k výjezdu, se jakožto zdravý šetří v hoře pro případ, že bude ještě hůř.",
+        "en": "Whoever wishes to ride out and save the nation is plainly of sound mind. A knight whose assessment expressly certifies fitness to ride shall, being healthy, be preserved in the mountain in case things get even worse."
+      },
+      "reasonId": "RZ_ZDRAVY"
+    },
+    {
+      "id": "R21",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 21/1448",
+        "en": "Decree No. 21/1448"
+      },
+      "text": {
+        "cs": "K výjezdu do boje je rytíř povinen třít alespoň jednu zbraň, koně a kus zbroje. Kdo nemá čím válčit, nechť válčí doma.",
+        "en": "To ride to battle a knight must bear at least one weapon, a horse and a piece of armour. He who has nothing to fight with may fight at home."
+      },
+      "reasonId": "RZ_CHYBI_ZBRAN"
+    },
+    {
+      "id": "R22",
+      "day": 2,
+      "cislo": {
+        "cs": "Patent císařský č. 22/1620",
+        "en": "Imperial Patent No. 22/1620"
+      },
+      "text": {
+        "cs": "Výjezd se povoluje toliko osobám víry katolické. Kališnický kalich budiž z varkoče odstraněn; růženec posvěcený jest povinný.",
+        "en": "Departure is permitted only to persons of the Catholic faith. The Utraquist chalice must be removed from the tabard; a blessed rosary is mandatory."
+      },
+      "reasonId": "RZ_KALICH"
+    },
+    {
+      "id": "R23",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 23/1448",
+        "en": "Decree No. 23/1448"
+      },
+      "text": {
+        "cs": "Vous delší než úřední píď je bezpečnostním rizikem (zamotá se do třmene). Rytíř s dlouhým vousem nevyjede.",
+        "en": "A beard longer than the official span is a safety hazard (it tangles in the stirrup). A long-bearded knight shall not ride out."
+      },
+      "reasonId": "RZ_VOUS_DLOUHY"
+    },
+    {
+      "id": "R24",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 24/1448",
+        "en": "Decree No. 24/1448"
+      },
+      "text": {
+        "cs": "Nošení brejlí u výjezdu se zapovídá. Kdo na vyhlášky nevidí pouhým okem, ať jim lépe věří.",
+        "en": "Wearing spectacles for departure is forbidden. He who cannot read the decrees with the naked eye should simply believe them more."
+      },
+      "reasonId": "RZ_BRYLE"
+    },
+    {
+      "id": "R25",
+      "day": 1,
+      "cislo": {
+        "cs": "Nařízení věčné č. 25",
+        "en": "Eternal Ordinance No. 25"
+      },
+      "text": {
+        "cs": "Urážka svatého Václava slovem, skutkem či chybným erbem (lev místo orlice) se trestá okamžitým zamítnutím. Kníže všechno slyší.",
+        "en": "Insult to St. Wenceslas by word, deed or wrong coat of arms (a lion in place of the eagle) is punished by immediate rejection. The Duke hears all."
+      },
+      "reasonId": "RZ_URAZKA_VACLAV"
+    },
+    {
+      "id": "R26",
+      "day": 1,
+      "cislo": {
+        "cs": "Vyhláška č. 26/1448",
+        "en": "Decree No. 26/1448"
+      },
+      "text": {
+        "cs": "Výjezd se povoluje jen rytíři, jenž doloží nejméně 10 let praxe v oboru kybernetické bezpečnosti. Obor bude zřízen.",
+        "en": "Departure is granted only to a knight who proves at least 10 years of experience in cybersecurity. The field is to be established."
+      },
+      "reasonId": "RZ_PRAXE"
+    }
+  ]
+}

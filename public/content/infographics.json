@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "IG_001",
+      "kind": "facka",
+      "text": {
+        "cs": "Dne onoho se kolem hory Blaník projela skupina historických šermířů. Skóre: Rytíři 1 : 0 Úředník.",
+        "en": "On this day, a group of historical fencers rode past Mount Blaník. Score: Knights 1 : 0 Clerk."
+      }
+    },
+    {
+      "id": "IG_002",
+      "kind": "facka",
+      "text": {
+        "cs": "Statistika úrazů na pracovišti: 100 % způsobeno nespokojenými klienty v plátové zbroji.",
+        "en": "Workplace injury statistics: 100% caused by dissatisfied clients in plate armour."
+      }
+    },
+    {
+      "id": "IG_003",
+      "kind": "facka",
+      "text": {
+        "cs": "Odborová organizace úředníků doporučuje: uhýbejte doleva. Rytíři jsou vesměs praváci.",
+        "en": "The clerks' union recommends: dodge left. Knights are mostly right-handed."
+      }
+    },
+    {
+      "id": "IG_004",
+      "kind": "dayend",
+      "text": {
+        "cs": "Národu dnes opět nebylo nejhůř. Děkujeme, že úřadujete s námi.",
+        "en": "The nation once again avoided its darkest hour today. Thank you for administering with us."
+      }
+    },
+    {
+      "id": "IG_005",
+      "kind": "dayend",
+      "text": {
+        "cs": "Hora Blaník: 500 let bez pracovního úrazu výjezdem.",
+        "en": "Mount Blaník: 500 years without a departure-related workplace accident."
+      }
+    },
+    {
+      "id": "IG_006",
+      "kind": "dayend",
+      "text": {
+        "cs": "Spotřeba razítkové barvy dnes pokryla roční těžbu jedné menší inkoustové studny.",
+        "en": "Today's stamp ink consumption equalled the annual yield of a minor ink well."
+      }
+    },
+    {
+      "id": "IG_007",
+      "kind": "facka",
+      "text": {
+        "cs": "Zápis v knize přání a stížností: „Facka.“ Vyřízeno obratem, doručeno osobně do vlastní tváře.",
+        "en": "Entry in the book of wishes and complaints: \"One slap.\" Processed by return, served in person — into your own face."
+      }
+    },
+    {
+      "id": "IG_008",
+      "kind": "facka",
+      "text": {
+        "cs": "Kronika hory, list 4 512: zamítnuto neprávem. Úder veden plátovou rukavicí zprava. Rukavice bez závad.",
+        "en": "Mountain chronicle, folio 4,512: rejected wrongfully. Blow delivered by plate gauntlet, from the right. Gauntlet found free of defects."
+      }
+    },
+    {
+      "id": "IG_009",
+      "kind": "facka",
+      "text": {
+        "cs": "Průzkum spokojenosti klientů: 1 z 1 dotázaných rytířů upřednostňuje fyzickou formu zpětné vazby.",
+        "en": "Client satisfaction survey: 1 in 1 knights polled prefers feedback in physical form."
+      }
+    },
+    {
+      "id": "IG_010",
+      "kind": "facka",
+      "text": {
+        "cs": "Metodický pokyn č. 112/B: úder od klienta se vykazuje jako „ústní projednání se zvýšenou intenzitou“.",
+        "en": "Methodological Guideline No. 112/B: a blow from a client is to be reported as an \"oral hearing of elevated intensity\"."
+      }
+    },
+    {
+      "id": "IG_011",
+      "kind": "dayend",
+      "text": {
+        "cs": "Bilance dne: výjezdů povoleno 0, konců světa dostaveno 0. Plán plněn na 102 %.",
+        "en": "Daily balance: departures approved 0, ends of the world arrived 0. Plan fulfilled at 102%."
+      }
+    },
+    {
+      "id": "IG_012",
+      "kind": "dayend",
+      "text": {
+        "cs": "Denní uzávěrka: fronta se zkrátila přirozeným usnutím čekajících. Úřadovna se zavírá, hora nikoliv.",
+        "en": "Daily closing: the queue shortened as those waiting fell asleep naturally. The office closes; the mountain does not."
+      }
+    },
+    {
+      "id": "IG_013",
+      "kind": "dayend",
+      "text": {
+        "cs": "Hlášení pro nadřízené: nejhůř dnes opět nenastalo. Doporučení: setrvat ve střehu, případně v dřímotě.",
+        "en": "Report to superiors: the darkest hour once again failed to occur today. Recommendation: remain on alert, or failing that, asleep."
+      }
+    },
+    {
+      "id": "IG_014",
+      "kind": "dayend",
+      "text": {
+        "cs": "Dnešní spotřeba: 1 svíce, 3 kolky, 14 povzdechů, 0 výjezdů. Oproti minulému století beze změn.",
+        "en": "Today's consumption: 1 candle, 3 duty stamps, 14 sighs, 0 departures. No change from the previous century."
+      }
+    },
+    {
+      "id": "IG_015",
+      "kind": "dayend",
+      "text": {
+        "cs": "Mimořádné hlášení: došla razítková barva. Do odvolání se razítkuje nasucho; pravost otisku ověřujte hmatem.",
+        "en": "Special report: the stamp ink has run out. Until further notice, stamping is done dry; verify the imprint by touch."
+      }
+    },
+    {
+      "id": "IG_016",
+      "kind": "dayend",
+      "text": {
+        "cs": "Polední pauza proběhla dle plánu, 11:30–14:00. Stížnosti na její délku přijímáme výhradně během polední pauzy.",
+        "en": "The midday break took place as scheduled, 11:30–14:00. Complaints about its length are accepted exclusively during the midday break."
+      }
+    },
+    {
+      "id": "IG_H01",
+      "kind": "heckle",
+      "text": {
+        "cs": "No tak, bude to? Honem, honem!",
+        "en": "Well? Will it be today? Chop chop!"
+      }
+    },
+    {
+      "id": "IG_H02",
+      "kind": "heckle",
+      "text": {
+        "cs": "Razítkuj, úřade, razítkuj!",
+        "en": "Stamp away, office, stamp away!"
+      }
+    },
+    {
+      "id": "IG_H03",
+      "kind": "heckle",
+      "text": {
+        "cs": "Pět set let čekám, ale TOHLE je moc!",
+        "en": "I have waited five hundred years, but THIS is too much!"
+      }
+    },
+    {
+      "id": "IG_H04",
+      "kind": "heckle",
+      "text": {
+        "cs": "Kůň mi mezitím zestárl o století!",
+        "en": "My horse has aged a century in this queue!"
+      }
+    },
+    {
+      "id": "IG_H05",
+      "kind": "heckle",
+      "text": {
+        "cs": "Přitlač! Pořádně! Ať to drží!",
+        "en": "Press harder! Properly! Make it stick!"
+      }
+    },
+    {
+      "id": "IG_H06",
+      "kind": "heckle",
+      "text": {
+        "cs": "To i Bílá hora byla rychlejší…",
+        "en": "Even White Mountain was over quicker…"
+      }
+    },
+    {
+      "id": "IG_H07",
+      "kind": "heckle",
+      "text": {
+        "cs": "Honem, než bude národu zase líp!",
+        "en": "Hurry, before the nation starts feeling better again!"
+      }
+    },
+    {
+      "id": "IG_H08",
+      "kind": "heckle",
+      "text": {
+        "cs": "Zbroj mi tu reziví, člověče!",
+        "en": "My armour is rusting as we speak, man!"
+      }
+    },
+    {
+      "id": "IG_H09",
+      "kind": "heckle",
+      "text": {
+        "cs": "Už jsem tam měl být čtyři minuty, ty magore!",
+        "en": "I was supposed to be out there four minutes ago, you muppet!"
+      }
+    }
+  ]
+}

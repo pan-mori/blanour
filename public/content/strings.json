@@ -1,0 +1,501 @@
+{
+  "version": 1,
+  "items": {
+    "title": {
+      "cs": "Ještě není tak zle!",
+      "en": "Not Bad Enough Yet!"
+    },
+    "subtitle": {
+      "cs": "Odbor blanických výjezdů · byrokratická komedie",
+      "en": "Department of Blaník Departures · a bureaucratic comedy"
+    },
+    "play": {
+      "cs": "ÚŘADOVAT",
+      "en": "START SHIFT"
+    },
+    "day": {
+      "cs": "Den",
+      "en": "Day"
+    },
+    "newRule": {
+      "cs": "NOVÁ VYHLÁŠKA DNE",
+      "en": "NEW REGULATION OF THE DAY"
+    },
+    "openOffice": {
+      "cs": "OTEVŘÍT PŘEPÁŽKU →",
+      "en": "OPEN THE COUNTER →"
+    },
+    "dayDone": {
+      "cs": "Konec dne",
+      "en": "End of day"
+    },
+    "nextDay": {
+      "cs": "DALŠÍ DEN →",
+      "en": "NEXT DAY →"
+    },
+    "statRejected": {
+      "cs": "Zamítnuto žádostí",
+      "en": "Applications rejected"
+    },
+    "statApproved": {
+      "cs": "Povoleno výjezdů",
+      "en": "Departures approved"
+    },
+    "statMistakes": {
+      "cs": "Obdrženo facek",
+      "en": "Slaps received"
+    },
+    "statDecrees": {
+      "cs": "Vydáno nových vyhlášek",
+      "en": "Emergency decrees issued"
+    },
+    "statCoffees": {
+      "cs": "Vypito turků",
+      "en": "Cups of coffee consumed"
+    },
+    "patience": {
+      "cs": "Trpělivost rytíře",
+      "en": "Knight's patience"
+    },
+    "knight": {
+      "cs": "Rytíř",
+      "en": "Knight"
+    },
+    "decrees": {
+      "cs": "Vyhlášky v šuplíku",
+      "en": "Decrees in drawer"
+    },
+    "equipment": {
+      "cs": "Výstroj na sobě",
+      "en": "Visible equipment"
+    },
+    "seal": {
+      "cs": "Pečeť",
+      "en": "Seal"
+    },
+    "reject": {
+      "cs": "ZAMÍTNOUT",
+      "en": "REJECT"
+    },
+    "approve": {
+      "cs": "POVOLIT VÝJEZD",
+      "en": "APPROVE DEPARTURE"
+    },
+    "issueDecree": {
+      "cs": "VYDAT VYHLÁŠKU",
+      "en": "ISSUE DECREE"
+    },
+    "pickReason": {
+      "cs": "Z jakého důvodu zamítáte?",
+      "en": "On what grounds do you reject?"
+    },
+    "pickDecree": {
+      "cs": "Kterou vyhlášku ráčíte vydat?",
+      "en": "Which decree do you wish to issue?"
+    },
+    "decreeIssued": {
+      "cs": "Vyhláška vydána s okamžitou platností!",
+      "en": "Decree issued, effective immediately!"
+    },
+    "cancel": {
+      "cs": "Zpět",
+      "en": "Back"
+    },
+    "approveConfirm": {
+      "cs": "Opravdu POVOLIT výjezd blanického vojska?\nTohle už nejde vzít zpátky…",
+      "en": "Really APPROVE the departure of the Blaník host?\nThere is no undoing this…"
+    },
+    "yes": {
+      "cs": "Ano, povoluji",
+      "en": "Yes, approved"
+    },
+    "no": {
+      "cs": "Ne, ještě ne",
+      "en": "No, not yet"
+    },
+    "rejectOkDefault": {
+      "cs": "Žádost zamítnuta. Rytíř odchází se skřípěním zubů.",
+      "en": "Application rejected. The knight leaves, grinding his teeth."
+    },
+    "rejectBadDefault": {
+      "cs": "„Za CO přesně?! Všechno mám v pořádku!“",
+      "en": "\"On WHAT grounds?! Everything is in order!\""
+    },
+    "patienceExpired": {
+      "cs": "Rytíři došla trpělivost. Úřední šiml dostal podkovou.",
+      "en": "The knight ran out of patience. The office nag got the horseshoe."
+    },
+    "continue": {
+      "cs": "Pokračovat",
+      "en": "Continue"
+    },
+    "endSurvivedTitle": {
+      "cs": "HORA SPÍ DÁL",
+      "en": "THE MOUNTAIN SLEEPS ON"
+    },
+    "endSurvivedBody": {
+      "cs": "Přežil jsi všech pět epoch. Zle ještě není — zásluhou razítka.\nRytíři dál čekají, až bude národu nejhůř. Ty víš své: nejhůř je, až když dojde káva.",
+      "en": "You survived all five eras. Things are not bad enough yet — thanks to the stamp.\nThe knights keep waiting for the nation's darkest hour. You know better: the darkest hour is when the coffee runs out."
+    },
+    "endBeatenTitle": {
+      "cs": "ÚŘEDNÍK ODNESEN",
+      "en": "CLERK CARRIED OUT"
+    },
+    "endBeatenBody": {
+      "cs": "Tři facky a dost. Rytíři tě vynesli před horu v koši na spisy\na na přepážku pověsili ceduli: OTEVŘENO. KONEČNĚ.",
+      "en": "Three slaps and that was that. The knights carried you out of the mountain in a filing basket\nand hung a sign on the counter: OPEN. AT LAST."
+    },
+    "endReleasedTitle": {
+      "cs": "RYTÍŘI VYJELI",
+      "en": "THE KNIGHTS RIDE OUT"
+    },
+    "endReleasedBody": {
+      "cs": "Bylo tedy nejhůř. Vojsko svatého Václava vyrazilo z hory…\na ty s ním — byl jsi mobilizován. Jenže po letech úředničiny bylo tvé tělo tak slabé,\nže ses ani nevyšplhal na koně. Udupali tě tví spolubojovníci a jejich oři.\nRazítka osiřela.",
+      "en": "So it truly was the darkest hour. Saint Wenceslas' host rode out of the mountain…\nand you with them — you were mobilized. But after years of desk work your body was so feeble\nyou couldn't even climb onto your horse. You were trampled by your brothers-in-arms and their steeds.\nThe stamps were orphaned."
+    },
+    "backToMenu": {
+      "cs": "ZPĚT DO ÚŘADU (menu)",
+      "en": "BACK TO THE OFFICE (menu)"
+    },
+    "stampTray": {
+      "cs": "Razítkovník",
+      "en": "Stamp rack"
+    },
+    "stampPad": {
+      "cs": "poduška",
+      "en": "ink pad"
+    },
+    "stampRejected": {
+      "cs": "ZAMÍTNUTO",
+      "en": "REJECTED"
+    },
+    "stampApproved": {
+      "cs": "SCHVÁLENO",
+      "en": "APPROVED"
+    },
+    "stampHintInk": {
+      "cs": "Namoč razítko na podušce (pozor, houpne s ním!).",
+      "en": "Ink the stamp on the pad (careful, it'll swing!)."
+    },
+    "stampHintPress": {
+      "cs": "Q/E nebo kolečkem otoč PODLE zářezu kroužku · pak podrž levé tlačítko na kroužku",
+      "en": "Rotate with Q/E or wheel to MATCH the circle notch · then hold the left button on the circle"
+    },
+    "stampSeals": {
+      "cs": "Pečeti do razítka:",
+      "en": "Seal inserts:"
+    },
+    "stampHintSeal": {
+      "cs": "Vlož do razítka pečeť podle formuláře (kroužek na žádosti!).",
+      "en": "Mount the seal the form requires (see the circle on the application!)."
+    },
+    "stampWrongSeal": {
+      "cs": "Špatná pečeť v razítku! Mrkni na kroužek na formuláři.",
+      "en": "Wrong seal in the stamp! Check the circle on the form."
+    },
+    "sealSlot": {
+      "cs": "pečeť úřadu",
+      "en": "office seal"
+    },
+    "askSuffix": {
+      "cs": "Vše podle předpisu, pane úředníku!",
+      "en": "All by the book, officer!"
+    },
+    "helpTitle": {
+      "cs": "ÚŘEDNÍ NÁPOVĚDA",
+      "en": "OFFICIAL HELP DESK"
+    },
+    "helpHow": {
+      "cs": "Jak úřadovat",
+      "en": "How to administrate"
+    },
+    "helpRules": {
+      "cs": "Platné vyhlášky",
+      "en": "Regulations in force"
+    },
+    "helpH1": {
+      "cs": "Klikej na PŘEDMĚTY rytíře — odpoví ti na ně. U prohřešku se objeví tlačítko ⊘, které spustí razítkování.",
+      "en": "Click the knight's ITEMS — he'll answer. A violation reveals a ⊘ button that starts the stamping."
+    },
+    "helpH2": {
+      "cs": "Prohřešky v DOKUMENTECH řeš tlačítkem ZAMÍTNOUT a výběrem důvodu.",
+      "en": "DOCUMENT violations go through the REJECT button and picking a reason."
+    },
+    "helpH3": {
+      "cs": "Razítko: ① vlož pečeť podle kroužku na žádosti ② namoč na podušce (houpne!) ③ Q/E/kolečkem otoč PODLE natočení kroužku ④ podrž na kroužku. Pozor — pokřik rytíře s razítkem škubne!",
+      "en": "Stamp: ① mount the seal the application shows ② ink it (it swings!) ③ rotate with Q/E/wheel to MATCH the circle ④ hold on the circle. Careful — a heckling knight jolts the stamp!"
+    },
+    "helpH4": {
+      "cs": "Čisté papíry? VYDAT VYHLÁŠKU vyrobí chybu (jen 2× za hru). Křivé nařčení = facka. Tři facky = konec.",
+      "en": "Clean papers? ISSUE A DECREE creates a flaw (twice per game). False accusation = a slap. Three slaps = done."
+    },
+    "stampDry": {
+      "cs": "Razítko je suché!",
+      "en": "The stamp is dry!"
+    },
+    "stampCrooked": {
+      "cs": "Křivě vůči kroužku! Srovnej razítko podle zářezu.",
+      "en": "Crooked against the circle! Match the notch."
+    },
+    "stampFaded": {
+      "cs": "Moc zlehka — otisk je bledý.",
+      "en": "Too light — the imprint is faded."
+    },
+    "stampSmudged": {
+      "cs": "Moc dlouho — rozmazané. Styď se.",
+      "en": "Too long — smudged. Shame on you."
+    },
+    "sealBroken": {
+      "cs": "ZLOMENÁ ⚠",
+      "en": "BROKEN ⚠"
+    },
+    "howTo": {
+      "cs": "Jak úřadovat",
+      "en": "How to administrate"
+    },
+    "howToBody": {
+      "cs": "Rytíři chtějí vyjet z Blaníku zachránit národ. Ty nechceš — přišel bys o teplé místo.\n\n1. Prostuduj dokumenty a porovnej je s vyhláškami dne (čti ranní noviny!).\n2. Najdi chybu a ZAMÍTNI se správným důvodem. Špatný důvod = facka.\n3. Mají-li vše v pořádku, VYDAT VYHLÁŠKU chybu vytvoří. Jen 2× za hru!\n4. Rozhodnutí platí až s razítkem: namoč na podušce, kolečkem/Q/E srovnej, podrž na dokumentu a přitlač. Tak akorát.\n5. Neotálej — trpělivost rytíře má své meze. Tři facky = konec.\n\nPOVOLIT VÝJEZD můžeš kdykoli… ale oba víme, co to znamená.",
+      "en": "The knights want to ride out of Blaník to save the nation. You don't want that — you'd lose a cushy job.\n\n1. Study the documents and compare them with the day's decrees (read the morning paper!).\n2. Find a flaw and REJECT with the correct reason. Wrong reason = a slap.\n3. If their papers are in order, ISSUE A DECREE to create a flaw. Only twice per game!\n4. Decisions only count when stamped: ink on the pad, align with wheel/Q/E, hold on the document and press. Just right.\n5. Don't dawdle — a knight's patience has limits. Three slaps and you're done.\n\nYou may APPROVE THE DEPARTURE at any time… but we both know what that means."
+    },
+    "close": {
+      "cs": "Zavřít",
+      "en": "Close"
+    },
+    "music": {
+      "cs": "Hudba a zvuky",
+      "en": "Music & sounds"
+    },
+    "wrapHint": {
+      "cs": "Převázáno! Přetáhni uzel podél provázku →",
+      "en": "Tied up! Drag the knot along the string →"
+    },
+    "sealChart": {
+      "cs": "VZORNÍK ÚŘEDNÍCH PEČETÍ",
+      "en": "OFFICIAL SEAL REFERENCE"
+    },
+    "sealChartNote": {
+      "cs": "Zlomená pečeť = listina neplatná!",
+      "en": "A broken seal voids the document!"
+    },
+    "on": {
+      "cs": "ZAPNUTO",
+      "en": "ON"
+    },
+    "off": {
+      "cs": "VYPNUTO",
+      "en": "OFF"
+    },
+    "stampRecap": {
+      "cs": "ZAMÍTÁŠ:",
+      "en": "REJECTING:"
+    },
+    "stampRecapApprove": {
+      "cs": "POVOLUJEŠ VÝJEZD BLANICKÉHO VOJSKA! Opravdu?!",
+      "en": "APPROVING THE DEPARTURE OF THE BLANÍK HOST! Really?!"
+    },
+    "stampCancel": {
+      "cs": "✕ Zvolit jiný důvod",
+      "en": "✕ Pick another reason"
+    },
+    "stampMisplaced": {
+      "cs": "Vedle! Otisk patří na vyznačený kroužek.",
+      "en": "Off target! The imprint belongs on the marked circle."
+    },
+    "cabinetTitle": {
+      "cs": "RAZÍTKOVÁ SKŘÍŇ — vyber důvod zamítnutí",
+      "en": "STAMP CABINET — pick a rejection ground"
+    },
+    "cabinetPick": {
+      "cs": "Otevři zásuvku s odpovídajícím prohřeškem:",
+      "en": "Open the drawer with the matching violation:"
+    },
+    "cabinetBack": {
+      "cs": "◀ Zpět k zásuvkám",
+      "en": "◀ Back to drawers"
+    },
+    "cat_formular": {
+      "cs": "Formuláře a podání",
+      "en": "Forms & filings"
+    },
+    "cat_poplatek": {
+      "cs": "Poplatky a kolky",
+      "en": "Fees & duty stamps"
+    },
+    "cat_papiry": {
+      "cs": "Doklady a přílohy",
+      "en": "Papers & attachments"
+    },
+    "cat_pecet": {
+      "cs": "Pečeti",
+      "en": "Seals"
+    },
+    "cat_vira": {
+      "cs": "Víra a symboly",
+      "en": "Faith & symbols"
+    },
+    "cat_kun": {
+      "cs": "Kůň",
+      "en": "The horse"
+    },
+    "cat_vystroj": {
+      "cs": "Výstroj a zbroj",
+      "en": "Equipment & armour"
+    },
+    "cat_chybi": {
+      "cs": "Chybí do boje",
+      "en": "Missing for battle"
+    },
+    "cat_dekret": {
+      "cs": "Čerstvé vyhlášky",
+      "en": "Fresh decrees"
+    },
+    "freshDecree": {
+      "cs": "čerstvá vyhláška",
+      "en": "fresh decree"
+    },
+    "catEmpty": {
+      "cs": "V této zásuvce zatím žádné razítko není.\nPřibude, jakmile začne platit odpovídající vyhláška.",
+      "en": "No stamp in this drawer yet.\nOne appears once a matching decree comes into force."
+    },
+    "candle": {
+      "cs": "svíčka",
+      "en": "candle"
+    },
+    "waxTitle": {
+      "cs": "Pečetění",
+      "en": "Wax sealing"
+    },
+    "waxTakeWax": {
+      "cs": "Vezmi červený vosk ze stolu.",
+      "en": "Take the red wax from the desk."
+    },
+    "waxHeat": {
+      "cs": "nahřátí",
+      "en": "heat"
+    },
+    "waxHeatIt": {
+      "cs": "Podrž vosk nad plamenem svíčky, dokud nezměkne.",
+      "en": "Hold the wax over the candle flame until it softens."
+    },
+    "waxPour": {
+      "cs": "Vosk je horký! Kápni ho na kroužek na formuláři.",
+      "en": "The wax is hot! Drip it onto the circle on the form."
+    },
+    "waxPressMatrix": {
+      "cs": "Přitiskni SPRÁVNÉ pečetidlo (podle znaku na kroužku).",
+      "en": "Press the CORRECT seal matrix (per the mark on the circle)."
+    },
+    "waxMatrices": {
+      "cs": "Pečetidla:",
+      "en": "Seal matrices:"
+    },
+    "waxSealedOk": {
+      "cs": "Zapečetěno! Teď orazítkuj zamítnutí.",
+      "en": "Sealed! Now stamp the rejection."
+    },
+    "waxWrongMatrix": {
+      "cs": "Špatné pečetidlo! Vosk je zmařen — nahřej a nalej znovu.",
+      "en": "Wrong matrix! The wax is ruined — reheat and re-pour."
+    },
+    "stampSlot": {
+      "cs": "sem razítko",
+      "en": "stamp here"
+    },
+    "chibiHintZbran": {
+      "cs": "Rytíř nemá u sebe žádnou zbraň. S holýma rukama se neválčí.",
+      "en": "The knight carries no weapon. One does not fight bare-handed."
+    },
+    "chibiHintKun": {
+      "cs": "Rytíř nemá koně. Pěšky na bitvu nedojde včas.",
+      "en": "The knight has no horse. He won't reach the battle on foot."
+    },
+    "chibiHintZbroj": {
+      "cs": "Rytíř nemá žádnou zbroj. V první řeži by padl.",
+      "en": "The knight wears no armour. He would fall in the first clash."
+    },
+    "tagHintVousDlouhy": {
+      "cs": "Vous delší než píď — zamotá se do třmene (vyhl. 23).",
+      "en": "Beard longer than a span — it tangles in the stirrup (decree 23)."
+    },
+    "tagHintBryle": {
+      "cs": "Brejle u výjezdu zapovězeny (vyhl. 24).",
+      "en": "Spectacles forbidden for departure (decree 24)."
+    },
+    "tagHintKalich": {
+      "cs": "Kališnický kalich na varkoči — po Bílé hoře zapovězeno (patent 22).",
+      "en": "Utraquist chalice on the tabard — forbidden after White Mountain (patent 22)."
+    },
+    "tagHintVaclav": {
+      "cs": "Urážka sv. Václava. Kníže všechno slyší (nař. 25).",
+      "en": "Insult to St. Wenceslas. The Duke hears all (ordinance 25)."
+    },
+    "drawerDecrees": {
+      "cs": "Podpultové vyhlášky",
+      "en": "Under-the-counter decrees"
+    },
+    "talkOut": {
+      "cs": "ROZMLUVIT MU TO",
+      "en": "TALK HIM OUT OF IT"
+    },
+    "talkOutDesc": {
+      "cs": "(ne zamítnout — poslat převléct/přezbrojit)",
+      "en": "(not a rejection — send him to re-equip)"
+    },
+    "cat_rozmluva": {
+      "cs": "Domluva",
+      "en": "A quiet word"
+    },
+    "talkScold": {
+      "cs": "„Co to máš za maskování, člověče?! Víš vůbec, jakej je rok? Přijela rudá armáda — šupej se přezbrojit, nebo budeš mávat srpem za špatnou stranu!\"",
+      "en": "\"What kind of disguise is that, man?! Do you even know what year it is? The Red Army has arrived — go re-arm, or you'll be swinging that sickle for the wrong side!\""
+    },
+    "talkReply": {
+      "cs": "„Aha. No jo. Tak si teda vezmu pořádnej meč, ať je klid. Beztak se mi s tím kladivem blbě zdravilo.\"",
+      "en": "\"Ah. Right. I'll take a proper sword then, for the quiet life. That hammer made waving hello awkward anyway.\""
+    },
+    "talkContinue": {
+      "cs": "Rytíř se přezbrojil. Pokračuj v odbavení.",
+      "en": "The knight re-armed. Continue processing."
+    },
+    "youClerk": {
+      "cs": "Ty (úředník):",
+      "en": "You (clerk):"
+    },
+    "legislaTitle": {
+      "cs": "VEČERNÍ ÚŘADOVÁNÍ — nové vyhlášky",
+      "en": "EVENING PAPERWORK — new decrees"
+    },
+    "legislaHint": {
+      "cs": "Panika! Vyber si přesně 2 nové vyhlášky na zítřek. (Však si je pak sám dodržuj.)",
+      "en": "Panic! Choose exactly 2 new decrees for tomorrow. (You'll have to enforce them yourself.)"
+    },
+    "legislaNeed": {
+      "cs": "Vyber ještě",
+      "en": "Pick"
+    },
+    "legislaMore": {
+      "cs": "vyhlášku/y",
+      "en": "more"
+    },
+    "statActive": {
+      "cs": "Platných vyhlášek",
+      "en": "Decrees in force"
+    },
+    "legislaPicked": {
+      "cs": "Vybrány 2 vyhlášky. Zítra je sám dodržuj.",
+      "en": "Two decrees chosen. Enforce them yourself tomorrow."
+    },
+    "inspectHint": {
+      "cs": "→ Zamítnutí vyber v razítkové skříni (tlačítko ZAMÍTNOUT).",
+      "en": "→ Pick the rejection in the stamp cabinet (the REJECT button)."
+    },
+    "swordHint": {
+      "cs": "Meč nad 120 cm bez platného zbrojního průkazu kat. H.",
+      "en": "Sword over 120 cm without a valid category-H weapons permit."
+    },
+    "langLabel": {
+      "cs": "Jazyk / Language",
+      "en": "Language / Jazyk"
+    }
+  }
+}

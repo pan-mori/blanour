@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "N_001",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "absurd",
+      "headline": { "cs": "Kolem Blaníku projela skupina potulných šermířů. Poplach v hoře odvolán po šesti hodinách.", "en": "A band of wandering swordsmen passed Mount Blaník. The alarm inside was called off after six hours." }
+    },
+    {
+      "id": "N_002",
+      "minDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Anketa: Je národu nejhůř? 47 % míní, že už bylo hůř. 47 %, že teprve bude. Zbytek se přejmenoval na Švýcary.", "en": "Poll: Is this the nation's darkest hour? 47% say it was darker before, 47% say darker is coming. The rest renamed themselves Swiss." }
+    },
+    {
+      "id": "N_003",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "absurd",
+      "headline": { "cs": "Cena piva poprvé překročila cenu ovsa. Svatý Václav prý v noci osedlával koně.", "en": "Beer now costs more than oats for the first time. Saint Wenceslas was reportedly saddling his horse at night." }
+    },
+    {
+      "id": "N_004",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "serious",
+      "headline": { "cs": "Bitva na Bílé hoře trvala dvě hodiny. Vyřízení porážky na úřadech potrvá tři sta let.", "en": "The Battle of White Mountain lasted two hours. Processing the defeat at the offices will take three hundred years." }
+    },
+    {
+      "id": "N_005",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "absurd",
+      "headline": { "cs": "Zimní král hledá letní brigádu.", "en": "The Winter King is looking for a summer job." }
+    },
+    {
+      "id": "N_006",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "Revoluce odložena na po obědě. C. k. úřady mají polední pauzu.", "en": "Revolution postponed until after lunch. The I.-R. offices are on their midday break." }
+    },
+    {
+      "id": "N_007",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "serious",
+      "headline": { "cs": "Národ žádá svobodu tisku. Tisk žádá, aby národ nejdřív vyplnil formulář.", "en": "The nation demands freedom of the press. The press demands the nation first fill in a form." }
+    },
+    {
+      "id": "N_008",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "Hora Blaník splnila pětiletku spánku za čtyři roky.", "en": "Mount Blaník fulfilled its five-year sleep plan in four years." }
+    },
+    {
+      "id": "N_009",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "serious",
+      "headline": { "cs": "Kdo nic nedělá, nic nezkazí. Odbor blanických výjezdů vyznamenán za zásluhy.", "en": "He who does nothing spoils nothing. The Department of Blaník Departures receives a medal of merit." }
+    },
+    {
+      "id": "N_010",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "absurd",
+      "headline": { "cs": "Dálnice D1 dokončena! Oprava začne v pondělí.", "en": "The D1 motorway is finished! Repairs begin on Monday." }
+    },
+    {
+      "id": "N_011",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "serious",
+      "headline": { "cs": "Průzkum: 9 z 10 rytířů v hoře trpí syndromem vyhoření z nevyhoření.", "en": "Survey: 9 in 10 knights in the mountain suffer burnout from never riding out." }
+    },
+    {
+      "id": "N_012",
+      "minDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Filozof z Kutné Hory: „Nejhůř není, když je zle. Nejhůř je, když si zle přestaneme umět představit.“", "en": "Philosopher of Kutná Hora: \"The darkest hour is not when things are bad. It is when we can no longer imagine worse.\"" }
+    },
+    {
+      "id": "N_013",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Zemí jde mor a hlad. Komise hory Blaník prověřila stav a shledala: zle jest, leč nikoli nejhůře.", "en": "Plague and famine stalk the land. The Mount Blaník Commission reviewed the situation and found: bad it is, yet not the worst." },
+      "body": { "cs": "Proti rozhodnutí lze podati odpor ve lhůtě sta let.", "en": "Objections to the ruling may be filed within one hundred years." }
+    },
+    {
+      "id": "N_014",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Čtrnáct let po Lipanech: kališník s katolíkem se shodnou v jediném — že za všechno může ten druhý.", "en": "Fourteen years after Lipany: Utraquist and Catholic agree on one thing only — it is all the other one's fault." }
+    },
+    {
+      "id": "N_015",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Jiřík z Poděbrad dobyl Prahu bez jediného blanického rytíře. V hoře kdosi tiše škrtl čárku v čekací listině.", "en": "George of Poděbrady took Prague without a single Blaník knight. Inside the mountain, someone quietly crossed a line off the waiting list." }
+    },
+    {
+      "id": "N_016",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "absurd",
+      "headline": { "cs": "Pražský groš opět zhubl. Mincmistr ujišťuje: „Stříbro v něm jest, jen se nesmí hledati.“", "en": "The Prague groschen has slimmed down again. The mint master assures: \"The silver is in there — one must simply not go looking for it.\"" },
+      "body": { "cs": "Vejce stojí dva groše. Slepice se diví.", "en": "An egg costs two groschen. The hen is baffled." }
+    },
+    {
+      "id": "N_017",
+      "minDay": 1,
+      "maxDay": 1,
+      "tone": "absurd",
+      "headline": { "cs": "Lazebník z Louňovic zahání mor česnekem a půstem. Mor si přivyká a žádá přídavek.", "en": "The Louňovice barber-surgeon wards off the plague with garlic and fasting. The plague is getting used to it and asking for seconds." }
+    },
+    {
+      "id": "N_018",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "serious",
+      "headline": { "cs": "Kdo nepřestoupí na pravou víru, ať prodá statky a odejde. Statky přestoupily už v listopadu.", "en": "Whoever will not convert to the true faith shall sell his estates and leave. The estates converted back in November." }
+    },
+    {
+      "id": "N_019",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "serious",
+      "headline": { "cs": "Zemí táhnou vojska a exulanti. Hora Blaník hlásí rekordní počet dotazů, zda „už“. Odpověď: „ještě ne“.", "en": "Armies and exiles cross the land. Mount Blaník reports a record number of inquiries asking \"now?\". The answer: \"not yet\"." },
+      "body": { "cs": "Dotazy se přijímají toliko s předepsaným kolkem.", "en": "Inquiries are accepted only with the prescribed duty stamp." }
+    },
+    {
+      "id": "N_020",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "absurd",
+      "headline": { "cs": "Cenzor zakázal slovo „porážka“. Bílá hora se úředně vede jako „neplánované vítězství protistrany“.", "en": "The censor has banned the word \"defeat\". White Mountain is officially filed as an \"unplanned victory of the opposing side\"." },
+      "body": { "cs": "Toto číslo vychází s povolením. Povolení vychází s tímto číslem.", "en": "This issue is published with a permit. The permit is published with this issue." }
+    },
+    {
+      "id": "N_021",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "absurd",
+      "headline": { "cs": "Konfiskační komise pracuje tak svědomitě, že omylem zkonfiskovala sama sebe.", "en": "The confiscation commission works so diligently it has accidentally confiscated itself." }
+    },
+    {
+      "id": "N_022",
+      "minDay": 2,
+      "maxDay": 2,
+      "tone": "absurd",
+      "headline": { "cs": "Jezuitská kolej vypisuje sbírku knih. Odevzdávají se přímo na hranici.", "en": "The Jesuit college announces a book drive. Donations are accepted directly at the stake." }
+    },
+    {
+      "id": "N_023",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "serious",
+      "headline": { "cs": "Havlíček: „Slibů si nevšímej, skutky važ.“ C. k. úřady skutky zvážily a uložily ad acta.", "en": "Havlíček: \"Heed not promises; weigh the deeds.\" The I.-R. offices weighed the deeds and filed them ad acta." }
+    },
+    {
+      "id": "N_024",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "serious",
+      "headline": { "cs": "Svoboda tisku trvala od března do podzimu. Redakce prosí čtenáře, aby si ji dobře zapamatovali.", "en": "Freedom of the press lasted from March till autumn. The editors ask readers to commit it firmly to memory." },
+      "body": { "cs": "Toto číslo vyšlo ještě svobodně. Pravděpodobně.", "en": "This issue was still published freely. Probably." }
+    },
+    {
+      "id": "N_025",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "Konstituce vyhlášena! Venkov děkuje a dotazuje se, zda se maže na chléb.", "en": "The Constitution is proclaimed! The countryside gives thanks and inquires whether it can be spread on bread." },
+      "body": { "cs": "C. k. místodržitelství odpoví po prostudování otázky.", "en": "The I.-R. Governorate will respond once it has studied the question." }
+    },
+    {
+      "id": "N_026",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "Národní garda nacvičuje pochod vpřed. Prozatím bezpečně ovládá rozchod.", "en": "The National Guard is drilling the march forward. So far it has safely mastered \"dismissed\"." }
+    },
+    {
+      "id": "N_027",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "Student žádá o povolení k stavbě barikády. Úřad žádá doložit souhlas vlastníků dlažebních kostek.", "en": "A student applies for a barricade-building permit. The office requires proof of consent from the owners of the cobblestones." }
+    },
+    {
+      "id": "N_028",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "serious",
+      "headline": { "cs": "Soudruzi, nejhůř býti nemůže, neboť nejhůř bylo za kapitalismu. Kdo tvrdí opak, dostaví se na uliční výbor.", "en": "Comrades, this cannot be the darkest hour, for the darkest hour was under capitalism. Anyone claiming otherwise shall report to the street committee." },
+      "body": { "cs": "Uliční výbor úřaduje nepřetržitě, zejména v noci.", "en": "The street committee is in session around the clock, especially at night." }
+    },
+    {
+      "id": "N_029",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "serious",
+      "headline": { "cs": "Z projevu: „Zítra již znamená to, co včera znamenalo pozítří.“ Potlesk trval dvanáct minut, nikdo si netroufl přestat první.", "en": "From a speech: \"Tomorrow now means what the day after tomorrow meant yesterday.\" The applause lasted twelve minutes; no one dared stop first." }
+    },
+    {
+      "id": "N_030",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "JZD Pod Blaníkem oselo 102 % výměry. Sousední pole si zatím ničeho nevšimlo.", "en": "The United Agricultural Cooperative Below Blaník has sown 102% of its acreage. The neighbouring field has yet to notice." }
+    },
+    {
+      "id": "N_031",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "Instalatér dorazí v rámci plánu ve čtvrtém čtvrtletí. Na melouch v sobotu.", "en": "The plumber will arrive, as per the plan, in the fourth quarter. For cash on the side, on Saturday." },
+      "body": { "cs": "Materiál si soudruh zákazník zajistí sám.", "en": "Comrade customer shall procure the materials himself." }
+    },
+    {
+      "id": "N_032",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "Fronta před masnou vstoupila do třetího dne. Vpředu se už tyká.", "en": "The queue outside the butcher's has entered day three. Up front, they're on a first-name basis." }
+    },
+    {
+      "id": "N_033",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "serious",
+      "headline": { "cs": "Komentář: „Je nám nejhůř v dějinách,“ shodují se diskutující z vyhřátých obýváků na pěti sítích současně.", "en": "Op-ed: \"This is our darkest hour in history,\" agree commenters from their heated living rooms, on five networks at once." },
+      "body": { "cs": "Článek pokračuje po reklamě na zájezdy.", "en": "The article continues after an ad for package holidays." }
+    },
+    {
+      "id": "N_034",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "serious",
+      "headline": { "cs": "Historik: „Přežili jsme Lipany, Bílou horu i normalizaci.“ Diskuse pod článkem: „Nepřežili.“", "en": "Historian: \"We survived Lipany, White Mountain, even normalization.\" The comment section: \"We did not.\"" }
+    },
+    {
+      "id": "N_035",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "absurd",
+      "headline": { "cs": "Hora Blaník jmenovala pověřence pro GDPR. Rytíři nyní spí anonymizovaně.", "en": "Mount Blaník has appointed a GDPR officer. The knights now sleep in anonymized form." },
+      "body": { "cs": "Svatý Václav udělil souhlas se zpracováním osobních údajů.", "en": "Saint Wenceslas has granted consent to the processing of his personal data." }
+    },
+    {
+      "id": "N_036",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "absurd",
+      "headline": { "cs": "Pivo překročilo stovku. Hospodský viní sládka, sládek stát, stát počasí. Počasí se bez právníka nevyjádří.", "en": "Beer has broken the hundred-crown mark. The publican blames the brewer, the brewer the state, the state the weather. The weather won't comment without a lawyer." }
+    },
+    {
+      "id": "N_037",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "absurd",
+      "headline": { "cs": "Kolona na D1 dosáhla 40 kilometrů. Řidiči vzkazují rytířům: „Hlavně teď nevyjíždějte, ještě byste to zdrželi.“", "en": "The D1 traffic jam has reached 40 kilometres. Drivers to the knights: \"Whatever you do, don't ride out now — you'd only hold things up.\"" },
+      "body": { "cs": "Sjezd na Blaník uzavřen. Pro případný výjezd.", "en": "The Blaník exit ramp is closed. Reserved for the eventual Departure." }
+    },
+    {
+      "id": "N_038",
+      "minDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Z letopisů hory: „nejhůř“ bylo za pět set let ohlášeno sedmnáctkrát. Pokaždé se v podání našla chyba.", "en": "From the mountain annals: the \"darkest hour\" has been declared seventeen times in five hundred years. Each time, a defect was found in the filing." },
+      "body": { "cs": "Letopisec dodává: zatím vždy naštěstí.", "en": "The chronicler adds: so far, mercifully, every time." }
+    },
+    {
+      "id": "N_039",
+      "minDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Rytíř se ze spaní ptá: „Už?“ Hora odpovídá: „Ještě ne.“ Jest to nejdelší rozhovor v dějinách národa.", "en": "A knight asks in his sleep: \"Now?\" The mountain replies: \"Not yet.\" It is the longest conversation in the nation's history." }
+    },
+    {
+      "id": "N_040",
+      "minDay": 1,
+      "tone": "serious",
+      "headline": { "cs": "Úvaha na závěr: kdo čeká na nejhorší, věří, že má smysl čekat. Hora Blaník je tedy kupodivu horou naděje.", "en": "A closing thought: whoever waits for the worst believes the waiting has meaning. Mount Blaník is thus, oddly enough, a mountain of hope." }
+    },
+    {
+      "id": "N_041",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "Bílé koně zabavil Úřad pro přerozdělování ořů. Hora hlásí: nemáme na čem vyjet. Úřad: přerozdělí se i to.", "en": "The white horses have been seized by the Office for Steed Redistribution. The mountain reports: nothing left to ride out on. The Office: that too shall be redistributed." }
+    },
+    {
+      "id": "N_042",
+      "minDay": 5,
+      "maxDay": 5,
+      "tone": "absurd",
+      "headline": { "cs": "Zavedena STK pro koně. První kůň prošel na druhý pokus; blinkry dohodou — levé ucho, pravé ucho.", "en": "Roadworthiness tests (STK) introduced for horses. The first horse passed on the second try; indicators by convention — left ear, right ear." },
+      "body": { "cs": "Emisní kontrola viz nařízení ESG-BL č. 13/2026.", "en": "For emissions, see Regulation ESG-BL No. 13/2026." }
+    },
+    {
+      "id": "N_043",
+      "minDay": 1,
+      "tone": "absurd",
+      "headline": { "cs": "Nově: formulář pro ohlášení ztráty formuláře se vydává proti předložení ztraceného formuláře.", "en": "New: the form for reporting a lost form is issued upon presentation of the lost form." }
+    },
+    {
+      "id": "N_044",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "„To vyřizuje okénko vedle,“ sdělilo okénko. Okénko vedle: „To vyřizuje okénko vedle.“ Fronta po třech dnech utvořila kruh.", "en": "\"That is handled by the next window,\" said the window. The next window: \"That is handled by the next window.\" After three days, the queue has formed a circle." }
+    },
+    {
+      "id": "N_045",
+      "minDay": 4,
+      "maxDay": 4,
+      "tone": "absurd",
+      "headline": { "cs": "Úřadovna hlásí: dnes se nevyřizuje, přijďte zítra. Zítra se vyřizuje včerejšek.", "en": "The office announces: nothing is processed today, come tomorrow. Tomorrow, yesterday is processed." }
+    },
+    {
+      "id": "N_046",
+      "minDay": 3,
+      "maxDay": 3,
+      "tone": "absurd",
+      "headline": { "cs": "Heraldická komise: jednoocasí lvi se s okamžitou platností považují za rozpracované. Malíři erbů zdražili ocas o sto procent.", "en": "Heraldic commission: one-tailed lions are henceforth deemed works in progress. Coat-of-arms painters have raised the price per tail by one hundred percent." }
+    }
+  ]
+}

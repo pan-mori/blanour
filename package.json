@@ -1,0 +1,22 @@
+{
+  "name": "blanour",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "validate": "node scripts/validate-content.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/pixelify-sans": "^5.2.5",
+    "@fontsource/vt323": "^5.2.5",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.3.5"
+  }
+}

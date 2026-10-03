@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ještě není tak zle!</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: #14100c; height: 100%; overflow: hidden; }
+      #game { width: 100%; height: 100%; }
+      canvas { image-rendering: pixelated; }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <script>
+      // Testovací režim (?shot): zablokuj load event nekonečným obrázkem,
+      // aby headless chrome (--dump-dom) nechal hru běžet, než odešle snapshot.
+      if (/shot|auto/.test(location.search)) {
+        document.write('<img src="/hold" alt="" width="1" height="1" style="position:absolute;opacity:0">');
+      }
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

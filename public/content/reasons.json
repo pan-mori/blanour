@@ -1,0 +1,422 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "RZ_KOLEK",
+      "ruleRef": "R01",
+      "label": {
+        "cs": "Chybějící nebo nedostatečný kolek (30 grošů)",
+        "en": "Missing or insufficient duty stamp (30 groschen)"
+      },
+      "category": "poplatek"
+    },
+    {
+      "id": "RZ_FORMULAR",
+      "ruleRef": "R02",
+      "label": {
+        "cs": "Žádost na neplatném formuláři",
+        "en": "Application filed on a void form"
+      },
+      "category": "formular"
+    },
+    {
+      "id": "RZ_ZBROJAK",
+      "ruleRef": "R03",
+      "label": {
+        "cs": "Meč nad 120 cm bez zbrojního průkazu kat. H",
+        "en": "Sword over 120 cm without category H permit"
+      },
+      "itemKeys": [
+        "mec"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_VYSTROJ",
+      "ruleRef": "R04",
+      "label": {
+        "cs": "Výstroj nesouhlasí s výstrojním listem",
+        "en": "Equipment does not match the manifest"
+      },
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_DOLOZKA",
+      "ruleRef": "R05",
+      "label": {
+        "cs": "Chybí výjezdní doložka",
+        "en": "Missing exit permit"
+      },
+      "category": "papiry"
+    },
+    {
+      "id": "RZ_GDPR",
+      "ruleRef": "R06",
+      "label": {
+        "cs": "Chybí souhlas se zpracováním údajů koně",
+        "en": "Missing consent for horse data processing"
+      },
+      "category": "papiry"
+    },
+    {
+      "id": "RZ_VOUS",
+      "ruleRef": "V_VOUS",
+      "label": {
+        "cs": "Plnovous delší než píď (dle čerstvé vyhlášky)",
+        "en": "Beard longer than a span (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_REFLEX",
+      "ruleRef": "V_REFLEX",
+      "label": {
+        "cs": "Kůň bez reflexní vesty (dle čerstvé vyhlášky)",
+        "en": "Horse without a hi-vis vest (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_PECET",
+      "ruleRef": "R07",
+      "label": {
+        "cs": "Listina se zlomenou pečetí — neplatná",
+        "en": "Document with a broken seal — void"
+      },
+      "category": "pecet"
+    },
+    {
+      "id": "RZ_VIRA",
+      "ruleRef": "R08",
+      "label": {
+        "cs": "Víra úředně neosvědčená, nebo osvědčená nesprávně",
+        "en": "Faith not officially certified, or certified incorrectly"
+      },
+      "category": "vira"
+    },
+    {
+      "id": "RZ_BEZDLUZNOST",
+      "ruleRef": "R09",
+      "label": {
+        "cs": "Nedoplatky vůči c. k. eráru",
+        "en": "Arrears owed to the I.-R. Treasury"
+      },
+      "category": "poplatek"
+    },
+    {
+      "id": "RZ_POSUDEK",
+      "ruleRef": "R10",
+      "label": {
+        "cs": "Kádrový posudek chybí nebo je starší 30 dnů",
+        "en": "Cadre assessment missing or older than 30 days"
+      },
+      "category": "papiry"
+    },
+    {
+      "id": "RZ_JZD",
+      "ruleRef": "R11",
+      "label": {
+        "cs": "Kůň neevidován u JZD Blaník (soukromé držení)",
+        "en": "Horse not registered with the Blaník Agricultural Cooperative (privately held)"
+      },
+      "category": "kun"
+    },
+    {
+      "id": "RZ_DATOVKA",
+      "ruleRef": "R12",
+      "label": {
+        "cs": "Chybí potvrzení o doručení datovou schránkou",
+        "en": "Missing proof of delivery via the official state inbox (data box)"
+      },
+      "category": "formular"
+    },
+    {
+      "id": "RZ_ESG",
+      "ruleRef": "R13",
+      "label": {
+        "cs": "Kůň emisní třídy E či horší bez zelené plakety",
+        "en": "Horse of emission class E or worse without a green sticker"
+      },
+      "category": "kun"
+    },
+    {
+      "id": "RZ_INVENTURA",
+      "ruleRef": "V_MEC",
+      "label": {
+        "cs": "Meč bez inventárního čísla (dle čerstvé vyhlášky)",
+        "en": "Sword lacking an inventory number (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_KOPI",
+      "ruleRef": "V_KOPI",
+      "label": {
+        "cs": "Kopí přesahuje světlou výšku chodby B (dle čerstvé vyhlášky)",
+        "en": "Lance exceeds the clearance height of corridor B (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_ERB",
+      "ruleRef": "V_STIT",
+      "label": {
+        "cs": "Erb na štítě neschválen heraldickou komisí (dle čerstvé vyhlášky)",
+        "en": "Coat of arms on shield not approved by the heraldic commission (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_VRANY",
+      "ruleRef": "V_VRANY",
+      "label": {
+        "cs": "Vraný kůň úředně nespatřen (dle čerstvé vyhlášky)",
+        "en": "Black horse not officially sighted (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_SVATOZAR",
+      "ruleRef": "V_SVATOZAR",
+      "label": {
+        "cs": "Svatozář bez platné revizní zprávy (dle čerstvé vyhlášky)",
+        "en": "Halo without a valid safety inspection report (per fresh decree)"
+      },
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_LEV_OCAS",
+      "ruleRef": "R14",
+      "label": {
+        "cs": "Lev na štítě má jen jeden ocas (předpis žádá dva)",
+        "en": "The lion on the shield has only one tail (regulation demands two)"
+      },
+      "itemKeys": [
+        "stit"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_LEV_CHYBI",
+      "ruleRef": "R14",
+      "label": {
+        "cs": "Na štítě chybí lev — zpátky a opravit",
+        "en": "No lion on the shield — go back and fix it"
+      },
+      "itemKeys": [
+        "stit"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_BAKH",
+      "ruleRef": "R15",
+      "label": {
+        "cs": "Meč ukovaný před r. 1400 bez atestu BAKH",
+        "en": "Sword forged before 1400 without a BAKH attestation"
+      },
+      "itemKeys": [
+        "mec"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_PODKOVY",
+      "ruleRef": "R16",
+      "label": {
+        "cs": "Podkovy s propadlou cechovní zkouškou (hlučné, bez odrazek)",
+        "en": "Horseshoes with a lapsed guild inspection (loud, no reflectors)"
+      },
+      "itemKeys": [
+        "kun",
+        "podkovy"
+      ],
+      "category": "kun"
+    },
+    {
+      "id": "RZ_VYZBROJ",
+      "ruleRef": "R17",
+      "label": {
+        "cs": "Neregulérní výzbroj — srp a kladivo nejsou zbraň",
+        "en": "Irregular armament — the sickle and hammer are not weapons"
+      },
+      "itemKeys": [
+        "srp",
+        "kladivo"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_BOZP",
+      "ruleRef": "R18",
+      "label": {
+        "cs": "Neúplné OOPP — chybí pracovní obuv (pokuta 500 Kč)",
+        "en": "Incomplete PPE — work boots missing (500 CZK fine)"
+      },
+      "itemKeys": [
+        "vesta",
+        "boty"
+      ],
+      "category": "vystroj"
+    },
+    {
+      "id": "RZ_UREDNIK",
+      "ruleRef": "R19",
+      "label": {
+        "cs": "Povolení nevydal úředník s výjezdní praxí (žádný takový není)",
+        "en": "Authorization not issued by an official with riding-out experience (no such official exists)"
+      },
+      "category": "papiry"
+    },
+    {
+      "id": "RZ_ZDRAVY",
+      "ruleRef": "R20",
+      "label": {
+        "cs": "Způsobilý k výjezdu — způsobilí se šetří (směrnice č. 20)",
+        "en": "Fit to ride out — the fit are to be preserved (Directive No. 20)"
+      },
+      "category": "papiry"
+    },
+    {
+      "id": "RZ_CHYBI_ZBRAN",
+      "ruleRef": "R21",
+      "category": "chybi",
+      "label": {
+        "cs": "Bez zbraně — s čím chce do boje?",
+        "en": "No weapon — what will he fight with?"
+      }
+    },
+    {
+      "id": "RZ_CHYBI_KUN",
+      "ruleRef": "R21",
+      "category": "chybi",
+      "label": {
+        "cs": "Bez koně — pěšky na bitvu nedojde",
+        "en": "No horse — he won't walk to the battle"
+      }
+    },
+    {
+      "id": "RZ_CHYBI_ZBROJ",
+      "ruleRef": "R21",
+      "category": "chybi",
+      "label": {
+        "cs": "Bez zbroje — padne hned v první řeži",
+        "en": "No armour — he'll fall in the first clash"
+      }
+    },
+    {
+      "id": "RZ_KALICH",
+      "ruleRef": "R22",
+      "category": "vira",
+      "label": {
+        "cs": "Kališnický kalich na varkoči (zapovězeno)",
+        "en": "Utraquist chalice on the tabard (forbidden)"
+      }
+    },
+    {
+      "id": "RZ_RUZENEC_CHYBI",
+      "ruleRef": "R22",
+      "category": "vira",
+      "label": {
+        "cs": "Chybí růženec řádně posvěcený",
+        "en": "Missing a duly blessed rosary"
+      }
+    },
+    {
+      "id": "RZ_VOUS_DLOUHY",
+      "ruleRef": "R23",
+      "category": "vira",
+      "label": {
+        "cs": "Vous delší než úřední píď (zákaz)",
+        "en": "Beard longer than the official span (forbidden)"
+      }
+    },
+    {
+      "id": "RZ_BRYLE",
+      "ruleRef": "R24",
+      "category": "papiry",
+      "label": {
+        "cs": "Brejle — kdo čtyři oči má, dvakrát čte vyhlášky a dvakrát pochybuje",
+        "en": "Spectacles — four eyes read the decrees twice and doubt them twice"
+      }
+    },
+    {
+      "id": "RZ_URAZKA_VACLAV",
+      "ruleRef": "R25",
+      "category": "vira",
+      "label": {
+        "cs": "Urážka sv. Václava (slovem či erbem)",
+        "en": "Insult to St. Wenceslas (by word or by arms)"
+      }
+    },
+    {
+      "id": "RZ_PRAXE",
+      "ruleRef": "R26",
+      "category": "papiry",
+      "label": {
+        "cs": "Chybí 10 let praxe v kybernetické bezpečnosti",
+        "en": "Missing 10 years of cybersecurity experience"
+      }
+    },
+    {
+      "id": "RZ_POLNICE",
+      "ruleRef": "V_POLNICE",
+      "label": {
+        "cs": "Polnice překračuje hlukový limit sluje (dle čerstvé vyhlášky)",
+        "en": "Bugle exceeds the cave's noise limit (per fresh decree)"
+      },
+      "itemKeys": ["polnice"],
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_POCHODEN",
+      "ruleRef": "V_POCHODEN",
+      "label": {
+        "cs": "Pochodeň porušuje požární řád hory (dle čerstvé vyhlášky)",
+        "en": "Torch violates the mountain's fire code (per fresh decree)"
+      },
+      "itemKeys": ["pochoden"],
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_SUD",
+      "ruleRef": "V_SUD",
+      "label": {
+        "cs": "Soudek medoviny bez kolku spotřební daně (dle čerstvé vyhlášky)",
+        "en": "Keg of mead without an excise-duty stamp (per fresh decree)"
+      },
+      "itemKeys": ["sud"],
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_MAPA",
+      "ruleRef": "V_MAPA",
+      "label": {
+        "cs": "Mapa cest neschválena zeměměřickým úřadem (dle čerstvé vyhlášky)",
+        "en": "Route map not approved by the surveying office (per fresh decree)"
+      },
+      "itemKeys": ["mapa"],
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_OSTRUHY",
+      "ruleRef": "V_OSTRUHY",
+      "label": {
+        "cs": "Ostruhy bez veterinární výjimky (dle čerstvé vyhlášky)",
+        "en": "Spurs without a veterinary exemption (per fresh decree)"
+      },
+      "itemKeys": ["ostruhy"],
+      "category": "dekret"
+    },
+    {
+      "id": "RZ_SEDLO",
+      "ruleRef": "V_SEDLO",
+      "label": {
+        "cs": "Sedlo bez inventárního štítku sluje (dle čerstvé vyhlášky)",
+        "en": "Saddle without the cave's inventory tag (per fresh decree)"
+      },
+      "itemKeys": ["sedlo"],
+      "category": "dekret"
+    }
+  ]
+}

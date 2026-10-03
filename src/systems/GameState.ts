@@ -1,0 +1,108 @@
+import { TUNING } from '../config';
+
+export type EndingType = 'survived' | 'beaten' | 'released';
+export type Lang = 'cs' | 'en';
+
+/** Co má scéna udělat po herní události. */
+export type Transition = 'continue' | 'cutaway' | 'ending:beaten' | 'ending:released' | 'ending:survived' | 'newspaper';
+
+export interface RunStats {
+  rejected: number;
+  rejectedWrong: number;
+  decreesUsed: number;
+  coffees: number; // čistě komická statistika
+}
+
+/**
+ * Jediný zdroj pravdy o běhu hry. Prostý singleton modul (žádný Phaser registry)
+ * — typová bezpečnost, testovatelnost. Scény čtou/mění přes metody, které vracejí
+ * Transition, takže logika toku hry žije tady a ne po scénách.
+ */
+class GameStateImpl {
+  lang: Lang = 'cs';
+  day = 1;
+  lives = TUNING.lives;
+  decreesLeft = TUNING.decrees;
+  endingType: EndingType | null = null;
+  stats: RunStats = this.freshStats();
+  /** Vyhlášky vydané hráčem během hry (decree ids) — platí do konce běhu. */
+  issuedDecrees: string[] = [];
+  /** Vyhlášky, které úředník uvedl v platnost (R…). Rostou každý den — od mála po mnoho. */
+  enactedRules = new Set<string>();
+  /** Důvody zamítnutí už POUŽITÉ v tomto runu — stejné razítko nejde dvakrát. */
+  usedReasons = new Set<string>();
+  seenEncounterIds = new Set<string>();
+  seenNewsIds = new Set<string>();
+
+  /** Startovní (málo) vyhlášek — s těmi se úřaduje první den. */
+  static readonly BASE_RULES = ['R01', 'R02'];
+
+  private freshStats(): RunStats {
+    return { rejected: 0, rejectedWrong: 0, decreesUsed: 0, coffees: 0 };
+  }
+
+  reset(): void {
+    this.day = 1;
+    this.lives = TUNING.lives;
+    this.decreesLeft = TUNING.decrees;
+    this.endingType = null;
+    this.stats = this.freshStats();
+    this.issuedDecrees = [];
+    this.enactedRules = new Set(GameStateImpl.BASE_RULES);
+    this.usedReasons.clear();
+    this.seenEncounterIds.clear();
+    this.seenNewsIds.clear();
+  }
+
+  enactRule(id: string): void {
+    this.enactedRules.add(id);
+  }
+
+  useReason(id: string): void {
+    this.usedReasons.add(id);
+  }
+
+  /** Správné zamítnutí. */
+  recordReject(): Transition {
+    this.stats.rejected++;
+    return 'continue';
+  }
+
+  /** Chyba (špatný/bezdůvodný důvod, vypršelá trpělivost) => facka. */
+  loseLife(): Transition {
+    this.lives--;
+    this.stats.rejectedWrong++;
+    if (this.lives <= 0) {
+      this.endingType = 'beaten';
+      return 'ending:beaten';
+    }
+    return 'cutaway';
+  }
+
+  /** Hráč orazítkoval SCHVÁLENO — rytíři vyjedou. */
+  approve(): Transition {
+    this.endingType = 'released';
+    return 'ending:released';
+  }
+
+  useDecree(id: string): boolean {
+    if (this.decreesLeft <= 0) return false;
+    this.decreesLeft--;
+    this.stats.decreesUsed++;
+    this.issuedDecrees.push(id);
+    return true;
+  }
+
+  /** Konec dne. */
+  nextDay(): Transition {
+    this.stats.coffees += 2 + Math.floor(Math.random() * 4);
+    if (this.day >= TUNING.days) {
+      this.endingType = 'survived';
+      return 'ending:survived';
+    }
+    this.day++;
+    return 'newspaper';
+  }
+}
+
+export const GameState = new GameStateImpl();

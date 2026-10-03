@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "zadost",
+      "title": { "cs": "Žádost o blanický výjezd (potvrzuje KONZISTOŘ)", "en": "Blaník Departure Application (certified by the CONSISTORY)" },
+      "sealType": "K",
+      "size": [520, 320],
+      "stampZone": [330, 220, 160, 80],
+      "fields": [
+        { "key": "jmeno", "label": { "cs": "Jméno a přídomek", "en": "Name and title" }, "pos": [20, 60] },
+        { "key": "duvod", "label": { "cs": "Důvod výjezdu", "en": "Reason for departure" }, "pos": [20, 100], "multiline": true },
+        { "key": "formular", "label": { "cs": "Formulář", "en": "Form" }, "pos": [20, 140] },
+        { "key": "kolek", "label": { "cs": "Kolek (grošů)", "en": "Duty stamp (groschen)" }, "pos": [20, 180], "render": "kolek" }
+      ]
+    },
+    {
+      "id": "zadost_ck",
+      "title": { "cs": "C. k. žádost o výjezd bájného vojska", "en": "I.-R. Application for the Departure of the Mythical Host" },
+      "sealType": "E",
+      "size": [520, 320],
+      "stampZone": [330, 220, 160, 80],
+      "fields": [
+        { "key": "jmeno", "label": { "cs": "Jméno a přídomek (Name und Prädikat)", "en": "Name and predicate (Name und Prädikat)" }, "pos": [20, 60] },
+        { "key": "duvod", "label": { "cs": "Důvod vyjetí (Ausrittsgrund), uveďtež úplně", "en": "Grounds for riding out (Ausrittsgrund), state in full" }, "pos": [20, 100], "multiline": true },
+        { "key": "formular", "label": { "cs": "Formulář (Formular-Nummer)", "en": "Form (Formular-Nummer)" }, "pos": [20, 140] },
+        { "key": "kolek", "label": { "cs": "Kolek c. k. erární (grošů)", "en": "I.-R. Treasury duty stamp (groschen)" }, "pos": [20, 180], "render": "kolek" }
+      ]
+    },
+    {
+      "id": "zadost_vybor",
+      "title": { "cs": "Žádost o uvolnění k výjezdu (schvaluje ULIČNÍ VÝBOR)", "en": "Application for Release for Departure (approved by the STREET COMMITTEE)" },
+      "sealType": "V",
+      "size": [520, 320],
+      "stampZone": [330, 220, 160, 80],
+      "fields": [
+        { "key": "jmeno", "label": { "cs": "Soudruh žadatel (jméno a zařazení)", "en": "Comrade applicant (name and assignment)" }, "pos": [20, 60] },
+        { "key": "duvod", "label": { "cs": "Důvod výjezdu v zájmu pracujícího lidu", "en": "Reason for departure in the interest of the working people" }, "pos": [20, 100], "multiline": true },
+        { "key": "formular", "label": { "cs": "Formulář (dle směrnice)", "en": "Form (per directive)" }, "pos": [20, 140] },
+        { "key": "kolek", "label": { "cs": "Kolek (grošů, plán odvodu splněn)", "en": "Duty stamp (groschen, levy plan fulfilled)" }, "pos": [20, 180], "render": "kolek" }
+      ]
+    },
+    {
+      "id": "zadost_dat",
+      "title": { "cs": "e-Žádost o výjezd (výtisk z datové schránky)", "en": "e-Application for Departure (Data Box printout)" },
+      "sealType": "E",
+      "size": [520, 320],
+      "stampZone": [330, 220, 160, 80],
+      "fields": [
+        { "key": "jmeno", "label": { "cs": "Identifikátor žadatele", "en": "Applicant identifier" }, "pos": [20, 60] },
+        { "key": "duvod", "label": { "cs": "Předmět podání (důvod výjezdu)", "en": "Subject of submission (reason for departure)" }, "pos": [20, 100], "multiline": true },
+        { "key": "formular", "label": { "cs": "Typ formuláře (verze)", "en": "Form type (version)" }, "pos": [20, 140] },
+        { "key": "kolek", "label": { "cs": "e-Kolek (grošů)", "en": "e-Duty stamp (groschen)" }, "pos": [20, 180], "render": "kolek" }
+      ]
+    },
+    {
+      "id": "vystroj",
+      "title": { "cs": "Výstrojní list", "en": "Equipment Manifest" },
+      "size": [520, 300],
+      "stampZone": [330, 200, 160, 80],
+      "fields": [
+        { "key": "polozky", "label": { "cs": "Deklarovaná výstroj", "en": "Declared equipment" }, "pos": [20, 60], "multiline": true, "render": "equipment" },
+        { "key": "kun", "label": { "cs": "Oř (barva)", "en": "Steed (colour)" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "zbrojak",
+      "title": { "cs": "Zbrojní průkaz kat. H", "en": "Weapons Permit cat. H" },
+      "size": [520, 260],
+      "stampZone": [330, 160, 160, 80],
+      "fields": [
+        { "key": "drzitel", "label": { "cs": "Držitel", "en": "Holder" }, "pos": [20, 60] },
+        { "key": "zbran", "label": { "cs": "Zbraň (délka)", "en": "Weapon (length)" }, "pos": [20, 100] },
+        { "key": "platnost", "label": { "cs": "Platnost do", "en": "Valid until" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "dolozka",
+      "title": { "cs": "Výjezdní doložka", "en": "Exit Permit" },
+      "size": [520, 260],
+      "stampZone": [330, 160, 160, 80],
+      "fields": [
+        { "key": "drzitel", "label": { "cs": "Soudruh rytíř", "en": "Comrade knight" }, "pos": [20, 60] },
+        { "key": "vybor", "label": { "cs": "Potvrzení uličního výboru", "en": "Street committee endorsement" }, "pos": [20, 100] }
+      ]
+    },
+    {
+      "id": "gdpr",
+      "title": { "cs": "Souhlas GDPR (kůň)", "en": "GDPR Consent (horse)" },
+      "size": [520, 260],
+      "stampZone": [330, 160, 160, 80],
+      "fields": [
+        { "key": "subjekt", "label": { "cs": "Subjekt údajů (kůň)", "en": "Data subject (horse)" }, "pos": [20, 60] },
+        { "key": "souhlas", "label": { "cs": "Souhlas udělen", "en": "Consent granted" }, "pos": [20, 100] }
+      ]
+    },
+    {
+      "id": "vira",
+      "title": { "cs": "Osvědčení o pravé víře", "en": "Certificate of True Faith" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "drzitel", "label": { "cs": "Osoba osvědčovaná", "en": "Person certified" }, "pos": [20, 60] },
+        { "key": "vyznani", "label": { "cs": "Vyznání", "en": "Confession" }, "pos": [20, 100] },
+        { "key": "vydano", "label": { "cs": "Vydala konzistoř dne", "en": "Issued by the consistory on" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "bezdluznost",
+      "title": { "cs": "Potvrzení o bezdlužnosti", "en": "Certificate of No Outstanding Debts" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "poplatnik", "label": { "cs": "Poplatník", "en": "Taxpayer" }, "pos": [20, 60] },
+        { "key": "nedoplatky", "label": { "cs": "Nedoplatky vůči c. k. eráru", "en": "Arrears owed to the I.-R. Treasury" }, "pos": [20, 100] },
+        { "key": "vystaveno", "label": { "cs": "Vystavil c. k. berní úřad dne", "en": "Issued by the I.-R. Tax Office on" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "posudek",
+      "title": { "cs": "Kádrový posudek", "en": "Cadre Assessment" },
+      "size": [520, 320],
+      "stampZone": [330, 220, 160, 80],
+      "fields": [
+        { "key": "posuzovany", "label": { "cs": "Posuzovaný soudruh", "en": "Comrade under assessment" }, "pos": [20, 60] },
+        { "key": "tridni_puvod", "label": { "cs": "Třídní původ", "en": "Class origin" }, "pos": [20, 100] },
+        { "key": "zaver", "label": { "cs": "Závěr komise", "en": "Committee's conclusion" }, "pos": [20, 140], "multiline": true },
+        { "key": "vyhotoven", "label": { "cs": "Vyhotoven dne", "en": "Drawn up on" }, "pos": [20, 200] }
+      ]
+    },
+    {
+      "id": "jzd",
+      "title": { "cs": "Evidenční list koně — JZD Blaník", "en": "Horse Registration Sheet — United Agricultural Cooperative Blaník" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "kun", "label": { "cs": "Kůň (jméno, barva)", "en": "Horse (name, colour)" }, "pos": [20, 60] },
+        { "key": "drzitel", "label": { "cs": "Držitel", "en": "Holder" }, "pos": [20, 100] },
+        { "key": "evidence", "label": { "cs": "Evidenční stav", "en": "Registration status" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "datovka",
+      "title": { "cs": "Potvrzení o doručení do datové schránky", "en": "Proof of Delivery — Official State Inbox (Data Box)" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "odesilatel", "label": { "cs": "Odesílatel", "en": "Sender" }, "pos": [20, 60] },
+        { "key": "id_zpravy", "label": { "cs": "ID datové zprávy", "en": "Data message ID" }, "pos": [20, 100] },
+        { "key": "stav", "label": { "cs": "Stav doručení", "en": "Delivery status" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "esg",
+      "title": { "cs": "ESG certifikát koně", "en": "Horse ESG Certificate" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "kun", "label": { "cs": "Certifikovaný kůň", "en": "Certified horse" }, "pos": [20, 60] },
+        { "key": "emisni_trida", "label": { "cs": "Emisní třída (metan)", "en": "Emission class (methane)" }, "pos": [20, 100] },
+        { "key": "platnost", "label": { "cs": "Certifikát platný do", "en": "Certificate valid until" }, "pos": [20, 140] }
+      ]
+    },
+    {
+      "id": "bakh",
+      "title": { "cs": "Bezpečnostní Atest Kutná Hora (BAKH)", "en": "Kutná Hora Safety Attestation (BAKH)" },
+      "size": [520, 280],
+      "stampZone": [330, 180, 160, 80],
+      "fields": [
+        { "key": "zbran", "label": { "cs": "Zbraň (délka)", "en": "Weapon (length)" }, "pos": [20, 60] },
+        { "key": "ukovano", "label": { "cs": "Ukováno léta Páně", "en": "Forged in the year of our Lord" }, "pos": [20, 100] },
+        { "key": "stav", "label": { "cs": "Stav atestace", "en": "Attestation status" }, "pos": [20, 140] }
+      ]
+    }
+  ]
+}
