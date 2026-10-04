@@ -395,6 +395,26 @@ export const RuleEngine = {
     return [...out];
   },
 
+  /**
+   * DEBUG (nápověda W+H): co je na rytíři „špatně" a jakou vyhláškou to legálně zamítnout.
+   * Vrací každý použitelný důvod proti SCHEDULABLE množině (aktivní + čekající ve šuplíku),
+   * ať nápověda ukáže i řešení, které se odemkne teprve zahráním čekající vyhlášky.
+   * `active=false` znamená „vyhláška je zatím jen ve šuplíku - nejdřív ji zahraj".
+   * Legendární (univerzální) razítka se vypouští - platí na kohokoli a jen by zašuměla.
+   */
+  debugFindings(enc: ActiveEncounter, day: number = GameState.day): {
+    reasonId: string; ruleRef: string; active: boolean;
+  }[] {
+    const activeNow = this.activeRuleIds(day);
+    const sched = this.schedulableRuleIds(day);
+    return this.solvableReasons(enc.data, day, sched)
+      .filter((id) => !this.isLegendary(id))
+      .map((reasonId) => {
+        const ruleRef = this.reasonRule(reasonId) ?? '?';
+        return { reasonId, ruleRef, active: activeNow.has(ruleRef) };
+      });
+  },
+
   /** Lze encounter zamítnout (aspoň jeden platný důvod s volným použitím)? */
   rejectableNow(
     data: Encounter,

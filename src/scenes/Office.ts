@@ -38,6 +38,7 @@ export class OfficeScene extends Phaser.Scene {
   private primaryDocWH = { w: 0, h: 0 };
   private primaryDocBaseAngle = 0; // klidový náklon žádosti - pokřik ji z něj vychýlí max o 5°
   private vaclavReturns = 0; // finále: kolikrát už kníže vrátil dokument (potřeba 2)
+  private vaclavHealed = false; // finále: pohled na světce jednou zahojí a dá 5 životů
   private vaclavSpots: { x: number; y: number; angle: number }[] = []; // razítkové kroužky
   private vaclavSpotIdx = 0; // který kroužek je právě na řadě
   private knightVisuals: Phaser.GameObjects.GameObject[] = [];
@@ -55,6 +56,13 @@ export class OfficeScene extends Phaser.Scene {
   private ambientDark?: Phaser.GameObjects.Container; // zhasnutá svíčka + ztmavení (vyhláška o světle)
   private readonly LIGHT_DECREES = ['V_POCHODEN']; // vyhlášky o světle/ohni → tma
   private readonly NOISE_DECREES = ['V_POLNICE']; // vyhlášky o decibelech → ticho
+  private debugHelp = false; // DEBUG nápověda (W+H): co je na rytíři špatně a čím zamítnout
+  private debugPanel?: Phaser.GameObjects.Container;
+  // facka u běžného rytíře = dokument se VRÁTÍ (razítko „VRÁCENO") a objeví se nový kroužek,
+  // zůstáváš na témž rytíři a zkoušíš dál. Sledujeme obsazená místa kroužků (doc-local 0..w/0..h),
+  // ať nový kroužek nepadne na starý; pruh = volná oblast dole na žádosti.
+  private usedStampSpots: { x: number; y: number }[] = [];
+  private stampBand = { xMin: 110, xMax: 530, yMin: 0, yMax: 0 };
 
   constructor() {
     super('Office');
@@ -81,6 +89,7 @@ export class OfficeScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.vaclavHealed = false; // nový běh/den → světec zatím neléčil
     // pozadí úřadovny v jeskyni (krápníky, police, svíčka)
     drawOfficeBackdrop(this);
 
@@ -104,14 +113,22 @@ export class OfficeScene extends Phaser.Scene {
     if (kbd) {
       const wKey = kbd.addKey('W');
       const rKey = kbd.addKey('R');
+      const hKey = kbd.addKey('H');
       kbd.on('keydown-R', () => { if (wKey.isDown) this.cheatNextKnight(); });
-      kbd.on('keydown-W', () => { if (rKey.isDown) this.cheatPrevKnight(); });
+      // W+H (v libovolném pořadí) = debug nápověda: co je na rytíři špatně + čím zamítnout
+      kbd.on('keydown-H', () => { if (wKey.isDown) this.toggleDebugHelp(); });
+      kbd.on('keydown-W', () => {
+        if (rKey.isDown) this.cheatPrevKnight();
+        else if (hKey.isDown) this.toggleDebugHelp();
+      });
     }
 
     // při opuštění scény (konec dne, ukončení runu) zhasni časovač i doznívající hlas
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.heckleTimer?.remove();
       this.stopHeckleVoice();
+      this.debugPanel?.destroy();
+      this.debugPanel = undefined;
     });
 
     // „Jiní úředníci": vyhlášky, co sis nevzal, může úřad vydat sám (šance roste se dnem;
@@ -202,6 +219,56 @@ export class OfficeScene extends Phaser.Scene {
     this.time.delayedCall(300, () => this.stampSys?.debugApply(2, 600, true));
   }
 
+  // ---------- DEBUG nápověda (W+H) ----------
+
+  /** Zapne/vypne debug nápovědu: u aktuálního rytíře vypíše, co je na něm špatně,
+   *  jakou vyhláškou to zamítnout a z jaké je kategorie. Chord W+H (libovolné pořadí). */
+  private toggleDebugHelp(): void {
+    this.debugHelp = !this.debugHelp;
+    if (this.debugHelp) this.renderDebugHelp();
+    else { this.debugPanel?.destroy(); this.debugPanel = undefined; }
+  }
+
+  /** Překresli panel, je-li nápověda zapnutá (po změně rytíře / vyhlášek). */
+  private refreshDebugHelp(): void {
+    if (this.debugHelp) this.renderDebugHelp();
+  }
+
+  private renderDebugHelp(): void {
+    this.debugPanel?.destroy();
+    this.debugPanel = undefined;
+    if (!this.enc) return;
+    const d = this.enc.data;
+    const findings = RuleEngine.debugFindings(this.enc);
+    const lines: string[] = [];
+    lines.push(`🐞 DEBUG (W+H) · ${d.knight.name}`);
+    lines.push(`tagy: ${d.knight.tags.join(', ') || '—'}`);
+    lines.push(`výstroj: ${d.knight.equipment.join(', ') || '—'}`);
+    lines.push('');
+    if (findings.length === 0) {
+      const decrees = RuleEngine.applicableDecrees(this.enc);
+      lines.push('✓ ČISTÉ PAPÍRY — zamítnout legálně NELZE.');
+      if (decrees.length > 0) lines.push(`   kryj dekretem: ${decrees.map((x) => x.id).join(', ')}`);
+      else lines.push('   žádný dekret nepasuje → správně POVOLIT (nebo vydat vyhlášku)');
+    } else {
+      lines.push('ZAMÍTNI razítkem:');
+      for (const f of findings) {
+        const reason = Content.all.reasons.find((r) => r.id === f.reasonId);
+        const rule = Content.all.rules.find((r) => r.id === f.ruleRef);
+        const cat = reason ? this.reasonCategory(reason) : 'vystroj';
+        const rr = rule ? L(rule.cislo) : f.ruleRef;
+        const label = reason ? L(reason.label) : f.reasonId;
+        lines.push(`• ${label}`);
+        lines.push(`    → ${rr} · kat.: ${Content.ui(`cat_${cat}`)}${f.active ? '' : '  ⚠ ZAHRAJ ZE ŠUPLÍKU'}`);
+      }
+    }
+    const txt = this.add.text(16, 12, lines.join('\n'), {
+      fontFamily: FONTS.doc, fontSize: '20px', color: '#b8f0b0', lineSpacing: 3, wordWrap: { width: 560 },
+    });
+    const bg = this.add.rectangle(0, 0, 600, txt.height + 24, 0x0a1a0a, 0.86).setStrokeStyle(2, 0x2f9d32).setOrigin(0, 0);
+    this.debugPanel = this.add.container(20, 110, [bg, txt]).setDepth(300);
+  }
+
   // ---------- tok encounterů ----------
 
   private nextKnight(back = false): void {
@@ -249,6 +316,16 @@ export class OfficeScene extends Phaser.Scene {
     this.tweens.add({ targets: this.encounterLayer, alpha: 1, y: 0, duration: 240, ease: 'Cubic.easeOut' });
 
     this.scheduleHeckle();
+    this.refreshDebugHelp(); // nový rytíř → přepočítej debug nápovědu (je-li zapnutá)
+
+    // FINÁLE: sv. Václav - pouhý pohled na světce zahojí zranění a obnoví síly (5 životů).
+    // Jen jednou při jeho příchodu (ne znovu po facce, kdy se jen překresluje reshowVaclav).
+    if (this.isVaclavFinale() && !this.vaclavHealed) {
+      this.vaclavHealed = true;
+      GameState.lives = 5;
+      this.updateHud();
+      this.showInfoBox(`✨ ${Content.ui('vaclavHeal')}`, 0xd4a017, () => { /* pokračuj */ });
+    }
 
     // úvodní „úřední podmínky" (kolek + formulář, R01/R02) platí jen na SMĚNĚ 1 -
     // od směny 2 jsou tyto vyhlášky zrušené, takže intro ukazujeme jen první směnu.
@@ -631,7 +708,7 @@ export class OfficeScene extends Phaser.Scene {
       this.updateHud();
       this.showCutaway(Content.ui('botchedSeal'), Content.ui('whyWrongSeal'), () => {
         if (t === 'ending:beaten') this.scene.start('Ending');
-        else this.nextKnight();
+        else this.returnDocument(); // zůstaň na témž rytíři, dokument se vrátí
       });
       return;
     }
@@ -643,7 +720,7 @@ export class OfficeScene extends Phaser.Scene {
       this.updateHud();
       this.showCutaway(Content.ui('botchedStamp'), this.qualityWhy(result.quality), () => {
         if (t === 'ending:beaten') this.scene.start('Ending');
-        else this.nextKnight();
+        else this.returnDocument(); // zůstaň na témž rytíři, dokument se vrátí
       });
       return;
     }
@@ -694,7 +771,7 @@ export class OfficeScene extends Phaser.Scene {
         : Content.ui('rejectBadDefault');
       this.showCutaway(msg, why, () => {
         if (t === 'ending:beaten') this.scene.start('Ending');
-        else this.nextKnight();
+        else this.returnDocument(); // zůstaň na témž rytíři, dokument se vrátí
       });
     }
   }
@@ -708,7 +785,7 @@ export class OfficeScene extends Phaser.Scene {
 
   /** Dokreslí další razítkový kroužek (přerušovaný + zářez + popisek) do žádosti,
    *  v lokálních souřadnicích kontejneru. Použito při vrácení dokumentu knížetem. */
-  private addStampSpotToDoc(lx: number, ly: number, angle: number): void {
+  private addStampSpotToDoc(lx: number, ly: number, angle: number, sealLetter?: SealLetter): void {
     if (!this.primaryDoc) return;
     const g = this.add.graphics();
     g.lineStyle(3, 0x9a8a60, 0.95);
@@ -720,9 +797,68 @@ export class OfficeScene extends Phaser.Scene {
     const rad = Phaser.Math.DegToRad(angle - 90);
     g.lineStyle(5, 0x9a8a60, 1);
     g.lineBetween(lx + Math.cos(rad) * 40, ly + Math.sin(rad) * 40, lx + Math.cos(rad) * 56, ly + Math.sin(rad) * 56);
-    const ghost = this.add.text(lx, ly, '⊛', { fontFamily: FONTS.ui, fontSize: '30px', color: '#9a8a60' }).setOrigin(0.5).setAngle(angle).setAlpha(0.85);
-    const lbl = this.add.text(lx, ly + 58, Content.ui('stampSlot'), { fontFamily: FONTS.doc, fontSize: '15px', color: '#9a8a60' }).setOrigin(0.5);
+    const ghost = this.add.text(lx, ly, sealLetter ?? '⊛', { fontFamily: FONTS.ui, fontSize: '30px', color: '#9a8a60' }).setOrigin(0.5).setAngle(angle).setAlpha(0.85);
+    const lbl = this.add.text(lx, ly + 58, Content.ui(sealLetter ? 'sealSlot' : 'stampSlot'), { fontFamily: FONTS.doc, fontSize: '15px', color: '#9a8a60' }).setOrigin(0.5);
     this.primaryDoc.add([g, ghost, lbl]);
+  }
+
+  /**
+   * Facka u BĚŽNÉHO rytíře: dokument se vrátí - přes neplatný otisk se otiskne „VRÁCENO"
+   * (jako u sv. Václava) a jinde na žádosti se objeví NOVÝ kroužek pro další pokus. Rytíř
+   * zůstává na přepážce, hráč zkouší dál. Život už ubral volající (loseLife) před tímto.
+   */
+  private returnDocument(): void {
+    this.stampSys?.teardown();
+    this.stampSys = null;
+    this.pendingReason = null;
+    this.busy = false;
+    if (!this.primaryDoc || !this.stampTarget) {
+      // nouzovka: bez dokumentu (nemělo by nastat) pokračuj dalším rytířem
+      this.nextKnight();
+      return;
+    }
+    const { w, h } = this.primaryDocWH;
+    // 1) „VRÁCENO" přes starý (neplatný) otisk
+    const old = this.stampTarget.circleLocal;
+    this.stampVraceno(old.x - w / 2, old.y - h / 2);
+    // 2) nový kroužek co nejdál od všech dosud použitých míst
+    const spot = this.pickFreeStampSpot();
+    this.usedStampSpots.push(spot);
+    const angle = Phaser.Math.Between(0, 359);
+    const sealLetter = this.stampTarget.requireWax ? this.requiredSeal() : undefined;
+    this.addStampSpotToDoc(spot.x - w / 2, spot.y - h / 2, angle, sealLetter);
+    this.stampTarget = { ...this.stampTarget, circleLocal: { x: spot.x, y: spot.y }, circleAngleDeg: angle };
+    // zpátky k rozhodování - hráč zkusí jiný důvod a nové razítko
+    for (const b of this.actionButtons) b.setVisible(true);
+  }
+
+  /** Červené protirazítko „VRÁCENO" na zadané doc-local místo (zruší neplatný pokus). */
+  private stampVraceno(lx: number, ly: number): void {
+    if (!this.primaryDoc) return;
+    const box = this.add.rectangle(0, 0, 220, 70, 0x000000, 0).setStrokeStyle(7, 0xa82810);
+    const t = this.add.text(0, 0, Content.ui('vaclavReturnStamp'), { fontFamily: FONTS.ui, fontSize: '40px', color: '#a82810' }).setOrigin(0.5);
+    const stamp = this.add.container(lx, ly, [box, t]).setAngle(Phaser.Math.Between(-14, -6)).setScale(2.2).setAlpha(0);
+    this.primaryDoc.add(stamp);
+    this.tweens.add({ targets: stamp, scale: 1, alpha: 0.92, duration: 200, ease: 'Back.easeOut' });
+  }
+
+  /** Vyber doc-local místo ve volném pruhu co nejdál od všech obsazených kroužků. */
+  private pickFreeStampSpot(): { x: number; y: number } {
+    const b = this.stampBand;
+    const ys = [b.yMin, (b.yMin + b.yMax) / 2, b.yMax];
+    let best = { x: b.xMin, y: (b.yMin + b.yMax) / 2 };
+    let bestDist = -1;
+    for (let i = 0; i <= 12; i++) {
+      const x = b.xMin + ((b.xMax - b.xMin) * i) / 12;
+      for (const y of ys) {
+        const d = this.usedStampSpots.reduce(
+          (m, s) => Math.min(m, Math.hypot(s.x - x, s.y - y)),
+          Number.POSITIVE_INFINITY,
+        );
+        if (d > bestDist) { bestDist = d; best = { x, y }; }
+      }
+    }
+    return best;
   }
 
   /** Kníže ti dokument jednou vrátí a svou autoritou přebije tenhle důvod zamítnutí
@@ -793,7 +929,7 @@ export class OfficeScene extends Phaser.Scene {
 
   /** Chyba na knížete = facka; pokud přežiješ, postavíš se mu znovu (ne další rytíř). */
   private vaclavFail(why: string): void {
-    const t = GameState.loseLife();
+    const t = GameState.loseLife(2); // facka od světce bolí dvojnásob → DMG za 2
     this.updateHud();
     this.showCutaway(Content.ui('vaclavFailMsg'), why, () => {
       if (t === 'ending:beaten') this.scene.start('Ending');
@@ -1664,6 +1800,11 @@ export class OfficeScene extends Phaser.Scene {
       circleAngleDeg: cAngle,
       requireWax,
     };
+
+    // volná oblast dole pro další kroužky (při vrácení dokumentu po facce) + evidence
+    // prvního kroužku, ať se nový nepřekrývá se starým.
+    this.stampBand = { xMin: 110, xMax: w - 110, yMin: contentBottom + 70, yMax: h - 55 };
+    this.usedStampSpots = [{ x: crx, y: cry }];
   }
 
   /** Přílohy: menší papíry ve sloupci vpravo. Vrací spodní hranu. */
@@ -1870,6 +2011,12 @@ export class OfficeScene extends Phaser.Scene {
     return RuleEngine.availableReasons(GameState.day).filter((r) => !this.PROCESS_REASONS.has(r.id));
   }
 
+  /** Je razítko pro hráče NOVÉ? = je ve skříni dostupné, ale ještě ho v zásuvce neviděl.
+   *  Zvýrazní se po uvedení vyhlášky/dekretu v platnost a zhasne, jakmile zásuvku otevře. */
+  private isNewStamp(r: Reason): boolean {
+    return !GameState.seenReasons.has(r.id);
+  }
+
   /** ZAMÍTNOUT → razítková skříň se zásuvkami (kategoriemi). */
   private openReasonPicker(): void {
     if (this.busy || !this.enc) return;
@@ -1905,7 +2052,7 @@ export class OfficeScene extends Phaser.Scene {
       const dx = x0 + col * (dw + gapX);
       const dy = y0 + row * (dh + gapY);
       const count = reasons.filter((r) => this.reasonCategory(r) === cat).length;
-      const hasNew = reasons.some((r) => this.reasonCategory(r) === cat && RuleEngine.isIssuedDecreeReason(r.id));
+      const hasNew = reasons.some((r) => this.reasonCategory(r) === cat && this.isNewStamp(r));
       this.overlayLayer.add(
         this.makeDrawer(dx, dy, dw, dh, Content.ui(`cat_${cat}`), count, () => this.showCabinetDrawer(cat), 0x4a3420, count === 0, hasNew),
       );
@@ -1955,6 +2102,7 @@ export class OfficeScene extends Phaser.Scene {
       this.renderEncounter(this.enc!);
       this.updateHud();
       this.scheduleHeckle();
+      this.refreshDebugHelp();
     });
   }
 
@@ -2051,6 +2199,9 @@ export class OfficeScene extends Phaser.Scene {
       const dy = y0 + row * (ch + gapY);
       this.overlayLayer.add(this.makeStampCard(dx, dy, cw, ch, r));
     });
+    // karty jsou vykreslené (vč. případného ⚡ NOVÁ) → teď je označ za viděná, ať
+    // při příštím otevření už nesvítí. Značíme až tady, jinak by se NOVÁ nikdy neukázalo.
+    GameState.markReasonsSeen(reasons.map((r) => r.id));
 
     const back = makeButton(this, cx - 220, GAME_HEIGHT - 120, Content.ui('cabinetBack'), () => this.openReasonPicker(), { fontSize: 28 });
     const cancel = makeButton(this, cx + 220, GAME_HEIGHT - 120, Content.ui('cancel'), () => {
@@ -2124,7 +2275,7 @@ export class OfficeScene extends Phaser.Scene {
   private makeStampCard(x: number, y: number, w: number, h: number, r: Reason): Phaser.GameObjects.Container {
     // vzácnost: legendární = zlatá; čerstvě vydaná vyhláška = zelená (ať ji hráč najde)
     const legend = r.rarity === 'legendary';
-    const fresh = RuleEngine.isIssuedDecreeReason(r.id);
+    const fresh = this.isNewStamp(r);
     const baseFill = legend ? 0xf7e6a8 : fresh ? 0xe2f0d8 : 0xf0e6c8;
     const hoverFill = legend ? 0xffeeb0 : fresh ? 0xeffae4 : 0xfff4d8;
     const borderCol = legend ? 0xd4a017 : fresh ? 0x1d6a20 : 0x8a7a55;
@@ -2215,6 +2366,7 @@ export class OfficeScene extends Phaser.Scene {
     RuleEngine.issueDecree(this.enc, d);
     this.overlayLayer.removeAll(true);
     this.updateHud();
+    this.refreshDebugHelp(); // dekret vstříkl nový flaw → přepočítej debug nápovědu
     if (this.LIGHT_DECREES.includes(d.id)) {
       // nejdřív text, po kliknutí teprve zhasne světlo (sebere se jas)
       this.showInfoBox(Content.ui('lightDecreeOops'), 0x7a1f12, () => this.applyAmbientEffects());
@@ -2232,6 +2384,7 @@ export class OfficeScene extends Phaser.Scene {
     if (!GameState.playPendingRule(rule.id)) return;
     this.overlayLayer.removeAll(true);
     this.updateHud();
+    this.refreshDebugHelp(); // vyhláška teď platí → změní se nabídka i debug nápověda
     try { this.sound.play('sfx_stamp', { volume: 0.5 }); } catch { /* zvuk není kritický */ }
     this.showInfoBox(`⚖ ${Content.ui('ruleEnacted')}\n${L(rule.cislo)}: ${L(rule.text)}`, 0x2f7d32, () => {
       // nic dalšího — akční tlačítka zůstala, hráč teď může zamítnout

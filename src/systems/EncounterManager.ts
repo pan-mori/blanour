@@ -79,11 +79,41 @@ class EncounterManagerImpl {
       return null;
     };
 
+    // PRIORITA „ukaž, co sis vybral": vyhlášky čekající ve šuplíku (hráčova večerní volba,
+    // ještě nezahraná) chceme opravdu předvést - jinak „nic nedělají". Hlavně poslední den
+    // (málo rytířů, hodně moderních vyhlášek) by jinak čerstvě zvolené 12/13/18… zůstaly bez
+    // rytíře. Nejdřív tedy doplň rytíře, jejichž ZAMÝŠLENÉ řešení je některá z čekajících
+    // vyhlášek; každou předvedeme nejvýš jednou, zbytek dne doplní běžný výběr.
+    const showcase = new Set(RuleEngine.schedulableRuleIds(day));
+    for (const id of RuleEngine.activeRuleIds(day)) showcase.delete(id); // jen ČEKAJÍCÍ (ne už platné)
+    const pickShowcase = (): Encounter | null => {
+      if (showcase.size === 0) return null;
+      for (let i = 0; i < flawBag.length; i++) {
+        const free = RuleEngine.solvableReasons(flawBag[i], day, active, budget);
+        const hitReason = free.find((rid) => {
+          const rr = RuleEngine.reasonRule(rid);
+          return !!rr && showcase.has(rr);
+        });
+        if (!hitReason) continue;
+        const e = flawBag.splice(i, 1)[0];
+        const rule = RuleEngine.reasonRule(hitReason);
+        if (rule) {
+          budget.set(rule, Math.max(0, (budget.get(rule) ?? 0) - 1)); // denní rezervace
+          GameState.recordSchedule(rule); // + run strop
+          showcase.delete(rule); // tuhle vyhlášku už předvádět nemusíme
+        }
+        return e;
+      }
+      return null;
+    };
+
     const picked: Encounter[] = [...pinned];
     while (picked.length < quota) {
       let next: Encounter | null = null;
+      // 1) nejdřív předveď čerstvě zvolené (čekající) vyhlášky, ať nejsou „k ničemu"
+      if (showcase.size > 0) next = pickShowcase();
       // dekretové (čisté papíry) jen když je rozpočet - jinak radši kratší den
-      if (decreeBudget > 0 && decreeBag.length > 0 && Math.random() < 0.4) {
+      if (!next && decreeBudget > 0 && decreeBag.length > 0 && Math.random() < 0.4) {
         next = weightedPick(decreeBag);
         if (next) decreeBudget--;
       }

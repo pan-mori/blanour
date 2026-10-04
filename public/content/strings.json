@@ -149,6 +149,10 @@
       "cs": "Facka od světce bolí dvojnásob. Na knížete to zkus znovu.",
       "en": "A saint's slap hurts twice as much. Try the prince again."
     },
+    "vaclavHeal": {
+      "cs": "Zlatý Václav vstoupil do úřadovny. Při pouhém pohledu na světce se ti zahojila všechna zranění a síly se obnovily - máš 5 životů.",
+      "en": "Golden Wenceslas steps into the office. At the mere sight of the saint all your wounds are healed and your strength restored - you now have 5 lives."
+    },
     "introRulesTitle": {
       "cs": "Úřední podmínky směny",
       "en": "Today's official conditions"

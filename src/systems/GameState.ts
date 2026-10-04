@@ -24,7 +24,9 @@ class GameStateImpl {
    *  takže restart scény (např. přepnutí jazyka) hodnotu nepřehodí. */
   audioMuted: boolean = this.readMuted();
   day = 1;
-  lives = TUNING.lives;
+  /** Životy (facky). Normálně TUNING.lives, finále (sv. Václav) je dočasně zvedne na 5,
+   *  proto explicitní number (ne literál z TUNING). */
+  lives: number = TUNING.lives;
   decreesLeft = TUNING.decrees;
   endingType: EndingType | null = null;
   stats: RunStats = this.freshStats();
@@ -46,6 +48,11 @@ class GameStateImpl {
   ruleSchedule = new Map<string, number>();
   seenEncounterIds = new Set<string>();
   seenNewsIds = new Set<string>();
+  /** Razítka (reasonId), která už hráč ve skříni VIDĚL. „NOVÁ" se zvýrazní jen razítko
+   *  nově dostupné (po uvedení vyhlášky/dekretu v platnost), dokud ho hráč v zásuvce
+   *  neotevře - pak zvýraznění zmizí. Dřív se za „nové" značily jen dekrety, a to napořád,
+   *  takže zvýraznění působilo náhodně. */
+  seenReasons = new Set<string>();
 
   /** Úřední podmínky dvou základních vyhlášek (R01 kolek, R02 formulář), které se
    *  mění startem každého období (dne) - hodnota kolku a typ platného formuláře. */
@@ -88,6 +95,12 @@ class GameStateImpl {
     this.ruleSchedule.clear();
     this.seenEncounterIds.clear();
     this.seenNewsIds.clear();
+    this.seenReasons.clear();
+  }
+
+  /** Označ razítka za „už viděná" (po otevření zásuvky skříně) - přestanou se značit NOVÁ. */
+  markReasonsSeen(ids: string[]): void {
+    for (const id of ids) this.seenReasons.add(id);
   }
 
   /** Přelosuje úřední podmínky (kolek + formulář) pro nové období. */
@@ -141,11 +154,13 @@ class GameStateImpl {
     return 'continue';
   }
 
-  /** Chyba (špatný/bezdůvodný důvod, vypršelá trpělivost) => facka. */
-  loseLife(): Transition {
-    this.lives--;
+  /** Chyba (špatný/bezdůvodný důvod, vypršelá trpělivost) => facka. `amount` = kolik životů
+   *  facka sebere (sv. Václav dává DMG za 2); počet chyb roste vždy o 1. */
+  loseLife(amount = 1): Transition {
+    this.lives -= amount;
     this.stats.rejectedWrong++;
     if (this.lives <= 0) {
+      this.lives = 0;
       this.endingType = 'beaten';
       return 'ending:beaten';
     }
