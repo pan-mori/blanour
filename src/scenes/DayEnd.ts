@@ -8,13 +8,13 @@ import { makeButton, title } from '../ui/helpers';
 
 /** Konec dne: statistiky + legislativní fáze (úředník vydá ≥2 nové vyhlášky). */
 export class DayEndScene extends Phaser.Scene {
-  private selected = new Set<string>();
-  private minPick = 2;
-  private nextBtn!: Phaser.GameObjects.Container;
-  private needTxt!: Phaser.GameObjects.Text;
+  protected selected = new Set<string>();
+  protected minPick = 2;
+  protected nextBtn!: Phaser.GameObjects.Container;
+  protected needTxt!: Phaser.GameObjects.Text;
 
-  constructor() {
-    super('DayEnd');
+  constructor(key = 'DayEnd') {
+    super(key);
   }
 
   create(): void {
@@ -38,7 +38,7 @@ export class DayEndScene extends Phaser.Scene {
         cx,
         138,
         `${Content.ui('statRejected')}: ${s.rejected}   ·   ${Content.ui('statMistakes')}: ${s.rejectedWrong}\n` +
-          `${Content.ui('statDecrees')}: ${s.decreesUsed}   ·   ${Content.ui('statActive')}: ${GameState.enactedRules.size}`,
+          `${Content.ui('statDecrees')}: ${s.decreesUsed}   ·   ${Content.ui('statActive')}: ${RuleEngine.activeRuleIds().size}`,
         { fontFamily: FONTS.doc, fontSize: '28px', color: '#bfa978', align: 'center', lineSpacing: 6 },
       )
       .setOrigin(0.5);
@@ -80,15 +80,15 @@ export class DayEndScene extends Phaser.Scene {
         beardSeen++;
         return true;
       })
-      .slice(0, 6);
-    this.minPick = Math.min(2, candidates.length); // vybírá se PŘESNĚ 2 (min i max)
+      .slice(0, TUNING.legislationChoices);
+    this.minPick = Math.min(TUNING.rulesPerEvening, candidates.length); // vybírá se PŘESNĚ tolik (min i max)
 
     this.add
       .text(cx, 196, Content.ui('legislaTitle'), { fontFamily: FONTS.title, fontSize: '48px', color: '#d4a017' })
       .setOrigin(0.5);
     // hint pod hlavičku s mezerou (roste dolů); karty pak začnou až pod ním
     const hint = this.add
-      .text(cx, 240, Content.ui('legislaHint'), {
+      .text(cx, 240, Content.ui('legislaHint').replace('{n}', String(this.minPick)), {
         fontFamily: FONTS.doc, fontSize: '25px', color: '#ffb3a7', align: 'center', wordWrap: { width: 1300 }, lineSpacing: 4,
       })
       .setOrigin(0.5, 0);
@@ -120,7 +120,7 @@ export class DayEndScene extends Phaser.Scene {
     this.refreshGate();
   }
 
-  private makeRuleCard(x: number, y: number, w: number, r: Rule): Phaser.GameObjects.Container {
+  protected makeRuleCard(x: number, y: number, w: number, r: Rule): Phaser.GameObjects.Container {
     // legendární vyhláška (odemyká univerzální razítko) → oranžový rámeček s hlavičkou
     const legendary = RuleEngine.isLegendary(r.reasonId);
     const ORANGE = 0xe07b1a;
@@ -164,10 +164,10 @@ export class DayEndScene extends Phaser.Scene {
     return c;
   }
 
-  private refreshGate(): void {
+  protected refreshGate(): void {
     const remain = Math.max(0, this.minPick - this.selected.size);
     const ok = this.selected.size === this.minPick;
-    this.needTxt.setText(ok ? Content.ui('legislaPicked') : `${Content.ui('legislaNeed')} ${remain} ${Content.ui('legislaMore')}`);
+    this.needTxt.setText(ok ? Content.ui('legislaPicked').replace('{n}', String(this.minPick)) : `${Content.ui('legislaNeed')} ${remain} ${Content.ui('legislaMore')}`);
     this.needTxt.setColor(ok ? '#b8e0a8' : '#ffb3a7');
     const bg = this.nextBtn.list[0] as Phaser.GameObjects.Rectangle;
     const tx = this.nextBtn.list[1] as Phaser.GameObjects.Text;

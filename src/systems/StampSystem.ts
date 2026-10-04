@@ -9,6 +9,8 @@ export type StampQuality = 'crisp' | 'faded' | 'smudged' | 'crooked' | 'dry' | '
 export interface StampResult {
   quality: StampQuality;
   ok: boolean;
+  /** Byl vyžadován vosk a hráč přitiskl ŠPATNÉ pečetidlo? → facka „špatná pečeť". */
+  sealWrong: boolean;
 }
 
 /** Cíl razítkování: natočená žádost + náhodně umístěný a natočený kroužek pečeti. */
@@ -59,6 +61,8 @@ export class StampSystem {
   private carriedWax: Phaser.GameObjects.Container | null = null;
   private heatMeter?: Phaser.GameObjects.Rectangle;
   private heat = 0;
+  /** Které pečetidlo hráč přitiskl (K/E/V). Porovná se s requiredSeal až při odevzdání. */
+  private sealUsed?: SealLetter;
   private candleZone!: Phaser.Geom.Circle;
   private candle?: Phaser.GameObjects.Container;
   private flameTween?: Phaser.Tweens.Tween;
@@ -113,6 +117,7 @@ export class StampSystem {
     this.angle = Phaser.Math.Between(-60, 60);
     this.inkCharges = 0;
     this.sealImprinted = false;
+    this.sealUsed = undefined;
     this.waxState = 'cold';
     this.lastQuality = null;
 
@@ -302,9 +307,6 @@ export class StampSystem {
     const cancel = this.makeCancelButton(x, y + 262);
     this.tray = this.scene.add.container(0, 0, [panel, label, stick, stickHit, heatBg, this.heatMeter, heatLbl, stampLabel, ...matrices, ...cancel]);
     this.layer.add(this.tray);
-
-    // zvýrazni kroužek na formuláři
-    this.highlightCircle();
   }
 
   private makeWaxStickParts(): Phaser.GameObjects.GameObject[] {
@@ -349,38 +351,26 @@ export class StampSystem {
     this.setHint(Content.ui('waxHeatIt'));
   }
 
-  private highlightCircle(): void {
-    const wp = this.circleWorldPos();
-    const ring = this.scene.add.circle(wp.x, wp.y, 46).setStrokeStyle(4, COLORS.uiAccent, 0.9).setDepth(50);
-    this.scene.tweens.add({ targets: ring, alpha: 0.3, scale: 1.1, duration: 600, yoyo: true, repeat: -1 });
-    this.tray.add(ring);
-  }
-
   private pressMatrix(letter: SealLetter): void {
     if (this.waxState !== 'poured' || this.sealImprinted) return;
-    if (letter === this.requiredSeal) {
-      this.placeSealLetter(letter);
-      this.sealImprinted = true;
-      try { this.scene.sound.play('sfx_stamp', { volume: 0.8 }); } catch { /* ok */ }
-      this.setHint(Content.ui('waxSealedOk'));
-      this.scene.time.delayedCall(700, () => {
-        this.tray.destroy();
-        this.startStampPhase();
-      });
-    } else {
-      // špatné pečetidlo - vosk zmařen, nalej znovu
-      try { this.scene.sound.play('sfx_slap', { volume: 0.4 }); } catch { /* ok */ }
-      this.waxBlob?.destroy();
-      this.waxBlob = undefined;
-      this.waxState = 'cold';
-      this.setHint(Content.ui('waxWrongMatrix'));
-    }
+    // hráč smí přitisknout i ŠPATNÉ pečetidlo - pečeť se vždy aplikuje a postupuje
+    // se dál; jestli nesedí s požadovanou, odhalí se to až při odevzdání (facka).
+    this.placeSealLetter(letter);
+    this.sealUsed = letter;
+    this.sealImprinted = true;
+    try { this.scene.sound.play('sfx_stamp', { volume: 0.8 }); } catch { /* ok */ }
+    this.setHint(Content.ui('waxSealedOk'));
+    this.scene.time.delayedCall(700, () => {
+      this.tray.destroy();
+      this.startStampPhase();
+    });
   }
 
   private placeWaxAndSeal(letter: SealLetter): void {
     // (test) rovnou vosk i pečeť
     this.pourWaxAt(this.circleWorldPos());
     this.placeSealLetter(letter);
+    this.sealUsed = letter;
     this.sealImprinted = true;
   }
 
@@ -413,7 +403,6 @@ export class StampSystem {
     this.phase = 'stamp';
     this.buildStampTray();
     this.setHint(Content.ui('stampHintInk'));
-    this.highlightCircle();
   }
 
   private buildStampTray(): void {
@@ -460,9 +449,11 @@ export class StampSystem {
     return [g, sym, lbl, hit];
   }
 
-  /** Odevzdání otisku „jak je" - kvalitu vyhodnotí Office (crisp projde, jinak facka). */
+  /** Odevzdání otisku „jak je" - kvalitu i správnost pečeti vyhodnotí Office
+   *  (crisp otisk + správné pečetidlo projde, jinak facka). */
   private commitStamp(): void {
-    this.finish({ quality: this.lastQuality ?? 'dry', ok: true });
+    const sealWrong = this.requireWax && this.sealUsed !== this.requiredSeal;
+    this.finish({ quality: this.lastQuality ?? 'dry', ok: true, sealWrong });
   }
 
   /** Test: polož otisk BEZ odevzdání (ověření hromadění otisků). */

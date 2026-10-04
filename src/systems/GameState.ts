@@ -35,8 +35,15 @@ class GameStateImpl {
   /** Vyhlášky zvolené ve večerním úřadování (R…), které ještě NEJSOU v platnosti -
    *  čekají v šuplíku „Podpultové vyhlášky" a hráč je musí aktivně zahrát na rytíře. */
   pendingRules: string[] = [];
-  /** Důvody zamítnutí už POUŽITÉ v tomto runu - stejné razítko nejde dvakrát. */
+  /** Důvody zamítnutí už SPOTŘEBOVANÉ v tomto runu (legendární razítko + důvod, který
+   *  ve finále přebil kníže). Razítko zmizí ze skříně. Běžná razítka se NESPOTŘEBOVÁVAJÍ -
+   *  zůstávají v sadě a hráč je používá opakovaně (buduje si sbírku vyhlášek). */
   usedReasons = new Set<string>();
+  /** Kolik rytířů v tomto runu už DÁVKOVAČ naplánoval na danou vyhlášku (ruleRef) jako
+   *  zamýšlené řešení. Strop je TUNING.maxSameRulePerRun - víc rytířů „na stejnou věc"
+   *  (groše, formulář, délka meče…) se za run nevygeneruje, aby průchod nebyl stejný.
+   *  NEOVLIVŇUJE hráčova razítka - jen to, na co se rytíři generují. */
+  ruleSchedule = new Map<string, number>();
   seenEncounterIds = new Set<string>();
   seenNewsIds = new Set<string>();
 
@@ -45,7 +52,8 @@ class GameStateImpl {
   reqKolek = 30;
   reqFormular = 'B-1448';
 
-  /** Startovní (málo) vyhlášek - s těmi se úřaduje první den. */
+  /** Startovní (málo) vyhlášek - s těmi se úřaduje první den. Kolek+formulář (R01/R02)
+   *  platí VÝHRADNĚ na směně 1 - o deaktivaci od směny 2 rozhoduje RuleEngine.activeRuleIds. */
   static readonly BASE_RULES = ['R01', 'R02'];
   /** Možné hodnoty kolku (grošů) a platných formulářů - losuje se každé období. */
   static readonly KOLEK_POOL = [10, 20, 30];
@@ -77,6 +85,7 @@ class GameStateImpl {
     this.pendingRules = [];
     this.rollEraRules();
     this.usedReasons.clear();
+    this.ruleSchedule.clear();
     this.seenEncounterIds.clear();
     this.seenNewsIds.clear();
   }
@@ -111,8 +120,19 @@ class GameStateImpl {
     return true;
   }
 
+  /** Spotřebuj důvod (legendární razítko / kníže ve finále) - zmizí ze skříně. */
   useReason(id: string): void {
     this.usedReasons.add(id);
+  }
+
+  /** Kolik rytířů ještě SMÍ dávkovač naplánovat na tuto vyhlášku v rámci runu. */
+  scheduleLeft(ruleId: string): number {
+    return Math.max(0, TUNING.maxSameRulePerRun - (this.ruleSchedule.get(ruleId) ?? 0));
+  }
+
+  /** Zaznamenej, že dávkovač naplánoval dalšího rytíře na tuto vyhlášku. */
+  recordSchedule(ruleId: string): void {
+    this.ruleSchedule.set(ruleId, (this.ruleSchedule.get(ruleId) ?? 0) + 1);
   }
 
   /** Správné zamítnutí. */

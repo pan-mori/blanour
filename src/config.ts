@@ -41,6 +41,33 @@ export const TUNING = {
   lives: 3,
   decrees: 3, // „podpultové vyhlášky" - max 3 na celý run
   days: 5,
+  /**
+   * Kolik rytířů za celý run se smí VYGENEROVAT na stejnou vyhlášku (groše, formulář,
+   * délka meče…). Razítka hráči zůstávají ve skříni napořád - tohle omezuje jen OBSAH,
+   * aby se tentýž důvod zamítnutí neopakoval donekonečna a průchod nebyl stejný.
+   */
+  maxSameRulePerRun: 2,
+  /**
+   * Cílový počet rytířů (kol) na každý den - součet = 18 na celý run (projde i BEZ
+   * eskalace „jiných úředníků", jen z hráčovy legislativy při 2 vyhláškách/večer). Den 5
+   * obsahuje i finálového bosse (sv. Václav) navíc. Kvóta = počet BĚŽNÝCH rytířů dne.
+   */
+  quotaPerDay: [4, 4, 4, 3, 2] as const, // 4+4+4+3+(2+boss) = 18
+  /** Kolik nových vyhlášek úředník vydá každý večer (vybírá z legislationChoices nabídek). */
+  rulesPerEvening: 2,
+  /** Kolik vyhlášek se v legislativní fázi NABÍDNE na výběr (hráč z nich vybere rulesPerEvening). */
+  legislationChoices: 4,
+  /** Kolik vyhlášek si hráč zvolí na ÚPLNÉM začátku hry (směr celého runu). */
+  startRules: 2,
+  /**
+   * „Jiní úředníci": když si vyhlášku nevybereš, může ji úřad vydat sám. Šance za den =
+   * externalEscalation × (den−1), strop externalEscalationCap - čím dál ve hře, tím spíš.
+   * externalDeadlines = vyhlášky, které MUSÍ dorazit nejpozději v daný den (když si je
+   * hráč nevzal): pečetění (R27) i dvojstejnopis/archivace (R28) nejpozději v půlce hry (den 3 z 5).
+   */
+  externalEscalation: 0.15,
+  externalEscalationCap: 0.75,
+  externalDeadlines: { R27: 3, R28: 3 } as Record<string, number>,
   /** Trpělivost rytíře na jeden encounter (ms); vyprší => facka */
   patienceMs: 90_000,
   /** Od kolika zbývajících ms začne ukazatel varovně blikat */

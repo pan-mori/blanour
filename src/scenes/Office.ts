@@ -23,6 +23,9 @@ export class OfficeScene extends Phaser.Scene {
   private hud!: Phaser.GameObjects.Text;
   private heckleTimer?: Phaser.Time.TimerEvent;
   private heckleBubble?: Phaser.GameObjects.Container;
+  private heckleVoice?: Phaser.Sound.BaseSound;
+  private heckleShowDelay?: Phaser.Time.TimerEvent;
+  private rulesOverlayOpen = false; // menu „platné vyhlášky" - heckle smí i přes něj
   private encounterLayer!: Phaser.GameObjects.Container;
   private overlayLayer!: Phaser.GameObjects.Container;
   private busy = false; // blokuje akce během outcome/cutaway
@@ -45,6 +48,8 @@ export class OfficeScene extends Phaser.Scene {
   private copyDoc?: Phaser.GameObjects.Container;
   private copyWH = { w: 320, h: 430 };
   private copyTarget?: StampTarget;
+  /** Vyžaduje TENHLE rytíř druhopis do archivu? (R28, ~30 % rytířů) - rozhodnuto 1× na encounter. */
+  private needsArchive = false;
   private copyBodyText?: Phaser.GameObjects.Text;
   private copyParagraph = '';
   private ambientDark?: Phaser.GameObjects.Container; // zhasnutá svíčka + ztmavení (vyhláška o světle)
@@ -85,6 +90,8 @@ export class OfficeScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, 40, '', { fontFamily: FONTS.ui, fontSize: '34px', color: '#e8d9a8' })
       .setOrigin(0.5);
     makeButton(this, 56, 40, '?', () => this.openHelp(), { fontSize: 34, width: 72 }).setDepth(10);
+    // ikonka novin — kdykoli znovu otevřít noviny aktuální epochy + platné úřední podmínky
+    this.makeNewsButton(132, 40, 72).setDepth(10);
     // křížek vpravo nahoře - ukončit run a vrátit se do menu (s potvrzením)
     makeButton(this, GAME_WIDTH - 56, 40, '✕', () => this.confirmQuitRun(), { fontSize: 34, width: 72, color: 0x5a1a10 }).setDepth(10);
     // ikonka hudby (zap/vyp) — vlevo od křížku, přeškrtne se při ztlumení
@@ -100,6 +107,18 @@ export class OfficeScene extends Phaser.Scene {
       kbd.on('keydown-R', () => { if (wKey.isDown) this.cheatNextKnight(); });
       kbd.on('keydown-W', () => { if (rKey.isDown) this.cheatPrevKnight(); });
     }
+
+    // při opuštění scény (konec dne, ukončení runu) zhasni časovač i doznívající hlas
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.heckleTimer?.remove();
+      this.stopHeckleVoice();
+    });
+
+    // „Jiní úředníci": vyhlášky, co sis nevzal, může úřad vydat sám (šance roste se dnem;
+    // pečetění dorazí nejpozději v půlce hry). Běží PŘED vzorníkem pečetí i buildDay, ať je
+    // den postavený už s novými vyhláškami. Při autotestu/demu vynecháno (determinismus).
+    const dbgDrive = /[?&](auto|demo)=/.test(location.search);
+    const otherOfficials = dbgDrive ? [] : RuleEngine.rollOtherOfficials(GameState.day);
 
     // velké, viditelné tlačítko „Platné vyhlášky" vpravo → overlay se všemi vyhláškami
     const rbW = 128;
@@ -124,9 +143,13 @@ export class OfficeScene extends Phaser.Scene {
     // debug: ?enc=ENC_031 vynutí konkrétní encounter (QA obsahu)
     const dbgEnc = new URLSearchParams(location.search).get('enc');
     if (!dbgEnc || !EncounterManager.buildSingle(dbgEnc)) {
-      EncounterManager.buildDay(GameState.day, 4);
+      const quota = TUNING.quotaPerDay[GameState.day - 1] ?? 3;
+      EncounterManager.buildDay(GameState.day, quota);
     }
     this.nextKnight();
+
+    // oznámení „jiní úředníci vydali vyhlášku" (až po vykreslení prvního rytíře)
+    if (otherOfficials.length > 0) this.showOtherOfficialsIntro(otherOfficials);
 
     // debug: ?demo=auto — sám dojede k zamítnutí + rovnému razítku (QA odevzdání/archivace)
     if (new URLSearchParams(location.search).get('demo') === 'auto') {
@@ -188,6 +211,7 @@ export class OfficeScene extends Phaser.Scene {
     this.vaclavSpotIdx = 0;
     this.heckleBubble?.destroy();
     this.heckleBubble = undefined;
+    this.stopHeckleVoice();
     this.inspectPopup?.destroy();
     this.inspectPopup = undefined;
     this.stampSys?.teardown();
@@ -226,10 +250,11 @@ export class OfficeScene extends Phaser.Scene {
 
     this.scheduleHeckle();
 
-    // u prvního rytíře dne ukaž hráči aktuální úřední podmínky (kolek + formulář
-    // se mění každé období) — „úvodní vyhlášky". Při autotestu/demu přeskoč.
+    // úvodní „úřední podmínky" (kolek + formulář, R01/R02) platí jen na SMĚNĚ 1 -
+    // od směny 2 jsou tyto vyhlášky zrušené, takže intro ukazujeme jen první směnu.
+    // Při autotestu/demu přeskoč.
     const dbgDrive = /[?&](auto|demo)=/.test(location.search);
-    if (EncounterManager.index === 1 && !dbgDrive) this.showActiveRulesIntro();
+    if (EncounterManager.index === 1 && GameState.day === 1 && !dbgDrive) this.showActiveRulesIntro();
   }
 
   /** Úvodní přehled úředních podmínek dne (kolek + formulář) u prvního rytíře. */
@@ -260,6 +285,31 @@ export class OfficeScene extends Phaser.Scene {
     this.overlayLayer.add([dim, panel, title, txt]);
   }
 
+  /** Oznámení, že „jiní úředníci" sami uvedli v platnost vyhlášky, co si hráč nevzal. */
+  private showOtherOfficialsIntro(rules: Rule[]): void {
+    this.busy = true;
+    const cx = GAME_WIDTH / 2;
+    const cy = GAME_HEIGHT / 2;
+    const dim = this.add.rectangle(cx, cy, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.72).setInteractive();
+    const body = rules.map((r) => `§ ${L(r.cislo)}\n${GameState.fillVars(L(r.text))}`).join('\n\n');
+    const title = this.add
+      .text(cx, cy - 190, Content.ui('otherOfficialsTitle'), { fontFamily: FONTS.title, fontSize: '48px', color: '#e07b1a', align: 'center', wordWrap: { width: 1100 } })
+      .setOrigin(0.5);
+    const txt = this.add
+      .text(cx, cy - 110, body, { fontFamily: FONTS.doc, fontSize: '28px', color: '#e8d9a8', align: 'center', wordWrap: { width: 1080 }, lineSpacing: 6 })
+      .setOrigin(0.5, 0);
+    const h = Math.max(360, title.height + txt.height + 180);
+    const panel = this.add.rectangle(cx, cy, 1200, h, COLORS.uiPanel).setStrokeStyle(5, 0xe07b1a);
+    const note = this.add
+      .text(cx, cy + h / 2 - 48, Content.ui('otherOfficialsNote'), { fontFamily: FONTS.ui, fontSize: '24px', color: '#bfa978', align: 'center', wordWrap: { width: 1080 } })
+      .setOrigin(0.5);
+    dim.once('pointerdown', () => {
+      this.overlayLayer.removeAll(true);
+      this.busy = false;
+    });
+    this.overlayLayer.add([dim, panel, title, txt, note]);
+  }
+
   private updateHud(): void {
     const era = Content.era(GameState.day);
     const hearts = '♥'.repeat(GameState.lives) + '♡'.repeat(Math.max(0, TUNING.lives - GameState.lives));
@@ -277,21 +327,39 @@ export class OfficeScene extends Phaser.Scene {
     // debug: ?heckle=1 → pokřik už po 2 s (testování)
     const dbg = new URLSearchParams(location.search).has('heckle');
     this.heckleTimer = this.time.addEvent({
-      delay: dbg ? 2000 : Phaser.Math.Between(28_000, 48_000),
+      delay: dbg ? 2000 : Phaser.Math.Between(20_000, 30_000),
       loop: true,
       callback: () => {
-        if (this.busy || !this.enc) return;
+        if (!this.enc) return;
+        // pokřik smí i při prohlížení menu vyhlášek (rulesOverlayOpen) nebo výběru
+        // razítka (skříň busy nenastavuje) - jen ne během razítkování, cutaway či dialogů
+        if (this.busy && !this.rulesOverlayOpen) return;
         this.showHeckle();
       },
     });
   }
 
   private showHeckle(): void {
+    this.heckleShowDelay?.remove();
     this.heckleBubble?.destroy();
     const pool = Content.all.infographics.filter((i) => i.kind === 'heckle');
     if (pool.length === 0) return;
-    const line = L(pool[Math.floor(Math.random() * pool.length)].text);
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    const line = L(item.text);
+    // hlas rytíře spustíme o 0.5 s DŘÍV než naskočí text (když nahrávka existuje) -
+    // rytíř se nejdřív ozve a teprve pak „dopadne" bublina. Bez nahrávky text hned.
+    if (this.playHeckleVoice(item.id)) {
+      this.heckleShowDelay = this.time.delayedCall(500, () => {
+        if (!this.enc) return; // mezitím odešel rytíř
+        this.showHeckleBubble(line);
+      });
+    } else {
+      this.showHeckleBubble(line);
+    }
+  }
 
+  private showHeckleBubble(line: string): void {
+    this.heckleBubble?.destroy();
     const text = this.add.text(0, 0, `„${line}“`, {
       fontFamily: FONTS.doc,
       fontSize: '28px',
@@ -303,33 +371,83 @@ export class OfficeScene extends Phaser.Scene {
       .rectangle(-18, -14, text.width + 36, text.height + 28, 0xf3d9c4)
       .setStrokeStyle(3, 0xa8552a)
       .setOrigin(0, 0);
-    this.heckleBubble = this.add.container(560, 330, [bg, text]).setDepth(55).setAlpha(0);
+    // je otevřený nějaký overlay (menu vyhlášek / skříň s razítky)? Pak bublinu dáme
+    // NAD něj (depth 120 > overlay 100) a vynecháme třesení obrazovkou i kopnutí do
+    // papíru - to by jen rušilo při čtení menu. Jinak normální depth a plný efekt.
+    const overlayOpen = this.overlayLayer.length > 0;
+    // bublina přilétne mírně nakloněná a hned sebou rozzlobeně zatřese (rotace)
+    this.heckleBubble = this.add.container(560, 330, [bg, text]).setDepth(overlayOpen ? 120 : 55).setAlpha(0).setAngle(-6);
     this.tweens.add({ targets: this.heckleBubble, alpha: 1, y: 320, duration: 160 });
+    this.tweens.add({
+      targets: this.heckleBubble,
+      angle: { from: -6, to: 6 },
+      duration: 70,
+      yoyo: true,
+      repeat: 3,
+      ease: 'Sine.inOut',
+      onComplete: () => this.heckleBubble?.setAngle(-3), // zůstane trochu nakřivo
+    });
+    if (overlayOpen) {
+      this.time.delayedCall(3200, () => this.fadeOutHeckle());
+      return;
+    }
     // pokřik VŽDY otřese obrazovkou — a při razítkování kopne do úhlu razítka!
     this.cameras.main.shake(220, 0.006);
     this.stampSys?.nudge();
     this.tweens.add({ targets: this.encounterLayer, x: '+=6', duration: 50, yoyo: true, repeat: 3 });
     // rozzlobený rytíř bouchne do stolu → žádost sebou trhne (stejně jako razítko),
-    // ale jen o kousek — max 5° od klidového náklonu. Při razítkování ne: to by
+    // teď znatelně víc — až 10° od klidového náklonu. Při razítkování ne: to by
     // rozhodilo zacílení otisku (tam už sebou škube samotné razítko přes nudge()).
     if (this.primaryDoc && !this.stampSys?.isActive) {
-      const kick = Phaser.Math.FloatBetween(3, 5) * (Math.random() < 0.5 ? -1 : 1);
+      const kick = Phaser.Math.FloatBetween(7, 11) * (Math.random() < 0.5 ? -1 : 1);
       const target = Phaser.Math.Clamp(
         this.primaryDoc.angle + kick,
-        this.primaryDocBaseAngle - 5,
-        this.primaryDocBaseAngle + 5,
+        this.primaryDocBaseAngle - 10,
+        this.primaryDocBaseAngle + 10,
       );
       this.tweens.add({ targets: this.primaryDoc, angle: target, duration: 220, ease: 'Bounce.easeOut' });
     }
-    this.time.delayedCall(3200, () => {
-      if (!this.heckleBubble) return;
-      this.tweens.add({
-        targets: this.heckleBubble,
-        alpha: 0,
-        duration: 250,
-        onComplete: () => this.heckleBubble?.destroy(),
-      });
+    this.time.delayedCall(3200, () => this.fadeOutHeckle());
+  }
+
+  private fadeOutHeckle(): void {
+    if (!this.heckleBubble) return;
+    this.tweens.add({
+      targets: this.heckleBubble,
+      alpha: 0,
+      duration: 250,
+      onComplete: () => this.heckleBubble?.destroy(),
     });
+  }
+
+  /** Přehraj namluvený hlas heckleru (klíč 'heckle:<id infografiky>'), když existuje.
+   *  Předchozí hlas vždy utne, ať se dvě hlášky nepřekřikují. Ztlumení řeší globální
+   *  sound.mute, takže přehrání necháváme být i při mute (nic není slyšet). */
+  private playHeckleVoice(id: string): boolean {
+    // posbírej všechny namluvené varianty (take) téhle hlášky a jednu náhodně vyber,
+    // ať se hlas rytíře střídá. Klíče jsou 'heckle:<id>:1', ':2', … (viz Preload).
+    const keys: string[] = [];
+    for (let t = 1; t <= 8; t++) {
+      const k = `heckle:${id}:${t}`;
+      if (this.cache.audio.exists(k)) keys.push(k);
+    }
+    if (keys.length === 0) return false;
+    const key = keys[Math.floor(Math.random() * keys.length)];
+    this.stopHeckleVoice();
+    try {
+      this.heckleVoice = this.sound.add(key, { volume: 0.9 });
+      this.heckleVoice.play();
+      return true;
+    } catch {
+      return false; // zvuk není kritický → padne na text bez prodlevy
+    }
+  }
+
+  private stopHeckleVoice(): void {
+    this.heckleShowDelay?.remove(); // zruš i čekající zobrazení bubliny (hlas bez textu)
+    this.heckleShowDelay = undefined;
+    try { this.heckleVoice?.stop(); this.heckleVoice?.destroy(); } catch { /* ignore */ }
+    this.heckleVoice = undefined;
   }
 
   // ---------- vykreslení encounteru ----------
@@ -385,6 +503,7 @@ export class OfficeScene extends Phaser.Scene {
 
     // dokumenty: žádost = velký nakloněný papír s kroužkem pro pečeť, přílohy vpravo
     this.stampTarget = null;
+    this.needsArchive = false; // rozhodne se v renderPrimaryDoc podle R28 (default: bez druhopisu)
     const docs = enc.data.documents;
     if (docs.length > 0) this.renderPrimaryDoc(docs[0]);
     let sy = 250;
@@ -462,7 +581,7 @@ export class OfficeScene extends Phaser.Scene {
   private enterStampMode(decision: StampDecision): void {
     if (!this.stampTarget) {
       // nouzovka: bez cíle vyřiď rovnou (nemělo by nastat)
-      this.onStampDone(decision, { quality: 'crisp', ok: true });
+      this.onStampDone(decision, { quality: 'crisp', ok: true, sealWrong: false });
       return;
     }
     for (const b of this.actionButtons) b.setVisible(false);
@@ -493,6 +612,19 @@ export class OfficeScene extends Phaser.Scene {
 
   private onStampDone(decision: StampDecision, result: StampResult): void {
     if (!result.ok || !this.enc) return;
+    // ŠPATNÁ PEČEŤ: hráč směl přitisknout i špatné pečetidlo - chyba se trestá
+    // až tady, při odevzdání (facka). Řeší se před kvalitou otisku.
+    if (result.sealWrong) {
+      this.pendingReason = null;
+      if (this.isVaclavFinale()) { this.vaclavFail(Content.ui('whyWrongSeal')); return; }
+      const t = GameState.loseLife();
+      this.updateHud();
+      this.showCutaway(Content.ui('botchedSeal'), Content.ui('whyWrongSeal'), () => {
+        if (t === 'ending:beaten') this.scene.start('Ending');
+        else this.nextKnight();
+      });
+      return;
+    }
     // #4 ZPACKANÉ RAZÍTKO: otisk nesplnil podmínky (mimo kroužek / křivě / bledé / suché) = facka
     if (result.quality !== 'crisp') {
       this.pendingReason = null;
@@ -601,11 +733,24 @@ export class OfficeScene extends Phaser.Scene {
     }
     try { this.sound.play('sfx_slap', { volume: 0.5 }); } catch { /* ok */ }
     this.cameras.main.shake(260, 0.010);
-    // červené protirazítko „VRÁCENO" přes žádost
+    // červené protirazítko přes žádost: poprvé „VRÁCENO", podruhé náhodná úřednická hláška
     if (this.primaryDoc) {
+      let stampText = Content.ui('vaclavReturnStamp');
+      // první vrácení „VRÁCENO" doprostřed; druhé náhodná hláška vedle (vlevo/vpravo), ať nepřekryje to první
+      let stampX = 0;
+      let stampY = -10;
+      let stampAngle = -12;
+      if (this.vaclavReturns > 1) {
+        const pool = Content.all.infographics.filter((i) => i.kind === 'vaclav');
+        if (pool.length > 0) stampText = L(pool[Math.floor(Math.random() * pool.length)].text);
+        // umísti do prostoru mezi „VRÁCENO" (střed) a levým horním rohem — zhruba do poloviny té vzdálenosti
+        stampX = -this.primaryDocWH.w / 4;
+        stampY = -this.primaryDocWH.h / 4;
+        stampAngle = -16;
+      }
       const box = this.add.rectangle(0, -10, 320, 96, 0x000000, 0).setStrokeStyle(9, 0xa82810);
-      const t = this.add.text(0, -10, Content.ui('vaclavReturnStamp'), { fontFamily: FONTS.ui, fontSize: '50px', color: '#a82810' }).setOrigin(0.5);
-      const stamp = this.add.container(0, 0, [box, t]).setAngle(-12).setScale(3).setAlpha(0);
+      const t = this.add.text(0, -10, stampText, { fontFamily: FONTS.ui, fontSize: '50px', color: '#a82810' }).setOrigin(0.5);
+      const stamp = this.add.container(stampX, stampY, [box, t]).setAngle(stampAngle).setScale(3).setAlpha(0);
       this.primaryDoc.add(stamp);
       this.tweens.add({ targets: stamp, scale: 1, alpha: 0.92, duration: 200, ease: 'Back.easeOut' });
       this.tweens.add({ targets: this.primaryDoc, y: this.primaryDoc.y - 24, duration: 90, yoyo: true, repeat: 2 });
@@ -662,6 +807,7 @@ export class OfficeScene extends Phaser.Scene {
     this.knightDropRect = null;
     this.heckleBubble?.destroy();
     this.heckleBubble = undefined;
+    this.stopHeckleVoice();
     this.inspectPopup?.destroy();
     this.inspectPopup = undefined;
     this.overlayLayer.removeAll(true);
@@ -978,6 +1124,7 @@ export class OfficeScene extends Phaser.Scene {
   private openRules(): void {
     if (this.busy) return;
     this.busy = true;
+    this.rulesOverlayOpen = true; // heckle pokřik smí naskočit i přes tohle menu
     this.inspectPopup?.destroy();
     this.inspectPopup = undefined;
     const cx = GAME_WIDTH / 2;
@@ -1015,7 +1162,132 @@ export class OfficeScene extends Phaser.Scene {
     const close = makeButton(this, GAME_WIDTH - 280, 95, `✕ ${Content.ui('close')}`, () => {
       this.overlayLayer.removeAll(true);
       this.busy = false;
+      this.rulesOverlayOpen = false;
     }, { fontSize: 28 });
+    this.overlayLayer.add(close);
+  }
+
+  /** Ikonka novin v horní liště (list papíru s hlavičkou a linkami). */
+  private makeNewsButton(x: number, y: number, size = 72): Phaser.GameObjects.Container {
+    const bg = this.add.rectangle(0, 0, size, size, COLORS.uiPanelLight).setStrokeStyle(3, COLORS.uiAccent);
+    const g = this.add.graphics();
+    const paper = 0xe8d9a8;
+    const ink = 0x3a2a16;
+    g.fillStyle(paper, 1); g.fillRect(-19, -23, 38, 46); // list
+    g.lineStyle(2, ink, 1); g.strokeRect(-19, -23, 38, 46);
+    g.fillStyle(ink, 1);
+    g.fillRect(-14, -18, 28, 7); // hlavička (masthead)
+    g.fillRect(-14, -6, 12, 12); // obrázek vlevo
+    for (let i = 0; i < 3; i++) g.fillRect(0, -6 + i * 5, 14, 2); // linky vpravo
+    for (let i = 0; i < 3; i++) g.fillRect(-14, 10 + i * 5, 28, 2); // spodní linky
+    const c = this.add.container(x, y, [bg, g]);
+    c.setSize(size, size);
+    bg.setInteractive({ useHandCursor: true })
+      .on('pointerover', () => bg.setFillStyle(0x6a5430, 1))
+      .on('pointerout', () => bg.setFillStyle(COLORS.uiPanelLight))
+      .on('pointerdown', () => {
+        this.tweens.add({ targets: c, scale: 0.92, duration: 50, yoyo: true });
+        try { this.sound.play('sfx_click', { volume: 0.35 }); } catch { /* zvuk není kritický */ }
+        this.openNewsRecap();
+      });
+    return c;
+  }
+
+  /**
+   * Overlay novin: znovu si přečíst zprávy AKTUÁLNÍ epochy + platné úřední podmínky
+   * (vyhlášky právě v platnosti). NEMUTUJE stav — zprávy jen čte z Content.all.news
+   * (ne přes pickNews, aby nespotřeboval neviděné zprávy). Platí jako modální overlay,
+   * respektuje this.busy, aby se nekryl s encounterem/razítkem.
+   */
+  private openNewsRecap(): void {
+    if (this.busy) return;
+    this.busy = true;
+    this.inspectPopup?.destroy();
+    this.inspectPopup = undefined;
+    const cx = GAME_WIDTH / 2;
+    const era = Content.era(GameState.day);
+    const black = '#1c1a16';
+    const sepia = '#4a4134';
+    const paperW = 1240;
+
+    const dim = this.add.rectangle(cx, GAME_HEIGHT / 2, GAME_WIDTH, GAME_HEIGHT, 0x000000, 0.78).setInteractive();
+    const paper = this.add.rectangle(cx, GAME_HEIGHT / 2, paperW, GAME_HEIGHT - 60, COLORS.paper).setStrokeStyle(4, 0x8a7a55);
+    this.overlayLayer.add([dim, paper]);
+
+    // hlavička novin (masthead + datum epochy)
+    const masthead = this.add
+      .text(cx, 90, L(era.masthead).toUpperCase(), { fontFamily: FONTS.title, fontSize: '72px', color: black })
+      .setOrigin(0.5);
+    const sub = this.add
+      .text(cx, 150, `${Content.ui('day')} ${GameState.day}/5  ·  L.P. ${era.year}  ·  ${L(era.label)}`, {
+        fontFamily: FONTS.doc, fontSize: '28px', color: sepia,
+      })
+      .setOrigin(0.5);
+    const rule1 = this.add.rectangle(cx, 182, paperW - 120, 3, 0x1c1a16);
+    this.overlayLayer.add([masthead, sub, rule1]);
+
+    const leftX = cx - paperW / 2 + 70;
+    const wrapW = paperW - 150;
+    const bottomLimit = GAME_HEIGHT - 90;
+    let y = 208;
+
+    // zprávy aktuální epochy — čteme BEZ mutace stavu (žádný pickNews), max 3
+    const news = Content.all.news
+      .filter((n) => n.minDay <= GameState.day && (n.maxDay === undefined || n.maxDay >= GameState.day))
+      .slice(0, 3);
+    for (const n of news) {
+      const tone = n.tone === 'absurd' ? '❖' : '■';
+      const head = this.add.text(leftX, y, `${tone} ${L(n.headline)}`, {
+        fontFamily: FONTS.ui, fontSize: '30px', color: black, wordWrap: { width: wrapW },
+      });
+      this.overlayLayer.add(head);
+      y += head.height + 6;
+      if (n.body) {
+        const body = this.add.text(leftX + 28, y, L(n.body), {
+          fontFamily: FONTS.doc, fontSize: '24px', color: sepia, wordWrap: { width: wrapW - 28 },
+        });
+        this.overlayLayer.add(body);
+        y += body.height + 14;
+      } else {
+        y += 10;
+      }
+    }
+
+    // oddělovač + sekce platných úředních podmínek (vyhlášky právě v platnosti)
+    y += 8;
+    const rule2 = this.add.rectangle(cx, y, paperW - 120, 3, 0x1c1a16);
+    y += 24;
+    const rulesTitle = this.add.text(leftX, y, `§ ${Content.ui('introRulesTitle')}`, {
+      fontFamily: FONTS.title, fontSize: '36px', color: '#7a1f12',
+    });
+    this.overlayLayer.add([rule2, rulesTitle]);
+    y += rulesTitle.height + 12;
+
+    const activeIds = RuleEngine.activeRuleIds();
+    const activeRules = Content.all.rules.filter((r) => activeIds.has(r.id));
+    const fs = activeRules.length > 6 ? 20 : 24;
+    let truncated = false;
+    for (const r of activeRules) {
+      const t = this.add.text(leftX, y, `§ ${L(r.cislo)} — ${GameState.fillVars(L(r.text))}`, {
+        fontFamily: FONTS.doc, fontSize: `${fs}px`, color: black, wordWrap: { width: wrapW }, lineSpacing: 2,
+      });
+      if (y + t.height > bottomLimit) { t.destroy(); truncated = true; break; }
+      this.overlayLayer.add(t);
+      y += t.height + 8;
+    }
+    if (activeRules.length === 0) {
+      this.overlayLayer.add(this.add.text(leftX, y, '—', { fontFamily: FONTS.doc, fontSize: '24px', color: sepia }));
+    } else if (truncated) {
+      // zbytek se nevešel — plný seznam je v tlačítku „§ Platné vyhlášky"
+      this.overlayLayer.add(this.add.text(leftX, y, '…', { fontFamily: FONTS.doc, fontSize: `${fs}px`, color: sepia }));
+    }
+
+    // zavření: klik na ztmavené pozadí nebo křížek
+    dim.once('pointerdown', () => { this.overlayLayer.removeAll(true); this.busy = false; });
+    const close = makeButton(this, cx + paperW / 2 - 70, 90, '✕', () => {
+      this.overlayLayer.removeAll(true);
+      this.busy = false;
+    }, { fontSize: 28, width: 72 });
     this.overlayLayer.add(close);
   }
 
@@ -1208,6 +1480,13 @@ export class OfficeScene extends Phaser.Scene {
     const waxParam = new URLSearchParams(location.search).get('wax');
     const waxRuleActive = GameState.enactedRules.has('R27');
     const requireWax = isFinale ? false : (waxParam === '1' ? true : waxParam === '0' ? false : (waxRuleActive && Math.random() < 0.5));
+
+    // druhopis do archivu (R28) se vyžaduje ~30 % rytířů; debug ?archive=1 vynutí, =0 vypne.
+    // Ve finále (sv. Václav) nikdy. Rozhodne se tu 1× na encounter (stabilní do odbavení).
+    const archiveParam = new URLSearchParams(location.search).get('archive');
+    this.needsArchive = isFinale ? false
+      : (archiveParam === '1' ? true : archiveParam === '0' ? false
+      : (GameState.enactedRules.has('R28') && Math.random() < 0.3));
 
     // kroužek pečeti: náhodná pozice ve volném pruhu + zcela náhodné natočení.
     // Ve finále tři pevné kroužky vedle sebe; první se kreslí teď, další po vrácení.
@@ -1472,10 +1751,10 @@ export class OfficeScene extends Phaser.Scene {
   /** Procesní „pseudo-důvody" — vyhlášky, co mění postup, ne nabídku zamítnutí. */
   private readonly PROCESS_REASONS = new Set(['RZ_ARCHIV']);
 
-  /** Je v platnosti vyhláška o archivaci (R28)? (nebo debug ?archive=1). */
+  /** Vyžaduje TENHLE rytíř druhopis? R28 je v platnosti + encounter byl vylosován (~30 %).
+   *  Rozhodnutí padlo v renderPrimaryDoc (needsArchive), tady se jen přečte. */
   private archiveActive(): boolean {
-    if (new URLSearchParams(location.search).get('archive') === '1') return true;
-    return GameState.enactedRules.has('R28');
+    return this.needsArchive;
   }
 
   /** Důvody do skříně: VŠECHNY dostupné (i výstrojní — ty se teď vybírají jen odsud),
@@ -1822,7 +2101,7 @@ export class OfficeScene extends Phaser.Scene {
     this.overlayLayer.add([dim, panel, head, yes, no]);
   }
 
-  /** Vydá dekret. U vyhlášky o světle nejdřív vyskočí vtipné „upsík" okno a teprve
+  /** Vydá dekret. U vyhlášky o světle nejdřív vyskočí okno s textem a teprve
    *  po kliknutí se zhasne; ostatní efekty (ztišení) platí hned. */
   private doIssueDecree(d: Decree): void {
     if (!this.enc) return;
@@ -1830,8 +2109,8 @@ export class OfficeScene extends Phaser.Scene {
     this.overlayLayer.removeAll(true);
     this.updateHud();
     if (this.LIGHT_DECREES.includes(d.id)) {
-      // nejdřív vtip, po kliknutí teprve zhasne světlo (sebere se jas)
-      this.showInfoBox(`😬 ${Content.ui('lightDecreeOops')}`, 0x7a1f12, () => this.applyAmbientEffects());
+      // nejdřív text, po kliknutí teprve zhasne světlo (sebere se jas)
+      this.showInfoBox(Content.ui('lightDecreeOops'), 0x7a1f12, () => this.applyAmbientEffects());
     } else {
       this.applyAmbientEffects(); // např. ztišení hudby hned
       this.showInfoBox(`⚖ ${Content.ui('decreeIssued')}\n${L(d.text)}`, 0xd4a017, () => {

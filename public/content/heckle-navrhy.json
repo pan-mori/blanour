@@ -1,0 +1,205 @@
+{
+  "_comment": "Navrhy novych hlasek rytiru (heckle). Preber si je, prepis podle libosti a zkopiruj hotove polozky do public/content/infographics.json do pole items. ID IG_H10 a dale navazuji na stavajici IG_H01-IG_H09. Format musi odpovidat schematu: id, kind=heckle, text.cs, text.en.",
+  "items": [
+    {
+      "id": "IG_H01",
+      "kind": "heckle",
+      "text": {
+        "cs": "No tak, bude to? Honem, honem!",
+        "en": "Well? Will it be today? Chop chop!"
+      }
+    },
+    {
+      "id": "IG_H02",
+      "kind": "heckle",
+      "text": {
+        "cs": "Razítkuj, úřade, razítkuj!",
+        "en": "Stamp away, office, stamp away!"
+      }
+    },
+    {
+      "id": "IG_H03",
+      "kind": "heckle",
+      "text": {
+        "cs": "Pět set let čekám, ale TOHLE je moc!",
+        "en": "I have waited five hundred years, but THIS is too much!"
+      }
+    },
+    {
+      "id": "IG_H04",
+      "kind": "heckle",
+      "text": {
+        "cs": "Kůň mi mezitím zestárl o století!",
+        "en": "My horse has aged a century in this queue!"
+      }
+    },
+    {
+      "id": "IG_H05",
+      "kind": "heckle",
+      "text": {
+        "cs": "Přitlač! Pořádně! Ať to drží!",
+        "en": "Press harder! Properly! Make it stick!"
+      }
+    },
+    {
+      "id": "IG_H06",
+      "kind": "heckle",
+      "text": {
+        "cs": "To i Bílá hora byla rychlejší…",
+        "en": "Even White Mountain was over quicker…"
+      }
+    },
+    {
+      "id": "IG_H07",
+      "kind": "heckle",
+      "text": {
+        "cs": "Honem, než bude národu zase líp!",
+        "en": "Hurry, before the nation starts feeling better again!"
+      }
+    },
+    {
+      "id": "IG_H08",
+      "kind": "heckle",
+      "text": {
+        "cs": "Zbroj mi tu reziví, člověče!",
+        "en": "My armour is rusting as we speak, man!"
+      }
+    },
+    {
+      "id": "IG_H09",
+      "kind": "heckle",
+      "text": {
+        "cs": "Už jsem tam měl být čtyři minuty, ty magore!",
+        "en": "I was supposed to be out there four minutes ago, you muppet!"
+      }
+    },
+    {
+      "id": "IG_H10",
+      "kind": "heckle",
+      "text": {
+        "cs": "Razítko, ne román! Bouchni to tam! Nebo ja bouchnu tebe",
+        "en": "A stamp, not a novel! Slap it on there!"
+      }
+    },
+    {
+      "id": "IG_H11",
+      "kind": "heckle",
+      "text": {
+        "cs": "Přišel jsem bojovat, ne stárnout ve frontě!",
+        "en": "I came to fight, not to grow old in a queue!"
+      }
+    },
+    {
+      "id": "IG_H12",
+      "kind": "heckle",
+      "text": {
+        "cs": "Se zblázním, než ten inkoust uschne! Nervy moje",
+        "en": "My sword will rust before that ink dries!"
+      }
+    },
+    {
+      "id": "IG_H13",
+      "kind": "heckle",
+      "text": {
+        "cs": "Kolega drak už dávno odletěl, a já tu pořád stojím!",
+        "en": "My colleague the dragon flew off ages ago, and here I still stand!"
+      }
+    },
+    {
+      "id": "IG_H14",
+      "kind": "heckle",
+      "text": {
+        "cs": " Podivejte na něj Jedno razítko za hodinu  to je mi úřednický rekord!",
+        "en": "One stamp an hour — now THAT's a clerical record!"
+      }
+    },
+    {
+      "id": "IG_H17",
+      "kind": "heckle",
+      "text": {
+        "cs": "Za ten čas jsem mohl dobýt tři hrady!",
+        "en": "In this time I could have conquered three castles!"
+      }
+    },
+    {
+      "id": "IG_H18",
+      "kind": "heckle",
+      "text": {
+        "cs": "Dělej, úředníku, Česko čeká  a tentokrat to bez nás nevzladnou",
+        "en": "Move it, clerk, the king is waiting — and he has no patience!"
+      }
+    },
+    {
+      "id": "IG_H19",
+      "kind": "heckle",
+      "text": {
+        "cs": "Princezna se mezitím vdala za jiného!",
+        "en": "The princess has gone and married someone else meanwhile!"
+      }
+    },
+    {
+      "id": "IG_H20",
+      "kind": "heckle",
+      "text": {
+        "cs": "Mohl bych ty formulaře použivat misto zbraně tohle je MOR",
+        "en": "Five forms for a single dragon? I must be dreaming!"
+      }
+    },
+    {
+      "id": "IG_H21",
+      "kind": "heckle",
+      "text": {
+        "cs": "Za mech mladych let s mím brnění pamatujeme lepší fronty!",
+        "en": "My armour remembers better queues than this!"
+      }
+    },
+    {
+      "id": "IG_H22",
+      "kind": "heckle",
+      "text": {
+        "cs": "Honem, Pronajímam si koně na minuty, nezbankrotuju kuli tobě",
+        "en": "Hurry, before my horse retires on me!"
+      }
+    },
+    {
+      "id": "IG_H25",
+      "kind": "heckle",
+      "text": {
+        "cs": "Já tu zapustil kořeny jako starý dub!",
+        "en": "I've taken root here like an old oak!"
+      }
+    },
+    {
+      "id": "IG_H26",
+      "kind": "heckle",
+      "text": {
+        "cs": "Zase Úřad práce? tak jateda jdu",
+        "en": "A labour office? More like an office that won't labour!"
+      }
+    },
+    {
+      "id": "IG_H27",
+      "kind": "heckle",
+      "text": {
+        "cs": "Ještě jedno čekání a podám stížnost. Na další formulář.",
+        "en": "One more wait and I'll file a complaint. On yet another form."
+      }
+    },
+    {
+      "id": "IG_H28",
+      "kind": "heckle",
+      "text": {
+        "cs": "Papír, razítko, podpis — a já už nevím, jaké je století!",
+        "en": "Paper, stamp, signature — and I've lost track of what century it is!"
+      }
+    },
+    {
+      "id": "IG_H31",
+      "kind": "heckle",
+      "text": {
+        "cs": "Nejdřív formulář A38, pak razítko na formulář A38… tohle místo přivádí k šílenství!",
+        "en": "First Form A38, then a stamp for Form A38… this place drives you mad!"
+      }
+    }
+  ]
+}

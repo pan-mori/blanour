@@ -444,7 +444,7 @@
           "fields": {
             "jmeno": "Jaroslav ze Lhoty",
             "duvod": "pivo dražší než oves - znamení konce",
-            "formular": "B-1448b (koncept)",
+            "formular": "Koncept formuláře načmárano rukou B-1448b",
             "kolek": "30"
           }
         },
@@ -876,8 +876,8 @@
           "doc": "vystroj",
           "field": "polozky",
           "hint": {
-            "cs": "List deklaruje kokardu červenobílou. Na prsou má černožlutou, barvy císařské.",
-            "en": "The manifest declares a red-and-white cockade. On his chest sits a black-and-yellow one - the Emperor's colours."
+            "cs": "",
+            "en": ""
           }
         }
       ],

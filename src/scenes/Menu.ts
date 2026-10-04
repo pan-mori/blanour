@@ -48,7 +48,7 @@ export class MenuScene extends Phaser.Scene {
 
     makeButton(this, cx, 550, Content.ui('play'), () => {
       GameState.reset();
-      this.scene.start('Newspaper');
+      this.scene.start('StartLaw'); // úvodní výběr vyhlášek (směr runu) → pak Newspaper
     }, { fontSize: 52, width: 380 });
 
     // výběr jazyka: klikací vlajky (CZ / UK)
@@ -60,29 +60,16 @@ export class MenuScene extends Phaser.Scene {
     this.makeFlag(cx + 90, 690, 'en', GameState.lang === 'en', () => setLang('en'));
 
     // úvodní příběhová slideshow (lze spustit kdykoli z menu)
-    makeButton(this, cx, 800, Content.ui('story'), () => this.scene.start('Intro'), { fontSize: 34, width: 460 });
+    makeButton(this, cx, 840, Content.ui('story'), () => this.scene.start('Intro'), { fontSize: 34, width: 460 });
 
-    makeButton(this, cx, 885, Content.ui('howTo'), () => this.showHowTo(), { fontSize: 30 });
+    makeButton(this, cx, 930, Content.ui('howTo'), () => this.showHowTo(), { fontSize: 30 });
 
-    // přepínač zvuku - label se mění na místě (bez restartu scény)
-    const musicLabel = () => `${Content.ui('music')}: ${this.sound.mute ? Content.ui('off') : Content.ui('on')}`;
-    const musicBtn = makeButton(
-      this,
-      cx,
-      965,
-      musicLabel(),
-      () => {
-        this.sound.mute = GameState.toggleMuted();
-        if (!this.sound.mute) startMusic(); // kdyby hudba ještě neběžela
-        const txt = musicBtn.list.find((o) => o instanceof Phaser.GameObjects.Text) as Phaser.GameObjects.Text;
-        txt?.setText(musicLabel());
-      },
-      { fontSize: 30, width: 560 },
-    );
+    // přepínač zvuku - ikonka reproduktoru vpravo nahoře (bez restartu scény)
+    this.makeSoundIcon(GAME_WIDTH - 80, 80, startMusic);
 
     // kontrola diakritiky (pangram) - nenápadně v patičce
     this.add
-      .text(cx, GAME_HEIGHT - 60, 'Příliš žluťoučký kůň úpěl ďábelské ódy - © Odbor blanických výjezdů', {
+      .text(cx, GAME_HEIGHT - 60, '© Odbor blanických výjezdů', {
         fontFamily: FONTS.doc,
         fontSize: '24px',
         color: '#6b5b40',
@@ -93,6 +80,53 @@ export class MenuScene extends Phaser.Scene {
 
     // debug: brouček vlevo dole → LAB s minihrami (samostatné testování)
     this.makeDebugBug(90, GAME_HEIGHT - 70);
+  }
+
+  /** Ikonka reproduktoru vpravo nahoře - přepíná zvuk (muted) bez restartu scény. */
+  private makeSoundIcon(x: number, y: number, startMusic: () => void): void {
+    const r = 34; // poloměr kulatého podkladu
+    const bg = this.add.circle(x, y, r, COLORS.uiPanel, 0.85).setStrokeStyle(3, COLORS.uiAccent);
+    const g = this.add.graphics();
+
+    const draw = (muted: boolean) => {
+      g.clear();
+      const col = muted ? 0x8a7a55 : 0xe8d9a8;
+      g.fillStyle(col, 1);
+      // tělo reproduktoru (zadní obdélníček + kužel) vycentrované kolem (x, y)
+      const bx = x - 14;
+      g.fillRect(bx, y - 7, 9, 14); // zadní kanálek
+      g.beginPath(); // kužel
+      g.moveTo(bx + 9, y - 7);
+      g.lineTo(bx + 22, y - 16);
+      g.lineTo(bx + 22, y + 16);
+      g.lineTo(bx + 9, y + 7);
+      g.closePath();
+      g.fillPath();
+      if (muted) {
+        // křížek = ztlumeno
+        g.lineStyle(4, 0xc0392b, 1);
+        g.lineBetween(x + 6, y - 12, x + 22, y + 12);
+        g.lineBetween(x + 22, y - 12, x + 6, y + 12);
+      } else {
+        // zvukové vlny
+        g.lineStyle(3, col, 1);
+        g.beginPath(); g.arc(bx + 22, y, 8, -0.7, 0.7); g.strokePath();
+        g.beginPath(); g.arc(bx + 22, y, 15, -0.7, 0.7); g.strokePath();
+      }
+    };
+    draw(this.sound.mute);
+
+    const hit = this.add
+      .circle(x, y, r + 6, 0xffffff, 0.001)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => bg.setStrokeStyle(3, 0xffffff))
+      .on('pointerout', () => bg.setStrokeStyle(3, COLORS.uiAccent))
+      .on('pointerdown', () => {
+        this.sound.mute = GameState.toggleMuted();
+        if (!this.sound.mute) startMusic(); // kdyby hudba ještě neběžela
+        draw(this.sound.mute);
+      });
+    void hit;
   }
 
   /** Malý brouček (ladybug) vlevo dole - otevře DEBUG LAB s minihrami. */
@@ -155,8 +189,8 @@ export class MenuScene extends Phaser.Scene {
     g.strokeRect(x0, y0, w, h);
 
     const label = this.add
-      .text(x, y + h / 2 + 18, which === 'cs' ? 'Čeština' : 'English', {
-        fontFamily: FONTS.doc, fontSize: '20px', color: active ? '#d4a017' : '#8a7a55', stroke: '#14100c', strokeThickness: 3,
+      .text(x, y + h / 2 + 20, which === 'cs' ? 'Čeština' : 'English', {
+        fontFamily: FONTS.ui, fontSize: '28px', color: active ? '#f0d98c' : '#bfa978', stroke: '#14100c', strokeThickness: 4,
       })
       .setOrigin(0.5);
 

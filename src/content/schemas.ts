@@ -153,10 +153,10 @@ export interface Decree {
   injectsReason: string;
 }
 
-/** Infografika po facce / na konci dne / pokřik netrpělivého rytíře. */
+/** Infografika po facce / na konci dne / pokřik netrpělivého rytíře / nápis na razítku, kterým sv. Václav vrací žádost. */
 export interface Infographic {
   id: string;
-  kind: 'facka' | 'dayend' | 'heckle';
+  kind: 'facka' | 'dayend' | 'heckle' | 'vaclav';
   text: LString;
 }
 

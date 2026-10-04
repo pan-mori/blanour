@@ -14,7 +14,9 @@ import { IntroScene } from './scenes/Intro';
 import { NewspaperScene } from './scenes/Newspaper';
 import { OfficeScene } from './scenes/Office';
 import { DayEndScene } from './scenes/DayEnd';
+import { StartLawScene } from './scenes/StartLaw';
 import { EndingScene } from './scenes/Ending';
+import { FinalChoiceScene } from './scenes/FinalChoice';
 import { LabScene } from './scenes/Lab';
 import { installAutoTest } from './debug/autotest';
 
@@ -33,7 +35,7 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [BootScene, PreloadScene, MenuScene, IntroScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene, LabScene],
+  scene: [BootScene, PreloadScene, MenuScene, IntroScene, StartLawScene, NewspaperScene, OfficeScene, DayEndScene, EndingScene, FinalChoiceScene, LabScene],
 });
 
 // Debug/test hák: ?shot=nazev&wait=4500 → po čekání POSTne PNG snímek hry

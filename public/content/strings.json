@@ -105,6 +105,30 @@
       "cs": "Vyhláška uvedena v platnost!",
       "en": "Decree brought into force!"
     },
+    "startLawTitle": {
+      "cs": "NÁSTUP DO ÚŘADU",
+      "en": "FIRST DAY ON THE JOB"
+    },
+    "startLawHint": {
+      "cs": "Vyber si {n} vyhlášky, které budeš prosazovat od prvního dne. Určíš tím směr celého svého úřadování - každý běh může být jiný.",
+      "en": "Choose {n} decrees you'll enforce from day one. This sets the direction of your whole tenure - every run can differ."
+    },
+    "startLawPicked": {
+      "cs": "Vyhlášky zvoleny. Platí od prvního rytíře.",
+      "en": "Decrees chosen. In force from the very first knight."
+    },
+    "startLawGo": {
+      "cs": "Nastoupit do služby",
+      "en": "Report for duty"
+    },
+    "otherOfficialsTitle": {
+      "cs": "Jsou tu i jiní úředníci...",
+      "en": "There are other clerks here too..."
+    },
+    "otherOfficialsNote": {
+      "cs": "Vyhlášku vydal jiný odbor. Platí od teď — ať se ti líbí nebo ne.",
+      "en": "Another department issued this decree. In force from now on — like it or not."
+    },
     "vaclavReturnStamp": {
       "cs": "VRÁCENO",
       "en": "RETURNED"
@@ -326,8 +350,8 @@
       "en": "Too long - smudged. Shame on you."
     },
     "sealBroken": {
-      "cs": "ZLOMENÁ ⚠",
-      "en": "BROKEN ⚠"
+      "cs": "",
+      "en": ""
     },
     "howTo": {
       "cs": "Jak úřadovat",
@@ -392,6 +416,14 @@
     "botchedStamp": {
       "cs": "ZPACKANÉ RAZÍTKO! Úřední úkon je neplatný.",
       "en": "BOTCHED STAMP! The official act is void."
+    },
+    "botchedSeal": {
+      "cs": "ŠPATNÁ PEČEŤ! Úřední úkon je neplatný.",
+      "en": "WRONG SEAL! The official act is void."
+    },
+    "whyWrongSeal": {
+      "cs": "Pečetidlo nesouhlasí s pečetí požadovanou na formuláři (K/E/V).",
+      "en": "The seal matrix does not match the seal required on the form (K/E/V)."
     },
     "stampCancel": {
       "cs": "✕ Zvolit jiný důvod",
@@ -494,8 +526,8 @@
       "en": "Sealed! Now stamp the rejection."
     },
     "waxWrongMatrix": {
-      "cs": "Špatné pečetidlo! Vosk je zmařen - nahřej a nalej znovu.",
-      "en": "Wrong matrix! The wax is ruined - reheat and re-pour."
+      "cs": "Špatné pečetidlo! Vosk je zmařen - vezmi vosk ze stolu, nahřej a nalej znovu.",
+      "en": "Wrong matrix! The wax is ruined - take the wax from the desk, reheat and re-pour."
     },
     "stampSlot": {
       "cs": "sem razítko",
@@ -594,8 +626,8 @@
       "en": "EVENING PAPERWORK - new decrees"
     },
     "legislaHint": {
-      "cs": "Panika! Vyber si přesně 2 nové vyhlášky na zítřek. Přistanou ti v šuplíku „Podpultové vyhlášky\" - a sám je pak musíš aktivně uvést v platnost.",
-      "en": "Panic! Choose exactly 2 new decrees for tomorrow. They land in your \"under-the-counter\" drawer - and you'll have to bring them into force yourself."
+      "cs": "Panika! Vyber si přesně {n} nové vyhlášky na zítřek. Přistanou ti v šuplíku „Podpultové vyhlášky\" - a sám je pak musíš aktivně uvést v platnost.",
+      "en": "Panic! Choose exactly {n} new decrees for tomorrow. They land in your \"under-the-counter\" drawer - and you'll have to bring them into force yourself."
     },
     "legislaNeed": {
       "cs": "Vyber ještě",
@@ -610,8 +642,8 @@
       "en": "Decrees in force"
     },
     "legislaPicked": {
-      "cs": "Vybrány 2 vyhlášky. Najdeš je v šuplíku a sám je uvedeš v platnost.",
-      "en": "Two decrees chosen. Find them in the drawer and bring them into force yourself."
+      "cs": "Vybráno {n} vyhlášek. Najdeš je v šuplíku a sám je uvedeš v platnost.",
+      "en": "{n} decrees chosen. Find them in the drawer and bring them into force yourself."
     },
     "inspectHint": {
       "cs": "→ Zamítnutí vyber v razítkové skříni (tlačítko ZAMÍTNOUT).",
@@ -622,8 +654,8 @@
       "en": "Sword over 120 cm without a valid category-H weapons permit."
     },
     "langLabel": {
-      "cs": "Jazyk / Language",
-      "en": "Language / Jazyk"
+      "cs": "",
+      "en": ""
     },
     "stampFinishSeal": {
       "cs": "✓ Hotovo s razítkem",

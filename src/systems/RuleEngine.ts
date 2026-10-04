@@ -1,7 +1,12 @@
-import type { Decree, Encounter, Flaw, Reason } from '../content/schemas';
+import { TUNING } from '../config';
+import type { Decree, Encounter, Flaw, Reason, Rule } from '../content/schemas';
 import { beardLen, type BeardLen } from '../ui/KnightPortrait';
 import { Content } from './Content';
 import { GameState } from './GameState';
+
+/** Vyhlášky o vousech - nikdy nesmí být v platnosti všechny 3 naráz (jinak není legální
+ *  žádná délka vousu). Hlídá to večerní legislativa i „jiní úředníci". */
+const BEARD_RULE_IDS = new Set(['R23', 'R29', 'R30']);
 
 /** Encounter rozehraný na stole - vestavěné flaws + flaws vstříknuté dekrety. */
 export interface ActiveEncounter {
@@ -14,16 +19,95 @@ export interface ActiveEncounter {
  * reason.ruleRef smí odkazovat na vyhlášku (R…) NEBO dekret (V…) - dekretové
  * důvody se aktivují vydáním dekretu (GameState.issuedDecrees).
  */
+// Kolek (R01) a formulář (R02) jsou základní vyhlášky platné VÝHRADNĚ na směně 1.
+// Od směny 2 se deaktivují, aby rytíře šlo zamítat jen na dobové vyhlášky a ne pořád
+// na tyhle dvě základní. Zůstávají v GameState.enactedRules (ať se znovu nenabízejí
+// ve večerní legislativě), jen je tady podle aktuální směny vyřadíme z aktivních.
+const DAY1_ONLY_RULES = ['R01', 'R02'];
+
 export const RuleEngine = {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  activeRuleIds(_day?: number): Set<string> {
+  activeRuleIds(day: number = GameState.day): Set<string> {
     // aktivní jsou vyhlášky, které úředník uvedl v platnost + jím vydané dekrety
     const ids = new Set(GameState.enactedRules);
     for (const d of GameState.issuedDecrees) ids.add(d);
+    // kolek + formulář platí jen na směně 1
+    if (day > 1) for (const id of DAY1_ONLY_RULES) ids.delete(id);
     return ids;
   },
 
-  /** Důvody, které hráč SMÍ použít: aktivní vyhláška + ještě NEPOUŽITÉ (razítko jen jednou). */
+  /** Množina vyhlášek, se kterými se dá den SESTAVIT: aktivní + ty, které čekají
+   *  v šuplíku (pendingRules). Dávkovač (EncounterManager) díky tomu smí naplánovat
+   *  i rytíře řešitelného teprve po zahrání čekající vyhlášky - jinak by byl den po
+   *  večerní legislativě skoro prázdný (vyhláška vstupuje v platnost až zahráním). */
+  schedulableRuleIds(day: number = GameState.day): Set<string> {
+    const ids = this.activeRuleIds(day);
+    for (const id of GameState.pendingRules) {
+      if (day > 1 && DAY1_ONLY_RULES.includes(id)) continue;
+      ids.add(id);
+    }
+    return ids;
+  },
+
+  /** ruleRef pro daný důvod (společný slovník z reasons.json). */
+  reasonRule(reasonId: string): string | undefined {
+    return Content.all.reasons.find((r) => r.id === reasonId)?.ruleRef;
+  },
+
+  /** Nezavedl by tenhle enact 3. vyhlášku o vousech? (to se nesmí - viz BEARD_RULE_IDS) */
+  wouldBreakBeard(id: string): boolean {
+    if (!BEARD_RULE_IDS.has(id)) return false;
+    const active = [...GameState.enactedRules, ...GameState.pendingRules].filter((x) => BEARD_RULE_IDS.has(x)).length;
+    return active >= 2;
+  },
+
+  /**
+   * „Jiní úředníci": vyhlášky, které si hráč nevzal, může úřad vydat SÁM.
+   *  1) Pevné termíny (TUNING.externalDeadlines) - vyhlášku vynutí nejpozději v daný den
+   *     (pečetění R27 nejpozději v půlce hry, pokud si ji hráč nevybral).
+   *  2) Náhodná eskalace - šance roste se dnem; občas vydá jednu nepřijatou vyhlášku.
+   *  Vrací vyhlášky uvedené v platnost TEĎ (pro oznámení hráči). Volá se na začátku dne.
+   */
+  rollOtherOfficials(day: number): Rule[] {
+    const enactedNow: Rule[] = [];
+    const isTaken = (id: string): boolean =>
+      GameState.enactedRules.has(id) || GameState.pendingRules.includes(id);
+    const enact = (r: Rule): void => { GameState.enactRule(r.id); enactedNow.push(r); };
+
+    // 1) pevné termíny (např. pečetění)
+    for (const [id, deadline] of Object.entries(TUNING.externalDeadlines)) {
+      if (day < deadline || isTaken(id) || this.wouldBreakBeard(id)) continue;
+      const r = Content.all.rules.find((x) => x.id === id);
+      if (r) enact(r);
+    }
+
+    // 2) náhodná eskalace - jedna nepřijatá vyhláška, šance roste se dnem
+    const p = Math.min(TUNING.externalEscalationCap, TUNING.externalEscalation * (day - 1));
+    if (p > 0 && Math.random() < p) {
+      const pool = Content.all.rules.filter(
+        (r) => r.day <= day && !isTaken(r.id) && !this.wouldBreakBeard(r.id),
+      );
+      if (pool.length > 0) enact(pool[Math.floor(Math.random() * pool.length)]);
+    }
+    return enactedNow;
+  },
+
+  /** Smí se důvod TEĎ nabídnout/použít? Razítko zůstává v sadě (žádný strop na hráče),
+   *  jen spotřebovaná (legendární/knížetem přebitá) razítka zmizí. `budget` používá
+   *  POUZE dávkovač dne: hlídá, kolik rytířů se smí naplánovat na stejnou vyhlášku. */
+  reasonUsable(
+    reasonId: string,
+    ruleId: string | undefined,
+    active: Set<string>,
+    budget?: Map<string, number> | null,
+  ): boolean {
+    if (!ruleId || !active.has(ruleId)) return false;
+    if (GameState.usedReasons.has(reasonId)) return false;
+    if (budget && (budget.get(ruleId) ?? 0) <= 0) return false;
+    return true;
+  },
+
+  /** Důvody, které hráč SMÍ TEĎ použít: aktivní vyhláška + razítko není spotřebované.
+   *  Běžná razítka zůstávají ve skříni napořád (budování sbírky). */
   availableReasons(day: number): Reason[] {
     const active = this.activeRuleIds(day);
     return Content.all.reasons.filter((r) => active.has(r.ruleRef) && !GameState.usedReasons.has(r.id));
@@ -79,6 +163,39 @@ export const RuleEngine = {
       (f) => f.reasonId === reasonId && active.has(f.ruleRef),
     );
     return { ok: !!flaw, flaw };
+  },
+
+  /** Vyhláška o výstroji do boje (zbraň + kůň + zbroj) a mapování kategorie →
+   *  {důvod zamítnutí, náhradní kousek do výstroje}. Jediná „gear" vyhláška ve hře. */
+  GEAR_RULE: 'R21',
+  GEAR_CATS: [
+    { cat: 'weapon' as const, reason: 'RZ_CHYBI_ZBRAN', item: 'meč (90 cm)' },
+    { cat: 'horse' as const, reason: 'RZ_CHYBI_KUN', item: 'kůň hnědý' },
+    { cat: 'armour' as const, reason: 'RZ_CHYBI_ZBROJ', item: 'brnění' },
+  ],
+
+  /**
+   * „Rytíři si dávají pozor": když je v platnosti (nebo ve frontě) vyhláška o výstroji,
+   * dovyzbrojí rytíře, kteří NEJSOU zamýšlený gotcha „chybí výstroj". Bez toho by šla
+   * zamítnout skoro půlka rytířů jedním razítkem („chybí kůň"), protože objektivní
+   * verdikt R21 bere chybějící kousek u KOHOKOLI - i když autor jeho skutečnou chybu
+   * zamýšlel jinde (kolek, formulář, vous…). Takhle zůstane „chybí výstroj" vzácné:
+   * jen autorské gotcha kousky, které dávkovač drží na stropu TUNING.maxSameRulePerRun.
+   * Vrací KLON (sdílený Content se nemění) jen když je co dovybavit, jinak originál.
+   */
+  complyGear(data: Encounter, day: number, activeSet?: Set<string>): Encounter {
+    const active = activeSet ?? this.activeRuleIds(day);
+    if (!active.has(this.GEAR_RULE)) return data;
+    if (data.knight.tags.includes('svatozar')) return data; // světec gear nepotřebuje
+    const authorMissing = new Set(data.flaws.map((f) => f.reasonId)); // zamýšlené chybějící kousky
+    const add: string[] = [];
+    for (const g of this.GEAR_CATS) {
+      if (authorMissing.has(g.reason)) continue; // zamýšlený gotcha → nech chybět
+      if (this.hasGear(data.knight.equipment, g.cat)) continue; // už má
+      add.push(g.item);
+    }
+    if (add.length === 0) return data;
+    return { ...data, knight: { ...data.knight, equipment: [...data.knight.equipment, ...add] } };
   },
 
   /** Objektivní verdikt pro „chybí do boje" (null = není to chibi důvod). */
@@ -234,39 +351,58 @@ export const RuleEngine = {
     return false;
   },
 
-  /** Důvody, kterými LZE TEĎ tohoto rytíře zamítnout (aktivní + ještě nepoužité). */
-  solvableReasons(data: Encounter, day: number): string[] {
-    const active = this.activeRuleIds(day);
+  /**
+   * Důvody, kterými LZE tohoto rytíře zamítnout. `active` = platné vyhlášky (default
+   * aktivní; dávkovač posílá schedulable = aktivní + čekající). `budget` = denní
+   * rozpočet použití vyhlášek (dávkovač); bez něj se počítá proti stropu runu.
+   * Důvod projde, jen když jeho vyhlášce ještě zbývá použití (ruleAvail).
+   */
+  solvableReasons(
+    data: Encounter,
+    day: number,
+    activeSet?: Set<string>,
+    budget: Map<string, number> | null = null,
+  ): string[] {
+    const active = activeSet ?? this.activeRuleIds(day);
     const out = new Set<string>();
+    const add = (reasonId: string, ruleId: string | undefined): void => {
+      if (this.reasonUsable(reasonId, ruleId, active, budget)) out.add(reasonId);
+    };
     for (const f of data.flaws) {
       // kolek/formulář řešíme objektivně níže (autorský flaw by s měnící se podmínkou lhal)
       if (this.OBJECTIVE_DOC_REASONS.has(f.reasonId)) continue;
-      if (active.has(f.ruleRef) && !GameState.usedReasons.has(f.reasonId)) out.add(f.reasonId);
+      add(f.reasonId, f.ruleRef);
     }
-    if (!GameState.usedReasons.has('RZ_KOLEK') && this.kolekVerdict(data, 'RZ_KOLEK', active)?.ok) out.add('RZ_KOLEK');
-    if (!GameState.usedReasons.has('RZ_FORMULAR') && this.formVerdict(data, 'RZ_FORMULAR', active)?.ok) out.add('RZ_FORMULAR');
-    if (!GameState.usedReasons.has('RZ_HANA_KNIZE') && this.speechVerdict(data, 'RZ_HANA_KNIZE', active)?.ok) out.add('RZ_HANA_KNIZE');
-    if (!GameState.usedReasons.has('RZ_DUVOD') && this.reasonFieldVerdict(data, 'RZ_DUVOD', active)?.ok) out.add('RZ_DUVOD');
+    if (this.kolekVerdict(data, 'RZ_KOLEK', active)?.ok) add('RZ_KOLEK', 'R01');
+    if (this.formVerdict(data, 'RZ_FORMULAR', active)?.ok) add('RZ_FORMULAR', 'R02');
+    if (this.speechVerdict(data, 'RZ_HANA_KNIZE', active)?.ok) add('RZ_HANA_KNIZE', 'R31');
+    if (this.reasonFieldVerdict(data, 'RZ_DUVOD', active)?.ok) add('RZ_DUVOD', 'R32');
     for (const id of ['RZ_CHYBI_ZBRAN', 'RZ_CHYBI_KUN', 'RZ_CHYBI_ZBROJ']) {
-      if (!GameState.usedReasons.has(id) && this.chibiVerdict(data, id, active)?.ok) out.add(id);
+      if (this.chibiVerdict(data, id, active)?.ok) add(id, 'R21');
     }
     for (const id of ['RZ_BRYLE', 'RZ_KALICH', 'RZ_URAZKA_VACLAV']) {
-      if (!GameState.usedReasons.has(id) && this.tagReasonVerdict(data, id, active)?.ok) out.add(id);
+      const m = { RZ_BRYLE: 'R24', RZ_KALICH: 'R22', RZ_URAZKA_VACLAV: 'R25' }[id]!;
+      if (this.tagReasonVerdict(data, id, active)?.ok) add(id, m);
     }
     for (const id of ['RZ_VOUS_ZADNY', 'RZ_VOUS_KRATKY', 'RZ_VOUS_DLOUHY']) {
-      if (!GameState.usedReasons.has(id) && this.beardVerdict(data, id, active)?.ok) out.add(id);
+      if (this.beardVerdict(data, id, active)?.ok) add(id, this.BEARD_REASONS[id]?.rule);
     }
-    if (!GameState.usedReasons.has('RZ_ZBROJAK') && this.swordVerdict(data, 'RZ_ZBROJAK', active)?.ok) out.add('RZ_ZBROJAK');
-    // legendární razítka platí univerzálně - dokud jsou aktivní a nepoužitá, řeší kohokoli
+    if (this.swordVerdict(data, 'RZ_ZBROJAK', active)?.ok) add('RZ_ZBROJAK', 'R03');
+    // legendární razítka platí univerzálně - dokud je aktivní a nespotřebované, řeší kohokoli
     for (const r of Content.all.reasons) {
-      if (r.rarity === 'legendary' && active.has(r.ruleRef) && !GameState.usedReasons.has(r.id)) out.add(r.id);
+      if (r.rarity === 'legendary') add(r.id, r.ruleRef);
     }
     return [...out];
   },
 
-  /** Lze encounter TEĎ zamítnout (aspoň jeden nepoužitý platný důvod)? */
-  rejectableNow(data: Encounter, day: number): boolean {
-    return this.solvableReasons(data, day).length > 0;
+  /** Lze encounter zamítnout (aspoň jeden platný důvod s volným použitím)? */
+  rejectableNow(
+    data: Encounter,
+    day: number,
+    activeSet?: Set<string>,
+    budget: Map<string, number> | null = null,
+  ): boolean {
+    return this.solvableReasons(data, day, activeSet, budget).length > 0;
   },
 
   /** Lze rytíře TEĎ krýt dekretem? (tag match + nepoužitý dekret + zbývá rozpočet) */

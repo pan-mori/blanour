@@ -1,0 +1,16 @@
+{
+  "_comment": "Navrhy napisu na razitko, kterym svaty Vaclav vraci formular (klic vaclavReturnStamp v strings.json, ted 'VRACENO'). Ton: vtipne/ironicke, tema 'byrokracie vzdy vyhraje'. Vyber si jeden, prepis a zkopiruj do public/content/strings.json pod klic vaclavReturnStamp. POZOR: text se vykresluje velkym pismem (50px) pres formular, tak at neni moc dlouhy.",
+  "navrhy": [
+    { "cs": "ROZHODL JSEM JINAK", "en": "I RULED OTHERWISE" },
+    { "cs": "ÚŘAD VÍ LÉPE", "en": "THE OFFICE KNOWS BETTER" },
+    { "cs": "KNÍŽE VYHRÁVÁ", "en": "THE PRINCE WINS" },
+    { "cs": "VIZ NAŘÍZENÍ č. 25", "en": "SEE DECREE No. 25" },
+    { "cs": "DOPLŇTE FORMULÁŘ A38", "en": "ATTACH FORM A38" },
+    { "cs": "CHYBÍ PŘÍLOHA", "en": "ATTACHMENT MISSING" },
+    { "cs": "RAZÍTKO NA RAZÍTKO", "en": "STAMP UPON STAMP" },
+    { "cs": "K PŘEPRACOVÁNÍ", "en": "SEND IT BACK" },
+    { "cs": "POSLEDNÍ SLOVO MÁM JÁ", "en": "MY WORD IS FINAL" },
+    { "cs": "NEÚPLNÉ (opět)", "en": "INCOMPLETE (again)" },
+    { "cs": "ÚŘAD VŽDY VYHRÁVÁ", "en": "THE OFFICE ALWAYS WINS" }
+  ]
+}

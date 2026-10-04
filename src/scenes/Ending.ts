@@ -42,8 +42,18 @@ export class EndingScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
 
-    makeButton(this, cx, GAME_HEIGHT - 180, Content.ui('backToMenu'), () => {
-      this.scene.start('Menu');
+    // poděkování dabérům (namluvili hlášky rytířů)
+    this.add
+      .text(
+        cx,
+        830,
+        GameState.lang === 'en' ? 'Knight voices: Mori & Vojta & Dixi' : 'Hlasy rytířů namluvili: Mori a Vojta a Dixi',
+        { fontFamily: FONTS.doc, fontSize: '28px', color: '#8a7a55' },
+      )
+      .setOrigin(0.5);
+
+    makeButton(this, cx, GAME_HEIGHT - 180, GameState.lang === 'en' ? 'CONTINUE' : 'POKRAČOVAT', () => {
+      this.scene.start('FinalChoice');
     }, { fontSize: 44 });
   }
 }
