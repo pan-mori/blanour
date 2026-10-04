@@ -7,6 +7,10 @@ import { makeButton, title } from '../ui/helpers';
 import { drawMenuMountains } from '../ui/MenuBackdrop';
 
 export class MenuScene extends Phaser.Scene {
+  /** Pojistka proti smyčce, když je localStorage blokované (anonymní okno): v rámci
+   *  session si pamatujeme, že jsme příběh už automaticky pustili. */
+  private storyAutoPlayed = false;
+
   constructor() {
     super('Menu');
   }
@@ -48,7 +52,14 @@ export class MenuScene extends Phaser.Scene {
 
     makeButton(this, cx, 550, Content.ui('play'), () => {
       GameState.reset();
-      this.scene.start('StartLaw'); // úvodní výběr vyhlášek (směr runu) → pak Newspaper
+      // PRVNÍ „úřadování" vůbec → nejdřív příběh úřadu, pak teprve do hry.
+      // Další spuštění už jdou rovnou na úvodní výběr vyhlášek.
+      if (this.isFirstVisit()) {
+        this.markStorySeen();
+        this.scene.start('Intro', { next: 'StartLaw' });
+      } else {
+        this.scene.start('StartLaw'); // úvodní výběr vyhlášek (směr runu) → pak Newspaper
+      }
     }, { fontSize: 52, width: 380 });
 
     // výběr jazyka: klikací vlajky (CZ / UK)
@@ -80,6 +91,26 @@ export class MenuScene extends Phaser.Scene {
 
     // debug: brouček vlevo dole → LAB s minihrami (samostatné testování)
     this.makeDebugBug(90, GAME_HEIGHT - 70);
+  }
+
+  /** Hraje hráč úplně poprvé? (ještě neviděl úvodní příběh) */
+  private isFirstVisit(): boolean {
+    if (this.storyAutoPlayed) return false; // už jsme dnes pustili (fallback bez storage)
+    try {
+      return localStorage.getItem('blanour:seenStory') !== '1';
+    } catch {
+      return false; // storage blokované → neriskuj smyčku, ber jako viděné
+    }
+  }
+
+  /** Zapiš, že hráč úvodní příběh viděl (best-effort + session pojistka). */
+  private markStorySeen(): void {
+    this.storyAutoPlayed = true;
+    try {
+      localStorage.setItem('blanour:seenStory', '1');
+    } catch {
+      /* anonymní okno - stačí session pojistka storyAutoPlayed */
+    }
   }
 
   /** Ikonka reproduktoru vpravo nahoře - přepíná zvuk (muted) bez restartu scény. */

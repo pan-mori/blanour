@@ -6,7 +6,8 @@ import Phaser from 'phaser';
  */
 const TRACKS = ['music', 'music2', 'music3', 'music4'];
 
-const BASE_VOLUME = 0.05; // tišší základ, ať nepřehluší hlasy rytířů
+const BASE_VOLUME = 0.04; // tišší základ, ať nepřehluší hlasy rytířů
+
 
 class MusicImpl {
   private sound?: Phaser.Sound.BaseSoundManager;

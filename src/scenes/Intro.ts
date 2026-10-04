@@ -121,9 +121,16 @@ export class IntroScene extends Phaser.Scene {
   /** Aktuálně hrající namluvený díl + fronta zbývajících dílů slidu (navazují na sebe). */
   private voice?: Phaser.Sound.BaseSound;
   private voiceQueue: string[] = [];
+  /** Kam pokračovat po dohrání/přeskočení. Z menu tlačítka „Příběh" → Menu;
+   *  při prvním „úřadování" → rovnou do hry (StartLaw). */
+  private nextScene = 'Menu';
 
   constructor() {
     super('Intro');
+  }
+
+  init(data?: { next?: string }): void {
+    this.nextScene = data?.next ?? 'Menu';
   }
 
   create(): void {
@@ -353,6 +360,6 @@ export class IntroScene extends Phaser.Scene {
   }
 
   private finish(): void {
-    this.scene.start('Menu');
+    this.scene.start(this.nextScene);
   }
 }
