@@ -47,6 +47,7 @@ export function parseEquipment(raw: string, tags: string[]): ParsedItem | null {
     // „plamenná orlice" (svatováclavská) - černá orlice na stříbrném poli + zlaté plameny
     if (item.symbol === 'orlice' && /plamenn/.test(s)) { item.shieldColor = 0xd8d0c0; item.symbolColor = 0x1c1a16; item.flames = true; }
   } else if (/přilb|helm/.test(s)) item.key = 'prilba';
+  else if (/klobouk|čapk|čepic|baret|cylindr|slamá/.test(s)) item.key = 'klobouk';
   else if (/vest/.test(s)) item.key = 'vesta';
   else if (/bot|obuv/.test(s)) item.key = 'boty';
   else if (/podkov/.test(s)) item.key = 'podkovy';
@@ -157,6 +158,30 @@ export function ensureItemTexture(scene: Phaser.Scene, item: ParsedItem): string
       px(3, 1, 8, 3, STEEL);
       px(0, 8, 14, 2, STEEL_D); // krempa
       break;
+    case 'klobouk': {
+      // špičatý kouzelnický klobouk: vysoký kužel + široká krempa + hvězda
+      W = 16;
+      H = 18;
+      const felt = 0x3a2e22;
+      const feltHi = 0x5a4634;
+      g.fillStyle(0x241b14, 1);
+      g.fillEllipse(8 * S, 15.4 * S, 15 * S, 4 * S); // stín krempy
+      g.fillStyle(felt, 1);
+      g.fillEllipse(8 * S, 14.6 * S, 13 * S, 3.2 * S); // krempa
+      g.fillTriangle(8 * S, 0.5 * S, 3.6 * S, 14 * S, 12.4 * S, 14 * S); // kužel se špičkou
+      g.fillStyle(feltHi, 1);
+      g.fillTriangle(8 * S, 2.6 * S, 5.4 * S, 13.4 * S, 7.6 * S, 13.4 * S); // světlo na kuželu
+      px(4.4, 12, 7.2, 1.6, 0x7a1f12); // stuha u krempy
+      // zlatá jiskra (čtyřcípá hvězda) na kuželu
+      g.fillStyle(0xd4a017, 1);
+      const stx = 8 * S;
+      const sty = 7.2 * S;
+      const sa = 1.0 * S;
+      const sb = 2.2 * S;
+      g.fillPoints([{ x: stx, y: sty - sb }, { x: stx + sa, y: sty }, { x: stx, y: sty + sb }, { x: stx - sa, y: sty }], true);
+      g.fillPoints([{ x: stx - sb, y: sty }, { x: stx, y: sty - sa }, { x: stx + sb, y: sty }, { x: stx, y: sty + sa }], true);
+      break;
+    }
     case 'vesta':
       W = 14;
       H = 15;

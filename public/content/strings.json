@@ -333,6 +333,46 @@
       "cs": "Co když má rytíř papíry úplně v pořádku? Pak nemáš zač ho legálně zamítnout - tak si důvod vyrobíš. Tlačítkem VYDAT VYHLÁŠKU vydáš na místě novou absurdní vyhlášku šitou na tělo (např. „kůň bez reflexní vesty“), čímž vznikne chyba, kterou pak zamítneš. Pozor: jen 3× za celou hru.",
       "en": "What if a knight's papers are flawless? Then you have no legal ground to reject him - so you invent one. ISSUE A DECREE enacts a fresh absurd regulation tailored to him (e.g. \"horse without a hi-vis vest\"), creating a flaw you can then reject on. Careful: only 3× per whole game."
     },
+    "helpRejectHead": {
+      "cs": "JAK SPRÁVNĚ ZAMÍTNOUT",
+      "en": "HOW TO REJECT CORRECTLY"
+    },
+    "helpRejectIntro": {
+      "cs": "Zamítnutí = otisk razítka ZAMÍTNUTO do kroužku na dokumentu - rovně, sytě a na místě.",
+      "en": "A rejection = the REJECTED stamp imprinted onto the circle on the document - straight, bold and on target."
+    },
+    "helpStep1": {
+      "cs": "NAMOČIT: ťukni razítkem na poduštičku (houpne s ním!). Jedno namočení = 3 syté otisky. Suché razítko = facka.",
+      "en": "INK IT: tap the stamp on the pad (it swings!). One dip = 3 bold imprints. A dry stamp = a slap."
+    },
+    "helpStep2": {
+      "cs": "SMĚR: kolečkem / Q / E srovnej zářez razítka podle zářezu kroužku. Smí se lišit nejvýš o kousek",
+      "en": "DIRECTION: wheel / Q / E to line the stamp's notch up with the circle's notch. May differ by small at most."
+    },
+    "helpStep3": {
+      "cs": "PŘÍTLAK: podrž razítko na kroužku. Moc krátce = bledé, moc dlouho = rozmazané.",
+      "en": "PRESS: hold the stamp on the circle. Too short = faded, too long = smudged."
+    },
+    "helpStep4": {
+      "cs": "POTVRDIT: „Pustit jak je“. Projde jen rovný, sytý otisk v kroužku - jinak facka. Pokřik rytíře razítkem škubne!",
+      "en": "CONFIRM: \"Submit as is\". Only a straight, bold imprint on the circle passes - else a slap. A heckling knight jolts the stamp!"
+    },
+    "helpDirHead": {
+      "cs": "SMĚR RAZÍTKA - 3 PŘÍKLADY",
+      "en": "STAMP DIRECTION - 3 EXAMPLES"
+    },
+    "helpDirOk": {
+      "cs": "ROVNĚ · PLATÍ",
+      "en": "ALIGNED · VALID"
+    },
+    "helpDirCrooked": {
+      "cs": "NAKŘIVO · FACKA",
+      "en": "CROOKED · SLAP"
+    },
+    "helpDirOff": {
+      "cs": "MIMO KROUŽEK · FACKA",
+      "en": "OFF THE CIRCLE · SLAP"
+    },
     "stampDry": {
       "cs": "Razítko je suché!",
       "en": "The stamp is dry!"

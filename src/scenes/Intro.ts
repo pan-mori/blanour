@@ -116,6 +116,11 @@ export class IntroScene extends Phaser.Scene {
   private slideLayer?: Phaser.GameObjects.Container; // aktuální slide (pozadí + karta)
   private dots: Phaser.GameObjects.Arc[] = [];
   private nextBtn?: Phaser.GameObjects.Container;
+  /** Čísla slidů (1..11), jejichž namluvený příběh už hrál - aby se neopakoval. */
+  private narrated = new Set<number>();
+  /** Aktuálně hrající namluvený díl + fronta zbývajících dílů slidu (navazují na sebe). */
+  private voice?: Phaser.Sound.BaseSound;
+  private voiceQueue: string[] = [];
 
   constructor() {
     super('Intro');
@@ -132,8 +137,13 @@ export class IntroScene extends Phaser.Scene {
 
     this.index = 0;
     this.dots = [];
+    this.narrated.clear();
     this.buildChrome();
     this.showSlide(0);
+
+    // namluvený příběh utni, když se ze scény odchází (zvuk běží přes globální
+    // manažer, který přežívá scény - jinak by dabing hrál dál i v menu/úřadu)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.stopVoice());
 
     // ovládání
     const kb = this.input.keyboard;
@@ -198,6 +208,64 @@ export class IntroScene extends Phaser.Scene {
     this.slideLayer = this.buildSlide(slide);
 
     this.updateChrome();
+    this.narrate(this.index + 1);
+  }
+
+  /**
+   * Přehraj namluvený příběh pro daný slide (1..11), ale jen jednou - když se
+   * hráč na slide vrátí, už se nespustí. Díly jednoho slidu (např. 7.1 a 7.2)
+   * hrají v pořadí, druhý naváže, až první doběhne. Klíče viz STORY_VOICES.
+   */
+  private narrate(slideNum: number): void {
+    this.stopVoice(); // běžící dabing předchozího slidu vždy utni
+    if (this.narrated.has(slideNum)) return;
+
+    const keys: string[] = [];
+    for (let part = 1; part <= 4; part++) {
+      const k = `story:${slideNum}:${part}`;
+      if (this.cache.audio.exists(k)) keys.push(k);
+    }
+    if (keys.length === 0) return;
+    this.narrated.add(slideNum);
+
+    const start = () => {
+      // mezitím mohl hráč přepnout jinam - pak už nehraj (zámek audia odpadl pozdě)
+      if (this.index + 1 !== slideNum) return;
+      this.voiceQueue = keys.slice();
+      this.playNextPart();
+    };
+    if (this.sound.locked) this.sound.once(Phaser.Sound.Events.UNLOCKED, start);
+    else start();
+  }
+
+  /** Spustí další díl z fronty; po jeho dohrání automaticky naváže ten následující. */
+  private playNextPart(): void {
+    const key = this.voiceQueue.shift();
+    if (!key) {
+      this.voice = undefined;
+      return;
+    }
+    try {
+      this.voice = this.sound.add(key, { volume: 1 });
+      this.voice.once(Phaser.Sound.Events.COMPLETE, () => {
+        this.voice = undefined;
+        this.playNextPart();
+      });
+      this.voice.play();
+    } catch {
+      this.playNextPart(); // chybějící/vadný díl přeskoč, příběh jede dál
+    }
+  }
+
+  private stopVoice(): void {
+    this.voiceQueue = [];
+    try {
+      this.voice?.stop();
+      this.voice?.destroy();
+    } catch {
+      /* ignore */
+    }
+    this.voice = undefined;
   }
 
   /** Složí jeden slide: statický obrázek (nativní velikost) + tmavnutí + karta s textem. */

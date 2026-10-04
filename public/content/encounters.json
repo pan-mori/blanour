@@ -101,6 +101,7 @@
         "name": "Vilém Dlouhovous",
         "sprite": "knight_03",
         "tags": [
+          "vous_dlouhy",
           "vous"
         ],
         "equipment": [
@@ -1373,6 +1374,7 @@
         "name": "Radim, obsahový tvůrce",
         "sprite": "knight_24",
         "tags": [
+          "vous_dlouhy",
           "vous",
           "kopi"
         ],
@@ -1480,6 +1482,7 @@
         "name": "Metoděj z Malované",
         "sprite": "knight_26",
         "tags": [
+          "vous_dlouhy",
           "stit_lev1",
           "vous"
         ],
@@ -2332,6 +2335,7 @@
         "name": "Ondřej Zbožný z Olešné",
         "sprite": "knight_41",
         "tags": [
+          "vous_dlouhy",
           "ruzenec",
           "vous",
           "mec"
@@ -2698,6 +2702,7 @@
         "name": "Bořivoj Vousatý z Vlašimi",
         "sprite": "knight_47",
         "tags": [
+          "vous_dlouhy",
           "vous",
           "mec"
         ],
@@ -2738,8 +2743,8 @@
           "doc": "bakh",
           "field": "stav",
           "hint": {
-            "cs": "Meč ukován l. P. 1399, tedy před rokem 1400. Atest BAKH pozbyl platnosti l. P. 1440. Propadlý atest není atest platný; délka vousu s tím nesouvisí.",
-            "en": "Sword forged A.D. 1399, i.e. before 1400. The BAKH attestation lapsed in A.D. 1440. A lapsed attestation is not a valid one; the beard length has nothing to do with it."
+            "cs": "Meč ukován l. P. 1399, tedy před rokem 1400. Atest BAKH pozbyl platnosti l. P. 1440. Propadlý atest není atest platný - a ten plnovous po pás je kapitola sama pro sebe.",
+            "en": "Sword forged A.D. 1399, i.e. before 1400. The BAKH attestation lapsed in A.D. 1440. A lapsed attestation is not a valid one - and that waist-length beard is a matter all of its own."
           }
         }
       ],

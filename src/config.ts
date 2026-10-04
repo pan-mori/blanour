@@ -74,7 +74,7 @@ export const TUNING = {
   patienceWarnMs: 20_000,
   stamp: {
     /** Max odchylka otisku od kroužku (stupně) - úředník razítkuje ledabyle, ne přesně */
-    angleTolDeg: 32,
+    angleTolDeg: 20,
     /** Přítlak (ms): pod minimem bledý, nad maximem rozmazaný */
     pressMinMs: 350,
     pressMaxMs: 950,

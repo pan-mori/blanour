@@ -47,7 +47,7 @@ export class EndingScene extends Phaser.Scene {
       .text(
         cx,
         830,
-        GameState.lang === 'en' ? 'Knight voices: Mori & Vojta & Dixi' : 'Hlasy rytířů namluvili: Mori a Vojta a Dixi',
+        GameState.lang === 'en' ? 'Knight voices: Mori & Vojta & Zlounberg' : 'Hlasy rytířů namluvili: Mori a Vojta a Zlounberg,  Uvod namluvil: Kubík balšanku' ,
         { fontFamily: FONTS.doc, fontSize: '28px', color: '#8a7a55' },
       )
       .setOrigin(0.5);

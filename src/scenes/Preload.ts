@@ -43,6 +43,26 @@ export const HECKLE_VOICES: Record<string, string[]> = {
   H31: ['heckle_H31_mori1.m4a', 'heckle_H31_vojta1.m4a', 'heckle_H31_dixi1.mp3', 'heckle_H31_dixi2.mp3'],
 };
 
+/**
+ * Namluvený (dabovaný) příběh Úřadu pro úvodní slideshow (Intro) - 11 slidů.
+ * Klíč = číslo slidu (1..11), hodnota = díly v pořadí, jak se mají přehrát.
+ * Některé slidy mají dva díly, co na sebe navazují (nejdřív .1, pak .2).
+ * Klíče v cache: 'story:<slide>:<part>' (viz Preload.preload a IntroScene).
+ */
+export const STORY_VOICES: Record<number, string[]> = {
+  1: ['1.mp3'],
+  2: ['2.1.mp3', '2.2.mp3'],
+  3: ['3.mp3'],
+  4: ['4.1.mp3', '4.2.mp3'],
+  5: ['5.1.mp3', '5.2.mp3'],
+  6: ['6.mp3'],
+  7: ['7.1.mp3', '7.2.mp3'],
+  8: ['8.mp3'],
+  9: ['9.1.mp3', '9.2.mp3'],
+  10: ['10.mp3'],
+  11: ['11.mp3'],
+};
+
 /** Načte veškerý obsah (JSON) + assety, naplní Content. */
 export class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -107,6 +127,13 @@ export class PreloadScene extends Phaser.Scene {
     for (const [id, files] of Object.entries(HECKLE_VOICES)) {
       files.forEach((file, i) => {
         this.load.audio(`heckle:IG_${id}:${i + 1}`, `assets/audio/heckle/${file}`);
+      });
+    }
+
+    // namluvený příběh pro Intro - klíč 'story:<slide>:<part>' v pořadí dílů
+    for (const [slide, files] of Object.entries(STORY_VOICES)) {
+      files.forEach((file, i) => {
+        this.load.audio(`story:${slide}:${i + 1}`, `assets/audio/story/${file}`);
       });
     }
   }
