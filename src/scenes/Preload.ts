@@ -41,6 +41,8 @@ export const HECKLE_VOICES: Record<string, string[]> = {
   H27: ['heckle_H27_mori1.m4a', 'heckle_H27_vojta1.m4a', 'heckle_H27_dixi1.mp3', 'heckle_H27_dixi2.mp3'],
   H28: ['heckle_H28_mori1.m4a', 'heckle_H28_vojta1.m4a', 'heckle_H28_dixi1.mp3', 'heckle_H28_dixi2.mp3'],
   H31: ['heckle_H31_mori1.m4a', 'heckle_H31_vojta1.m4a', 'heckle_H31_dixi1.mp3', 'heckle_H31_dixi2.mp3'],
+  H32: ['heckle_H32_mori1.m4a'],
+  H33: ['heckle_H33_mori1.m4a'],
 };
 
 /**

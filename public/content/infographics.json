@@ -330,6 +330,22 @@
       }
     },
     {
+      "id": "IG_H32",
+      "kind": "heckle",
+      "text": {
+        "cs": "Mám z toho čekání hroznej hlad! Kdy mi to konečně bouchneš?",
+        "en": "All this waiting has left me starving! When will you finally stamp it?"
+      }
+    },
+    {
+      "id": "IG_H33",
+      "kind": "heckle",
+      "text": {
+        "cs": "Bůh si to žádá! A ty se tu pipleš s jedním razítkem?",
+        "en": "God himself demands it! And you fuss over a single stamp?"
+      }
+    },
+    {
       "id": "IG_V01",
       "kind": "vaclav",
       "text": { "cs": "ROZHODL JSEM JINAK", "en": "I RULED OTHERWISE" }
