@@ -418,7 +418,7 @@ export class OfficeScene extends Phaser.Scene {
     // debug: ?heckle=1 → pokřik už po 2 s (testování)
     const dbg = new URLSearchParams(location.search).has('heckle');
     this.heckleTimer = this.time.addEvent({
-      delay: dbg ? 2000 : Phaser.Math.Between(10_000, 25_000),
+      delay: dbg ? 2000 : Phaser.Math.Between(15_000, 30_000),
       loop: true,
       callback: () => {
         if (!this.enc) return;
