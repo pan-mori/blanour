@@ -23,6 +23,10 @@ export class OfficeScene extends Phaser.Scene {
   private hud!: Phaser.GameObjects.Text;
   private heckleTimer?: Phaser.Time.TimerEvent;
   private heckleBubble?: Phaser.GameObjects.Container;
+  /** „Pytlík" pokřiků: každá unikátní hláška × každá namluvená varianta (autor/take) se
+   *  přehraje právě jednou, teprve po vyčerpání se pytlík znovu zamíchá. Žádné opakování,
+   *  dokud nedojdou všechny. Drží se přes celý běh (i mezi dny). */
+  private heckleBag: { id: string; take?: number }[] = [];
   private heckleVoice?: Phaser.Sound.BaseSound;
   private heckleShowDelay?: Phaser.Time.TimerEvent;
   private rulesOverlayOpen = false; // menu „platné vyhlášky" - heckle smí i přes něj
@@ -429,13 +433,14 @@ export class OfficeScene extends Phaser.Scene {
   private showHeckle(): void {
     this.heckleShowDelay?.remove();
     this.heckleBubble?.destroy();
-    const pool = Content.all.infographics.filter((i) => i.kind === 'heckle');
-    if (pool.length === 0) return;
-    const item = pool[Math.floor(Math.random() * pool.length)];
+    const pick = this.nextHeckle();
+    if (!pick) return;
+    const item = Content.all.infographics.find((i) => i.id === pick.id);
+    if (!item) return;
     const line = L(item.text);
     // hlas rytíře spustíme o 0.5 s DŘÍV než naskočí text (když nahrávka existuje) -
     // rytíř se nejdřív ozve a teprve pak „dopadne" bublina. Bez nahrávky text hned.
-    if (this.playHeckleVoice(item.id)) {
+    if (pick.take !== undefined && this.playHeckleVoice(`heckle:${pick.id}:${pick.take}`)) {
       this.heckleShowDelay = this.time.delayedCall(1000, () => {
         if (!this.enc) return; // mezitím odešel rytíř
         this.showHeckleBubble(line);
@@ -443,6 +448,31 @@ export class OfficeScene extends Phaser.Scene {
     } else {
       this.showHeckleBubble(line);
     }
+  }
+
+  /** Vyber další pokřik z pytlíku (bez opakování); prázdný pytlík se znovu naplní a zamíchá. */
+  private nextHeckle(): { id: string; take?: number } | undefined {
+    if (this.heckleBag.length === 0) this.heckleBag = this.buildHeckleBag();
+    return this.heckleBag.pop();
+  }
+
+  /** Naplň pytlík: každá heckle-hláška × každá dostupná namluvená varianta (autor/take)
+   *  jako samostatná položka; hlášky bez nahrávky jen jako text. Nakonec zamíchat. */
+  private buildHeckleBag(): { id: string; take?: number }[] {
+    const bag: { id: string; take?: number }[] = [];
+    for (const item of Content.all.infographics) {
+      if (item.kind !== 'heckle') continue;
+      const takes: number[] = [];
+      for (let t = 1; t <= 8; t++) if (this.cache.audio.exists(`heckle:${item.id}:${t}`)) takes.push(t);
+      if (takes.length === 0) bag.push({ id: item.id }); // jen text (bez nahrávky)
+      else for (const t of takes) bag.push({ id: item.id, take: t });
+    }
+    // Fisher-Yates zamíchání
+    for (let i = bag.length - 1; i > 0; i--) {
+      const j = Phaser.Math.Between(0, i);
+      [bag[i], bag[j]] = [bag[j], bag[i]];
+    }
+    return bag;
   }
 
   private showHeckleBubble(line: string): void {
@@ -507,19 +537,11 @@ export class OfficeScene extends Phaser.Scene {
     });
   }
 
-  /** Přehraj namluvený hlas heckleru (klíč 'heckle:<id infografiky>'), když existuje.
+  /** Přehraj KONKRÉTNÍ namluvenou variantu pokřiku (klíč 'heckle:<id>:<take>') z pytlíku.
    *  Předchozí hlas vždy utne, ať se dvě hlášky nepřekřikují. Ztlumení řeší globální
    *  sound.mute, takže přehrání necháváme být i při mute (nic není slyšet). */
-  private playHeckleVoice(id: string): boolean {
-    // posbírej všechny namluvené varianty (take) téhle hlášky a jednu náhodně vyber,
-    // ať se hlas rytíře střídá. Klíče jsou 'heckle:<id>:1', ':2', … (viz Preload).
-    const keys: string[] = [];
-    for (let t = 1; t <= 8; t++) {
-      const k = `heckle:${id}:${t}`;
-      if (this.cache.audio.exists(k)) keys.push(k);
-    }
-    if (keys.length === 0) return false;
-    const key = keys[Math.floor(Math.random() * keys.length)];
+  private playHeckleVoice(key: string): boolean {
+    if (!this.cache.audio.exists(key)) return false;
     this.stopHeckleVoice();
     try {
       this.heckleVoice = this.sound.add(key, { volume: 0.9 });
